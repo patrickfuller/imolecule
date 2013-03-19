@@ -1,6 +1,7 @@
 from IPython.display import HTML, Javascript, display
 import re
 import os
+from uuid import uuid4 as uuid
 from molecule_to_json import generate_json
 
 # Load required assets on import
@@ -45,13 +46,15 @@ def draw(data, format="auto", optimize=True, add_h=False, size=(400, 225)):
             format = "smi"
 
     # This stitches together js and json to create a runnable js string
+    id = "molecule_%s" % uuid()
     js["molecule"] = (data if format == "json"
-                     else generate_json(data, format, optimize, add_h))
+                      else generate_json(data, format, optimize, add_h))
     js["w"], js["h"] = [str(s) for s in size]
+    js["selector"] = "#" + id
     drawer = re.sub("#\(\w+\)", lambda m: js[m.group()[2:-1]], js["script"])
 
     # Create a div with a handle to display molecule, then execute js
-    # TODO This is terrible
-    display(HTML(('<div class="molecule" '
-                   'style="min-width: %dpx; height: %dpx;" />' % tuple(size))))
+    display(HTML(('<div id=%s '
+                  'style="min-width: %dpx; height: %dpx;" />'
+                  % tuple([id] + list(size)))))
     display(Javascript(data=drawer))

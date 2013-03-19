@@ -9,6 +9,7 @@ import json
 import pybel
 from openbabel import OBMolBondIter
 
+
 def generate_json(data, format, optimize=True, add_h=False):
     """Converts any supported OpenBabel format to json."""
     molecule = pybel.readstring(format, data)

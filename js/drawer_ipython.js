@@ -111,7 +111,7 @@ function init() {
 
     addControls();
 
-    $('div.molecule').html( renderer.domElement );
+    $( "#(selector)" ).html( renderer.domElement );
 
 }
 
