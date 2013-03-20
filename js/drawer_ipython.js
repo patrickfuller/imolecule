@@ -111,7 +111,11 @@ function init() {
 
     addControls();
 
-    $( "#(selector)" ).html( renderer.domElement );
+    // Use IPython handles to create a div below the current line
+    container.show();
+    var div = $("<div/>").attr("id", "molecule_" + utils.uuid());
+    div.html(renderer.domElement);
+    element.append(div);
 
 }
 

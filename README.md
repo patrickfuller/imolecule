@@ -1,7 +1,10 @@
 imolecule
 =========
 
-An interactive 3D molecule viewer for the IPython notebook and browsers.
+An interactive 3D molecule viewer for the IPython notebook and
+[browsers](http://www.patrick-fuller.com/imolecule/).
+
+![](http://www.patrick-fuller.com/wp-content/uploads/2013/03/imolecule_examples.png)
 
 Usage
 =====
