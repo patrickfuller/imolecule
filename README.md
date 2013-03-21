@@ -50,7 +50,7 @@ and can be set up to better handle different use cases. For example, to view a
 crystallographic information file with pre-generated coordinates, you can
 disable location generation and increase the size of the visualizer.
 
-![](http://www.patrick-fuller.com/wp-content/uploads/2013/03/nu125_600.png)
+![](http://www.patrick-fuller.com/wp-content/uploads/2013/03/nu_125_600.png)
 
 ###Full Browser
 
