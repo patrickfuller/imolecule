@@ -1,4 +1,4 @@
-var camera, scene, renderer, controls, light;
+var camera, scene, renderer, controls, light, shader;
 var sphereGeometry, cylinderGeometry, materials, sizes;
 
 init();
@@ -22,7 +22,7 @@ function addControls() {
     controls.keys = [65, 83, 68];
 }
 
-function arrayToVector(array, vector) {
+function arrayToVector(array) {
     return new THREE.Vector3(array[0], array[1], array[2]);
 }
 
@@ -75,6 +75,20 @@ function drawMolecule(molecule) {
     }
 }
 
+function makeToonMaterial(color) {
+    var mat = new THREE.ShaderMaterial({
+                  uniforms: THREE.UniformsUtils.clone(shader.uniforms),
+                  vertexShader: shader.vertexShader,
+                  fragmentShader: shader.fragmentShader});
+    mat.uniforms.uDirLightPos.value.set(camera.position.z, camera.position.z,
+                                        camera.position.z);
+    mat.uniforms.uAmbientLightColor.value = new THREE.Color(parseInt("0x222222", 16));
+    var col = new THREE.Color(color);
+    mat.uniforms.uDirLightColor.value = col;
+    mat.uniforms.uBaseColor.value = col;
+    return mat;
+}
+
 function init() {
 
     camera = new THREE.PerspectiveCamera( 40, #(w) / #(h), 1, 3000 );
@@ -84,7 +98,7 @@ function init() {
 
     // Atoms are spheres, bonds are cylinders
     sphereGeometry = new THREE.SphereGeometry(1, 16, 12);
-    cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 32, 16, false);
+    cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 16, 12, false);
 
     var vPreRotation = new THREE.Vector3(Math.PI / 2, Math.PI, 0);
     var matrix = new THREE.Matrix4().setRotationFromEuler(vPreRotation);
@@ -92,17 +106,19 @@ function init() {
 
     sizes = #(sizes);
 
-    materials = #(colors);
-    for (var key in materials) {
-        materials[key] = new THREE.MeshLambertMaterial(
-                             { color: parseInt(materials[key], 16) } );
-    }
-
     light = new THREE.HemisphereLight(0xffffff, 1.0);
     light.position = camera.position;
+    shader = THREE.ShaderToon["toon2"];
 
-    scene.add( camera );
-    scene.add( light );
+    materials = #(colors);
+    for (var key in materials) {
+        var col = {color: parseInt(materials[key], 16)};
+        materials[key] = #(toon)? makeToonMaterial(col.color) :
+                                  new THREE.MeshLambertMaterial(col);
+    }
+
+    scene.add(camera);
+    scene.add(light);
 
     drawMolecule( #(molecule) );
 
