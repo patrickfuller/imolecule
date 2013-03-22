@@ -35,22 +35,23 @@ function arrayToVector(array, vector) {
  */
 function loadChemicalProperties() {
     // Fills object with material primitives, rather than just colors
-    $.getJSON("json/atom_colors.json", function(json) {
+    $.getJSON("json/atom_colors.json", function(colors) {
         toonMaterials = {};
         transparentMaterials = {};
-        for (var key in json) {
-            if (json.hasOwnProperty(key)) {
-                json[key] = parseInt(json[key], 16);
-                toonMaterials[key] = makeMaterial(json[key]);
+        for (var key in colors) {
+            if (colors.hasOwnProperty(key)) {
+                colors[key] = parseInt(colors[key], 16);
+                toonMaterials[key] = makeMaterial(colors[key]);
             }
          }
-    });
-    $.getJSON("json/atom_diameters.json", function(json) {
-        sizes = json;
-    });
 
-    $.getJSON("json/nu_100.json", function(json) {
-        drawMolecule(json);
+        $.getJSON("json/atom_diameters.json", function(diameters) {
+            sizes = diameters;
+
+            $.getJSON("json/nu_100.json", function(startingMolecule) {
+                drawMolecule(startingMolecule);
+            });
+        });
     });
 }
 
