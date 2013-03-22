@@ -145,20 +145,11 @@ function onFileSelect(evt) {
         return function(loaded) {
             clear();
             var json = $.parseJSON(loaded.target.result);
-            if (json.hasOwnProperty("building_blocks")) {
-                drawMof(json);
-            }
-            else {
-                drawMolecule(json);
-            }
+            clear();
+            drawMolecule(json);
         };
     })(files[0]);
     fileReader.readAsText(files[0]);
-
-    // TODO implement a sexy history thing.
-    //document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-
-    // TODO make file drop hidden, then full screen when fileover
 }
 
 /**
