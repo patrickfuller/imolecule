@@ -41,8 +41,8 @@ def molecule_to_dictionary(molecule):
 
     # Save number of bonds and indices of endpoint atoms
     # Switch from 1-index to 0-index counting
-    bonds = [{"source": b.GetBeginAtom().GetIndex(),
-              "target": b.GetEndAtom().GetIndex(),
+    bonds = [{"atoms": [b.GetBeginAtom().GetIndex(),
+                        b.GetEndAtom().GetIndex()],
               "order": b.GetBondOrder()}
              for b in OBMolBondIter(molecule.OBMol)]
 

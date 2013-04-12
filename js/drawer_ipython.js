@@ -1,3 +1,5 @@
+/*global $, jQuery, THREE*/
+"use strict";
 var camera, scene, renderer, controls, light, shader;
 var sphereGeometry, cylinderGeometry, materials, sizes;
 
@@ -5,7 +7,7 @@ init();
 animate();
 
 function addControls() {
-    controls = new THREE.TrackballControls(camera, renderer.domElement);
+    var controls = new THREE.TrackballControls(camera, renderer.domElement);
     controls.rotateSpeed = 1;
     controls.zoomSpeed = 0.25;
     controls.panSpeed = 1;
@@ -28,13 +30,11 @@ function arrayToVector(array) {
 
 function drawMolecule(molecule) {
 
-    var SCALE = 0.5;
-    var mesh, atom, bond, mag, transY;
-    var vSource, vTarget, vCent, vDiff;
+    var SCALE = 0.5, mesh, atom, bond, mag, transY, vSource, vTarget, vCent, vDiff, i, j;
     vCent = new THREE.Vector3();
     vDiff = new THREE.Vector3();
 
-    for (var i = 0; i < molecule.atoms.length; i++) {
+    for (i = 0; i < molecule.atoms.length; i += 1) {
         atom = molecule.atoms[i];
         mesh = new THREE.Mesh(sphereGeometry, materials[atom.element]);
         mesh.position.copy(arrayToVector(atom.location));
@@ -42,25 +42,28 @@ function drawMolecule(molecule) {
         scene.add(mesh);
     }
 
-    for (var i = 0; i < molecule.bonds.length; i++) {
+    for (i = 0; i < molecule.bonds.length; i += 1) {
         bond = molecule.bonds[i];
-        vSource = arrayToVector(molecule.atoms[bond.source].location);
-        vTarget = arrayToVector(molecule.atoms[bond.target].location);
+
+        // Support for an old format (TODO remove)
+        if (bond.hasOwnProperty("source")) {
+            bond.atoms = [bond.source, bond.target];
+        }
+        vSource = arrayToVector(molecule.atoms[bond.atoms[0]].location);
+        vTarget = arrayToVector(molecule.atoms[bond.atoms[1]].location);
 
         vCent.addVectors(vSource, vTarget).divideScalar(2);
         vDiff.subVectors(vTarget, vSource);
         mag = vDiff.length();
 
-        for (var j = 0; j < bond.order; j++) {
+        for (j = 0; j < bond.order; j += 1) {
             mesh = new THREE.Mesh(cylinderGeometry, materials.bond);
 
             if (bond.order === 2) {
-                transY = 0.275 * ((j === 1)? 1 : -1);
-            }
-            else if (bond.order === 3 && j !== 0) {
-                transY = 0.55 * ((j === 1)? 1 : -1);
-            }
-            else {
+                transY = 0.275 * ((j === 1) ? 1 : -1);
+            } else if (bond.order === 3 && j !== 0) {
+                transY = 0.55 * ((j === 1) ? 1 : -1);
+            } else {
                 transY = 0;
             }
 
@@ -76,14 +79,16 @@ function drawMolecule(molecule) {
 }
 
 function makeToonMaterial(color) {
-    var mat = new THREE.ShaderMaterial({
-                  uniforms: THREE.UniformsUtils.clone(shader.uniforms),
-                  vertexShader: shader.vertexShader,
-                  fragmentShader: shader.fragmentShader});
+    var mat, col;
+    mat = new THREE.ShaderMaterial({
+        uniforms: THREE.UniformsUtils.clone(shader.uniforms),
+        vertexShader: shader.vertexShader,
+        fragmentShader: shader.fragmentShader
+    });
     mat.uniforms.uDirLightPos.value.set(camera.position.z, camera.position.z,
                                         camera.position.z);
     mat.uniforms.uAmbientLightColor.value = new THREE.Color(parseInt("0x222222", 16));
-    var col = new THREE.Color(color);
+    col = new THREE.Color(color);
     mat.uniforms.uDirLightColor.value = col;
     mat.uniforms.uBaseColor.value = col;
     return mat;

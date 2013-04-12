@@ -1,16 +1,56 @@
 <html>
     <head>
-        <title>json molecule viewer</title>
+        <title>molecule viewer</title>
         <link href="css/style.css" rel="stylesheet" type="text/css" />
-    </head>
-    <body>
-        <div id="drop_zone">Drop files here</div>
-        <output id="list"></output>
 
         <script src="js/jquery-1.9.0.min.js"></script>
         <script src="js/three.min.js"></script>
         <script src="js/TrackballControls.js"></script>
         <script src="js/ShaderToon.js"></script>
         <script src="js/drawer_browser.js"></script>
+    </head>
+    <body>
+        <div class="mof-viewer">
+            <article class="viewer-options">
+                <select class="camera-type" onchange="javascript:viewer.setCameraType($('.viewer-options>.camera-type').find(':selected').text())">
+                    <option>perspective</option>
+                    <option>orthographic</option>
+                </select>
+                <select class="drawing-types" onchange="javascript:viewer.setDrawingType($('.viewer-options>.drawing-types').find(':selected').text())">
+                    <option>ball and stick</option>
+                    <option>space filling</option>
+                    <option>wireframe</option>
+                </select>
+            </article>
+        </div>
+         <script type="text/javascript">
+
+            // Set up a WebGL renderer instance
+            viewer.initialize(".mof-viewer");
+
+            // Basic file i/o logic
+            var selector = $("body, body > *");
+            selector.bind("dragover", function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                e.originalEvent.dataTransfer.dropEffect = "copy";
+                $("body, body > *").css("background", "#dfd");
+            });
+            selector.bind("dragleave", function (e) {
+                $("body, body > *").css("background", "#eee");
+            });
+            selector.bind("drop", function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                $("body, body > *").css("background", "#eee");
+
+                var reader = new FileReader();
+                reader.onload = function (loaded) {
+                    viewer.clear();
+                    viewer.drawMolecule($.parseJSON(loaded.target.result));
+                };
+                reader.readAsText(e.originalEvent.dataTransfer.files[0]);
+            });
+        </script>
     </body>
 </html>
