@@ -1,17 +1,19 @@
 <html>
     <head>
         <title>molecule viewer</title>
-        <link href="css/style.css" rel="stylesheet" type="text/css" />
+        <link href="static/css/style.css" rel="stylesheet" type="text/css" />
 
-        <script src="js/jquery-1.9.0.min.js"></script>
-        <script src="js/three.min.js"></script>
-        <script src="js/TrackballControls.js"></script>
-        <script src="js/ShaderToon.js"></script>
-        <script src="js/drawer_browser.js"></script>
+        <script src="static/lib/jquery-1.9.0.min.js"></script>
+        <script src="static/lib/socket.io.js"></script>
+        <script src="static/lib/three.min.js"></script>
+        <script src="static/lib/TrackballControls.js"></script>
+        <script src="static/lib/ShaderToon.js"></script>
+        <script src="static/molecule_viewer.js"></script>
     </head>
     <body>
         <div class="mof-viewer">
             <article class="viewer-options">
+                <p>Drag files into the window to view.</p>
                 <select class="camera-type" onchange="javascript:viewer.setCameraType($('.viewer-options>.camera-type').find(':selected').text())">
                     <option>perspective</option>
                     <option>orthographic</option>
@@ -28,28 +30,53 @@
             // Set up a WebGL renderer instance
             viewer.initialize(".mof-viewer");
 
+            // Connect a websocket to the server
+            var socket = new io.Socket(window.location.hostname, {port: 8000,
+                                       rememberTransport: false});
+            socket.connect();
+            socket.on("connect", function () {
+                console.log("Connected!");
+            });
+            // This is light (as there's only one method), but it could easily be
+            // expanded (uuid + queue map + router logic, probably in a new file)
+            socket.on("message", function (data) {
+                if (data.error) {
+                    alert(data.result);
+                    return;
+                }
+                viewer.clear();
+                viewer.drawMolecule($.parseJSON(data.result));
+            });
+
             // Basic file i/o logic
-            var selector = $("body, body > *");
+            var selector = $("body, body>*");
             selector.bind("dragover", function (e) {
                 e.stopPropagation();
                 e.preventDefault();
                 e.originalEvent.dataTransfer.dropEffect = "copy";
-                $("body, body > *").css("background", "#dfd");
+                $("body, body>*").css("background", "#dfd");
             });
             selector.bind("dragleave", function (e) {
-                $("body, body > *").css("background", "#eee");
+                $("body, body>*").css("background", "#eee");
             });
             selector.bind("drop", function (e) {
                 e.stopPropagation();
                 e.preventDefault();
-                $("body, body > *").css("background", "#eee");
+                $("body, body>*").css("background", "#eee");
 
                 var reader = new FileReader();
+                var file = e.originalEvent.dataTransfer.files[0];
                 reader.onload = function (loaded) {
-                    viewer.clear();
-                    viewer.drawMolecule($.parseJSON(loaded.target.result));
+                    var type = file.name.split(".").pop();
+                    if (type === "json") {
+                        self.viewer.clear();
+                        self.viewer.drawMolecule($.parseJSON(loaded.target.result));
+                    } else {
+                        socket.send({method: "convert", params: {data: loaded.target.result,
+                            in_format: type, out_format: "json"}});
+                    }
                 };
-                reader.readAsText(e.originalEvent.dataTransfer.files[0]);
+                reader.readAsText(file);
             });
         </script>
     </body>
