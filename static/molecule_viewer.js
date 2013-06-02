@@ -24,7 +24,7 @@ var viewer = {
             $.getJSON("static/json/atomic_radii_empirical.json", function (radii) {
                 self.atomicRadii = radii;
 
-                $.getJSON("static/json/nu_100.json", function (sample) {
+                $.getJSON("static/json/caffeine.json", function (sample) {
                     self.drawMolecule(sample);
                 });
             });
@@ -121,34 +121,27 @@ var viewer = {
         this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
     },
 
-    // Creates a new THREE.Vector3 from an array
-    arrayToVector: function (array) {
-        return new THREE.Vector3(array[0], array[1], array[2]);
-    },
-
     // Draws a molecule. Duh.
     drawMolecule: function (molecule) {
 
-        var mesh, material, atom, bond, site, line, ortho, mag,
-            axis, angle, transY, lineGeometry, vSource, vTarget, vOrtho, vCent,
-            vDiff, vY, vAxis, SCALE, i, j;
+        var i, j, scale, vectors, atom, bond, material, mesh, mag, transY;
 
-        SCALE = this.drawingType === "space filling" ? 1.0 : 0.3;
-        vSource = new THREE.Vector3();
-        vTarget = new THREE.Vector3();
-        vOrtho = new THREE.Vector3();
-        vCent = new THREE.Vector3();
-        vDiff = new THREE.Vector3();
-        vY = new THREE.Vector3(0, 1, 0);
-        vAxis = new THREE.Vector3();
+        this.current = molecule;
+        scale = this.drawingType === "space filling" ? 1.0 : 0.3;
+
+        // This is an object to hold geometric calculations
+        vectors = {};
+        $.each(["source", "target", "cent", "diff"], function (i, value) {
+            vectors[value] = new THREE.Vector3();
+        });
 
         if (molecule.hasOwnProperty("atoms")) {
             for (i = 0; i < molecule.atoms.length; i += 1) {
                 atom = molecule.atoms[i];
                 material = this.toonMaterials[atom.element];
                 mesh = new THREE.Mesh(this.sphereGeometry, material);
-                mesh.position.copy(this.arrayToVector(atom.location));
-                mesh.scale.x = mesh.scale.y = mesh.scale.z = SCALE * this.atomicRadii[atom.element] * 2;
+                mesh.position.fromArray(atom.location);
+                mesh.scale.x = mesh.scale.y = mesh.scale.z = scale * this.atomicRadii[atom.element] * 2;
                 if (this.drawingType !== "wireframe") {
                     this.scene.add(mesh);
                 }
@@ -160,19 +153,15 @@ var viewer = {
         if (molecule.hasOwnProperty("bonds")) {
             for (i = 0; i < molecule.bonds.length; i += 1) {
                 bond = molecule.bonds[i];
+                vectors.source.fromArray(molecule.atoms[bond.atoms[0]].location);
+                vectors.target.fromArray(molecule.atoms[bond.atoms[1]].location);
+                vectors.cent.addVectors(vectors.source, vectors.target).divideScalar(2);
+                mag = vectors.diff.subVectors(vectors.target, vectors.source).length();
 
-                // New bond change. Warn users in the console (TODO remove this eventually)
-                if (bond.hasOwnProperty("source")) {
-                    console.log("Received an outdated .json format. Converting...");
-                    bond.atoms = [bond.source, bond.target];
+                // Skip bonds that are too small to visualize
+                if (mag < 0.01) {
+                    continue;
                 }
-
-                vSource = this.arrayToVector(molecule.atoms[bond.atoms[0]].location);
-                vTarget = this.arrayToVector(molecule.atoms[bond.atoms[1]].location);
-
-                vCent.addVectors(vSource, vTarget).divideScalar(2);
-                vDiff.subVectors(vTarget, vSource);
-                mag = vDiff.length();
 
                 for (j = 0; j < bond.order; j += 1) {
                     mesh = new THREE.Mesh(this.cylinderGeometry, this.toonMaterials.bond);
@@ -185,11 +174,11 @@ var viewer = {
                         transY = 0;
                     }
 
-                    mesh.position.copy(vCent);
-                    mesh.lookAt(vTarget);
-                    mesh.scale.x = mesh.scale.y = SCALE * this.atomicRadii.bond * 2;
+                    mesh.position.copy(vectors.cent);
+                    mesh.lookAt(vectors.target);
+                    mesh.scale.x = mesh.scale.y = 0.3 * this.atomicRadii.bond * 2;
                     mesh.scale.z = mag;
-                    mesh.translateY(SCALE * transY);
+                    mesh.translateY(0.3 * transY);
 
                     if (this.drawingType !== "space filling") {
                         this.scene.add(mesh);
@@ -213,11 +202,11 @@ var viewer = {
 
         // Sets a camera with (view angle, aspect, near, far) and moves up z
         aspect = $element.width() / $element.height();
-        this.perspective = new THREE.PerspectiveCamera(70, aspect, 1, 3000);
+        this.perspective = new THREE.PerspectiveCamera(50, aspect, 1, 3000);
         this.orthographic = new THREE.OrthographicCamera(-$element.width() / 16, $element.width() / 16,
                                                          $element.height() / 16, -$element.height() / 16,
                                                          1, 500);
-        this.perspective.position.z = 50;
+        this.perspective.position.z = 15;
         this.camera = this.perspective;
         this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
         this.orthographic.position = this.perspective.position;

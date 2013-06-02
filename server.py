@@ -21,6 +21,9 @@ import zmq
 from zmq.eventloop import ioloop, zmqstream
 ioloop.install()
 
+import faulthandler
+faulthandler.enable()
+
 import tornado
 import tornado.web
 import tornadio
@@ -28,15 +31,17 @@ import tornadio.router
 import tornadio.server
 
 import format_converter
-
 from config import HTTP_PORT, TCP_PORT
+
 ROOT = os.path.normpath(os.path.dirname(__file__))
+with open("index.html") as index_file:
+    index = index_file.read() % {"port": HTTP_PORT}
 
 
 class IndexHandler(tornado.web.RequestHandler):
 
     def get(self):
-        self.render("index.html")
+        self.write(index)
 
 
 class ClientConnection(tornadio.SocketConnection):
@@ -55,20 +60,19 @@ class ClientConnection(tornadio.SocketConnection):
             result = traceback.format_exc()
             error = 1
         logging.log(logging.DEBUG, result)
-        self.send({"result": result, "error": error})
+        self.send({"result": result, "error": error, "id": message["id"]})
 
 
 WebClientRouter = tornadio.get_router(ClientConnection)
 
-application = tornado.web.Application(
-                      [(r"/", IndexHandler),
-                        WebClientRouter.route()],
-                      enabled_protocols=["websocket", "flashsocket",
-                                         "xhr-multipart", "xhr-polling"],
-                      flash_policy_port=843,
-                      flash_policy_file=os.path.join(ROOT, "flashpolicy.xml"),
-                      static_path=os.path.join(ROOT, "static"),
-                      socket_io_port=HTTP_PORT)
+handler = [(r"/", IndexHandler), WebClientRouter.route()]
+kwargs = {"enabled_protocols": ["websocket", "flashsocket",
+                                "xhr-multipart", "xhr-polling"],
+          "flash_policy_port": 843,
+          "flash_policy_file": os.path.join(ROOT, "flashpolicy.xml"),
+          "static_path": os.path.join(ROOT, "static"),
+          "socket_io_port": HTTP_PORT}
+application = tornado.web.Application(handler, **kwargs)
 
 if __name__ == "__main__":
     import sys

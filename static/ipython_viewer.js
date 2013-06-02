@@ -6,47 +6,55 @@ var sphereGeometry, cylinderGeometry, materials, sizes;
 init();
 animate();
 
-function arrayToVector(array) {
-    return new THREE.Vector3(array[0], array[1], array[2]);
-}
-
 function drawMolecule(molecule) {
 
-    var SCALE = 0.3, mesh, atom, bond, mag, transY, vSource, vTarget, vCent, vDiff, i, j;
-    vCent = new THREE.Vector3();
-    vDiff = new THREE.Vector3();
+    var i, j, scale, vectors, atom, bond, mesh, mag, transY;
+    scale = 0.3;
 
-    for (i = 0; i < molecule.atoms.length; i += 1) {
-        atom = molecule.atoms[i];
-        mesh = new THREE.Mesh(sphereGeometry, materials[atom.element]);
-        mesh.position.copy(arrayToVector(atom.location));
-        mesh.scale.x = mesh.scale.y = mesh.scale.z = SCALE * sizes[atom.element] * 2;
-        scene.add(mesh);
+    // This is an object to hold geometric calculations
+    vectors = {};
+    $.each(["source", "target", "cent", "diff"], function (i, value) {
+        vectors[value] = new THREE.Vector3();
+    });
+
+    if (molecule.hasOwnProperty("atoms")) {
+        for (i = 0; i < molecule.atoms.length; i += 1) {
+            atom = molecule.atoms[i];
+            mesh = new THREE.Mesh(sphereGeometry, materials[atom.element]);
+            mesh.position.fromArray(atom.location);
+            mesh.scale.x = mesh.scale.y = mesh.scale.z = scale * sizes[atom.element] * 2;
+            scene.add(mesh);
+        }
     }
 
-    for (i = 0; i < molecule.bonds.length; i += 1) {
-        bond = molecule.bonds[i];
-        vSource = arrayToVector(molecule.atoms[bond.atoms[0]].location);
-        vTarget = arrayToVector(molecule.atoms[bond.atoms[1]].location);
-        vCent.addVectors(vSource, vTarget).divideScalar(2);
-        vDiff.subVectors(vTarget, vSource);
-        mag = vDiff.length();
+    // If the input file specifies bonds, draw them
+    if (molecule.hasOwnProperty("bonds")) {
+        for (i = 0; i < molecule.bonds.length; i += 1) {
+            bond = molecule.bonds[i];
+            vectors.source.fromArray(molecule.atoms[bond.atoms[0]].location);
+            vectors.target.fromArray(molecule.atoms[bond.atoms[1]].location);
+            vectors.cent.addVectors(vectors.source, vectors.target).divideScalar(2);
+            mag = vectors.diff.subVectors(vectors.target, vectors.source).length();
 
-        for (j = 0; j < bond.order; j += 1) {
-            mesh = new THREE.Mesh(cylinderGeometry, materials.bond);
-            if (bond.order === 2) {
-                transY = 0.5 * ((j === 1) ? 1 : -1);
-            } else if (bond.order === 3 && j !== 0) {
-                transY = ((j === 1) ? 1 : -1);
-            } else {
-                transY = 0;
+            // Skip bonds that are too small to visualize
+            if (mag < 0.01) { continue; }
+
+            for (j = 0; j < bond.order; j += 1) {
+                mesh = new THREE.Mesh(cylinderGeometry, materials.bond);
+                if (bond.order === 2) {
+                    transY = 0.5 * ((j === 1) ? 1 : -1);
+                } else if (bond.order === 3 && j !== 0) {
+                    transY = ((j === 1) ? 1 : -1);
+                } else {
+                    transY = 0;
+                }
+                mesh.position.copy(vectors.cent);
+                mesh.lookAt(vectors.target);
+                mesh.scale.x = mesh.scale.y = scale * sizes.bond * 2;
+                mesh.scale.z = mag;
+                mesh.translateY(scale * transY);
+                scene.add(mesh);
             }
-            mesh.position.copy(vCent);
-            mesh.lookAt(vTarget);
-            mesh.scale.x = mesh.scale.y = SCALE * sizes.bond * 2;
-            mesh.scale.z = mag;
-            mesh.translateY(SCALE * transY);
-            scene.add(mesh);
         }
     }
 }
@@ -84,7 +92,7 @@ function init() {
 
     light = new THREE.HemisphereLight(0xffffff, 1.0);
     light.position = camera.position;
-    shader = THREE.ShaderToon["toon2"];
+    shader = THREE.ShaderToon.toon2;
 
     materials = #(colors);
     for (var key in materials) {

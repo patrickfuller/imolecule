@@ -2,18 +2,23 @@
     <head>
         <title>molecule viewer</title>
         <link href="static/css/style.css" rel="stylesheet" type="text/css" />
+        <link href="static/css/avgrund.css" rel="stylesheet" type="text/css" />
 
-        <script src="static/lib/jquery-1.9.0.min.js"></script>
-        <script src="static/lib/socket.io.js"></script>
-        <script src="static/lib/three.min.js"></script>
-        <script src="static/lib/TrackballControls.js"></script>
-        <script src="static/lib/ShaderToon.js"></script>
-        <script src="static/molecule_viewer.js"></script>
+        <script src="static/lib/jquery-1.9.0.min.js"> type="text/javascript"></script>
+        <script src="static/lib/FileSaver.min.js" type="text/javascript"></script>
+        <script src="static/lib/avgrund.js" type="text/javascript"></script>
+        <script src="static/lib/socket.io.js" type="text/javascript"></script>
+        <script src="static/lib/three.min.js" type="text/javascript"></script>
+        <script src="static/lib/TrackballControls.js" type="text/javascript"></script>
+        <script src="static/lib/ShaderToon.js" type="text/javascript"></script>
+        <script src="static/molecule_viewer.js" type="text/javascript"></script>
+        <script src="static/client_interface.js" type="text/javascript"></script>
     </head>
     <body>
         <div class="mof-viewer">
             <article class="viewer-options">
                 <p>Drag files into the window to view.</p>
+                <button class="save-as" onclick="javascript:Avgrund.show('.avgrund-popup')">save as</button>
                 <select class="camera-type" onchange="javascript:viewer.setCameraType($('.viewer-options>.camera-type').find(':selected').text())">
                     <option>perspective</option>
                     <option>orthographic</option>
@@ -25,28 +30,141 @@
                 </select>
             </article>
         </div>
-         <script type="text/javascript">
+
+        <aside class="avgrund-popup">
+            <h2>save as</h2>
+            <p>
+                Choose an output format. Supports <a href="http://en.wikipedia.org/wiki/JSON" target="_blank">json</a> and <a href="http://openbabel.org/docs/2.3.1/FileFormats/Overview.html" target="_blank">this list</a> of chemical formats.
+            </p>
+            <select class="formats">
+                <optgroup label="Common cheminformatics formats">
+                    <option value="json">Javascript Object Notation</option>
+                    <option value="can">Canonical SMILES format</option>
+                    <option value="cml">Chemical Markup Language</option>
+                    <option value="inchi">InChI format</option>
+                    <option value="inchikey">InChIKey</option>
+                    <option value="mol">MDL MOL format</option>
+                    <option value="pdb">Protein Data Bank format</option>
+                    <option value="smi">SMILES format</option>
+                    <option value="ml2">Sybyl Mol2 format</option>
+                </optgroup>
+                <optgroup label="Utility formats">
+                    <option value="k">Compare molecules using InChI</option>
+                    <option value="fs">Fastsearch format</option>
+                    <option value="fpt">Fingerprint format</option>
+                    <option value="mpd">MolPrint2D format</option>
+                    <option value="mna">Multilevel Neighborhoods of Atoms</option>
+                    <option value="molreport">Open Babel molecule report</option>
+                    <option value="report">Open Babel report format</option>
+                    <option value="xyz">XYZ cartesian coordinates format</option>
+                </optgroup>
+                <optgroup label="Other cheminformatics formats">
+                    <option value="mcdl">MCDL format</option>
+                    <option value="bgf">MSI BGF format</option>
+                </optgroup>
+                <optgroup label="Computational chemistry formats">
+                    <option value="adf">ADF cartesian input format</option>
+                    <option value="cache">CAChe MolStruct format</option>
+                    <option value="caccrt">Cacao Cartesian format</option>
+                    <option value="cacint">Cacao Internal format</option>
+                    <option value="outmol">DMol3 coordinates format</option>
+                    <option value="fhiaims">FHIaims XYZ format</option>
+                    <option value="fh">Fenske-Hall Z-Matrix format</option>
+                    <option value="inp">GAMESS Input</option>
+                    <option value="gukin">GAMESS-UK Input</option>
+                    <option value="gukout">GAMESS-UK Output</option>
+                    <option value="gjf">Gaussian 98/03 Input</option>
+                    <option value="gzmat">Gaussian Z-Matrix Input</option>
+                    <option value="hin">HyperChem HIN format</option>
+                    <option value="jin">Jaguar input format</option>
+                    <option value="mopcrt">MOPAC Cartesian format</option>
+                    <option value="mopin">MOPAC Internal</option>
+                    <option value="mpqcin">MPQC simplified input format</option>
+                    <option value="mp">Molpro input format</option>
+                    <option value="nw">NWChem input format</option>
+                    <option value="pqs">Parallel Quantum Solutions format</option>
+                    <option value="qcin">Q-Chem input format</option>
+                    <option value="tmol">TurboMole Coordinate format</option>
+                    <option value="CONTCAR">VASP format</option>
+                    <option value="zin">ZINDO input format</option>
+                </optgroup>
+                <optgroup label="Crystallography formats">
+                    <option value="cssr">CSD CSSR format</option>
+                    <option value="cif">Crystallographic Information File</option>
+                    <option value="fract">Free Form Fractional format</option>
+                    <option value="mmcif">Macromolecular Crystallographic Info</option>
+                </optgroup>
+                <optgroup label="Reaction formats">
+                    <option value="cmlr">CML Reaction format</option>
+                    <option value="rxn">MDL RXN format</option>
+                    <option value="rsmi">Reaction SMILES format</option>
+                </optgroup>
+                <optgroup label="Image formats">
+                    <option value="pov">POV-Ray input format</option>
+                    <option value="svg">SVG 2D depiction</option>
+                </optgroup>
+                <optgroup label="2D drawing formats">
+                    <option value="cdxml">ChemDraw CDXML format</option>
+                    <option value="ct">ChemDraw Connection Table format</option>
+                    <option value="cht">Chemtool format</option>
+                </optgroup>
+                <optgroup label="3D viewer formats">
+                    <option value="bs">Ball and Stick format</option>
+                    <option value="c3d1">Chem3D Cartesian 1 format</option>
+                    <option value="c3d2">Chem3D Cartesian 2 format</option>
+                    <option value="crk3d">Chemical Resource Kit 3D format</option>
+                    <option value="gpr">Ghemical format</option>
+                    <option value="molden">Molden format</option>
+                    <option value="pcm">PCModel Format</option>
+                    <option value="unixyz">UniChem XYZ format</option>
+                    <option value="vmol">ViewMol format</option>
+                    <option value="yob">YASARA.org YOB format</option>
+                </optgroup>
+                <optgroup label="Kinetics and Thermodynamics formats">
+                    <option value="ck">ChemKin format</option>
+                    <option value="tdd">Thermo format</option>
+                </optgroup>
+                <optgroup label="Molecular dynamics and docking formats">
+                    <option value="pdbqt">AutoDock PDQBT format</option>
+                    <option value="CONFIG">DL-POLY CONFIG</option>
+                    <option value="box">Dock 3.5 Box format</option>
+                    <option value="gro">GRO format</option>
+                    <option value="gr96">GROMOS96 format</option>
+                    <option value="mmod">MacroModel format</option>
+                    <option value="txyz">Tinker XYZ format</option>
+                </optgroup>
+                <optgroup label="Volume data formats">
+                    <option value="cube">Gaussian cube format</option>
+                    <option value="dx">OpenDX cube format for APBS</option>
+                </optgroup>
+                <optgroup label="Miscellaneous formats">
+                    <option value="msms">M.F. Sanner’s MSMS input format</option>
+                </optgroup>
+                <optgroup label="Biological data formats">
+                    <option value="fasta">FASTA format</option>
+                    <option value="pqr">PQR format</option>
+                </optgroup>
+                <optgroup label="Obscure formats">
+                    <option value="alc">Alchemy format</option>
+                    <option value="feat">Feature format</option>
+                    <option value="fix">SMILES FIX format</option>
+                    <option value="xed">XED format</option>
+                </optgroup>
+            </select>
+
+            <button onclick="javascript:Avgrund.hide()">close</button>
+            <button onclick="javascript:client.convert_and_save(JSON.stringify(viewer.current), $('select.formats option:selected').val())">save</button>
+        </aside>
+
+        <script type="text/javascript">
 
             // Set up a WebGL renderer instance
             viewer.initialize(".mof-viewer");
 
-            // Connect a websocket to the server
-            var socket = new io.Socket(window.location.hostname, {port: 8000,
-                                       rememberTransport: false});
-            socket.connect();
-            socket.on("connect", function () {
-                console.log("Connected!");
-            });
-            // This is light (as there's only one method), but it could easily be
-            // expanded (uuid + queue map + router logic, probably in a new file)
-            socket.on("message", function (data) {
-                if (data.error) {
-                    alert(data.result);
-                    return;
-                }
-                viewer.clear();
-                viewer.drawMolecule($.parseJSON(data.result));
-            });
+            // Connect a websocket to the server. The port notation is post-
+            // processed server-side according to the config file
+            client.connect(%(port)d);
+            client.set_references(viewer);
 
             // Basic file i/o logic
             var selector = $("body, body>*");
@@ -67,14 +185,9 @@
                 var reader = new FileReader();
                 var file = e.originalEvent.dataTransfer.files[0];
                 reader.onload = function (loaded) {
-                    var type = file.name.split(".").pop();
-                    if (type === "json") {
-                        self.viewer.clear();
-                        self.viewer.drawMolecule($.parseJSON(loaded.target.result));
-                    } else {
-                        socket.send({method: "convert", params: {data: loaded.target.result,
-                            in_format: type, out_format: "json"}});
-                    }
+                    var name = file.name.split(".");
+                    client.filename = name[0];
+                    client.convert_and_draw(loaded.target.result, name[1]);
                 };
                 reader.readAsText(file);
             });

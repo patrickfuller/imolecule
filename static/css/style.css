@@ -8,6 +8,12 @@ html, body {
     overflow: hidden;
 }
 
+html {
+	background-color: #222;
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGklEQVQIW2NkYGD4D8SMQAwGcAY2AbBKDBUAVuYCBQPd34sAAAAASUVORK5CYII=);
+	background-repeat: repeat;
+}
+
 body {
     background: #eee;
     width: 100%;
@@ -32,6 +38,10 @@ body {
         margin: 10px 0 10px 0;
         font-size: 16px;
         line-height: 1.32;
+    }
+    article p {
+        text-align: right;
+        margin-right: 30px;
     }
 
 a {
@@ -90,6 +100,14 @@ button {
 
 select {
     -webkit-appearance: none;
+}
+
+.avgrund-popup > button {
+    width: 131px;
+}
+
+.formats {
+    width: 300px;
 }
 
 .mof-viewer {
