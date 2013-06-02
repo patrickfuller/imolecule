@@ -2,7 +2,7 @@ imolecule
 =========
 
 An interactive 3D molecule viewer for the IPython notebook and
-[browsers](http://www.patrick-fuller.com/imolecule/).
+[browsers](http://www.patrick-fuller.com/imolecule.html).
 
 ![](http://www.patrick-fuller.com/wp-content/uploads/2013/04/collagen_imolecule.png)
 
@@ -58,7 +58,7 @@ crystallographic structure with pre-generated coordinates, you can increase the 
 
 ###Full Browser
 
-A version of the browser can be found at http://www.patrick-fuller.com/imolecule/.
+A version of the browser can be found at http://www.patrick-fuller.com/imolecule.html.
 To start your own local version, cd to the `imolecule` directory and start a
 server with:
 
