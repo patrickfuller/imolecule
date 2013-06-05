@@ -112,12 +112,7 @@ select {
 
 .formats {
     width: 300px;
-    background: #fff;
-    color: #222;
 }
-    .formats:hover, .formats:active {
-        background: #eee;
-    }
 
 .mof-viewer {
     width: 100%;
