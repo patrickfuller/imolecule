@@ -2,11 +2,13 @@
     <head>
         <title>imolecule</title>
         <link href="static/css/avgrund.css" rel="stylesheet" type="text/css" />
+        <link href="static/css/chosen.css" rel="stylesheet" type="text/css" />
         <link href="static/css/style.css" rel="stylesheet" type="text/css" />
 
         <script src="static/lib/jquery-1.9.0.min.js"> type="text/javascript"></script>
         <script src="static/lib/FileSaver.min.js" type="text/javascript"></script>
         <script src="static/lib/avgrund.js" type="text/javascript"></script>
+        <script src="static/lib/chosen.jquery.min.js" type="text/javascript"></script>
         <script src="static/lib/socket.io.js" type="text/javascript"></script>
         <script src="static/lib/three.min.js" type="text/javascript"></script>
         <script src="static/lib/TrackballControls.js" type="text/javascript"></script>
@@ -34,11 +36,13 @@
         <aside class="avgrund-popup">
             <h2>save as</h2>
             <p>
-                Choose an output format. Supports <a href="http://en.wikipedia.org/wiki/JSON" target="_blank">json</a> and <a href="http://openbabel.org/docs/2.3.1/FileFormats/Overview.html" target="_blank">this list</a> of chemical formats.
+                Choose an output format. Supports <a href="http://stackoverflow.com/questions/383692/what-is-json-and-why-would-i-use-it" target="_blank">json</a> and <a href="http://openbabel.org/docs/2.3.1/FileFormats/Overview.html" target="_blank">this list</a> of chemical formats.
             </p>
             <select class="formats">
-                <optgroup label="Common cheminformatics formats">
+                <optgroup label="imolecule format">
                     <option value="json">Javascript Object Notation</option>
+                </optgroup>
+                <optgroup label="Common cheminformatics formats">
                     <option value="can">Canonical SMILES format</option>
                     <option value="cml">Chemical Markup Language</option>
                     <option value="inchi">InChI format</option>
@@ -157,6 +161,8 @@
         </aside>
 
         <script type="text/javascript">
+        
+            $(".formats").chosen();
 
             // Set up a WebGL renderer instance
             viewer.initialize(".mof-viewer");

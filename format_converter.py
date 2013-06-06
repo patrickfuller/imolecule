@@ -2,18 +2,12 @@
 Methods to interconvert between json and other (cif, mol, smi, etc.) files
 """
 
-import os
-
-import numpy as np
-from numpy.linalg import norm
 import pybel
 ob = pybel.ob
 
 import json_formatter as json
 
-ROOT = os.path.normpath(os.path.dirname(__file__))
-with open(os.path.join(ROOT, "static/json/atoms.json")) as in_file:
-    atom_map = json.load(in_file)
+table = ob.OBElementTable()
 
 
 def convert(data, in_format, out_format, pretty=False, add_h=False):
@@ -49,7 +43,7 @@ def json_to_pybel(data):
     obmol.BeginModify()
     for atom in data["atoms"]:
         obatom = obmol.NewAtom()
-        obatom.SetAtomicNum(atom_map.index(atom["element"]) + 1)
+        obatom.SetAtomicNum(table.GetAtomicNum(str(atom["element"])))
         obatom.SetVector(*atom["location"])
     # If there is no bond data, try to infer them
     if "bonds" not in data or not data["bonds"]:
@@ -69,7 +63,8 @@ def json_to_pybel(data):
 def pybel_to_json(molecule):
     """Converts a pybel molecule to json."""
     # Save atom element type and 3D location.
-    atoms = [{"element": atom_map[atom.atomicnum - 1], "location": atom.coords}
+    atoms = [{"element": table.GetSymbol(atom.atomicnum),
+              "location": atom.coords}
              for atom in molecule.atoms]
     # Save number of bonds and indices of endpoint atoms
     bonds = [{"atoms": [b.GetBeginAtom().GetIndex(),
@@ -88,4 +83,4 @@ if __name__ == "__main__":
             data = in_file.read()
     except IOError:
         data = in_data
-    print convert(data, in_format, out_format)
+    print(convert(data, in_format, out_format))

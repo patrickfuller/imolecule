@@ -9,9 +9,9 @@ html, body {
 }
 
 html {
-	background-color: #222;
-	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGklEQVQIW2NkYGD4D8SMQAwGcAY2AbBKDBUAVuYCBQPd34sAAAAASUVORK5CYII=);
-	background-repeat: repeat;
+    background-color: #222;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGklEQVQIW2NkYGD4D8SMQAwGcAY2AbBKDBUAVuYCBQPd34sAAAAASUVORK5CYII=);
+    background-repeat: repeat;
 }
 
 body {
@@ -67,11 +67,10 @@ select,
 button {
     border: 0px;
     padding: 8px 10px;
-    margin: 5px 0px;
+    margin: 15px 30px 15px 0px; 
     border-radius: 1px;
     height: 35px;
     width: 150px;
-    margin-right: 30px;
 
     cursor: pointer;
     color: #fff;
@@ -93,10 +92,6 @@ button {
     button:active {
         background: #60895a;
     }
-    select+select,
-    button+button {
-        margin-left: 5px;
-    }
 
 select {
     -webkit-appearance: none;
@@ -107,7 +102,7 @@ select {
 }
 
 .avgrund-popup > button {
-    width: 131px;
+    width: 133px;
 }
 
 .formats {
