@@ -123,9 +123,12 @@ var viewer = {
     setCameraType: function (type) {
         if (type === "orthographic") {
             this.camera = this.orthographic;
+            this.camera.position.copy(this.perspective.position);
         } else if (type === "perspective") {
             this.camera = this.perspective;
+            this.camera.position.copy(this.orthographic.position);
         }
+        this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
     },
 
     // Draws a molecule. Duh.
@@ -171,19 +174,17 @@ var viewer = {
                 }
 
                 for (j = 0; j < bond.order; j += 1) {
+                    if (bond.order === 2) {
+                        transY = 0.5 * ((j === 1) ? 1 : -1);
+                    } else if (bond.order === 3 && j !== 0) {
+                        transY = ((j === 1) ? 1 : -1);
+                    } else {
+                        transY = 0;
+                    }
                     for (k = 0; k < 2; k += 1) {
                         mesh = new THREE.Mesh(this.cylinderGeometry, this.toonMaterials.bond);
                         atom = molecule.atoms[bond.atoms[k]];
                         mesh.atomMaterial = this.toonMaterials[atom.element];
-
-                        if (bond.order === 2) {
-                            transY = 0.5 * ((j === 1) ? 1 : -1);
-                        } else if (bond.order === 3 && j !== 0) {
-                            transY = ((j === 1) ? 1 : -1);
-                        } else {
-                            transY = 0;
-                        }
-
                         mesh.position.addVectors(vectors[k === 0 ? "source" : "target"],
                                 vectors.cent).divideScalar(2);
                         mesh.lookAt(vectors.target);
@@ -217,10 +218,10 @@ var viewer = {
 
         // Sets a camera with (view angle, aspect, near, far) and moves up z
         aspect = $element.width() / $element.height();
-        this.perspective = new THREE.PerspectiveCamera(50, aspect, 1, 3000);
+        this.perspective = new THREE.PerspectiveCamera(50, aspect);
         this.orthographic = new THREE.OrthographicCamera(-$element.width() / 32,
                 $element.width() / 32, $element.height() / 32,
-                -$element.height() / 32, 1, 500);
+                -$element.height() / 32, -100, 1000);
         this.perspective.position.z = 15;
         this.camera = this.perspective;
         this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
