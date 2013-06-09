@@ -75,10 +75,20 @@ kwargs = {"enabled_protocols": ["websocket", "flashsocket",
 application = tornado.web.Application(handler, **kwargs)
 
 if __name__ == "__main__":
-    import sys
+    import argparse
+    import webbrowser
 
-    if "--debug" in sys.argv:
+    parser = argparse.ArgumentParser(description="Opens a browser-based "
+                                     "client that interfaces with the chemical"
+                                     " format converter.")
+    parser.add_argument("--debug", action="store_true", help="prints all "
+                        "transmitted data streams")
+    args = parser.parse_args()
+
+    if args.debug:
         logging.getLogger().setLevel(logging.DEBUG)
+
+    webbrowser.open("http://localhost:%d/" % HTTP_PORT, new=2)
 
     context = zmq.Context()
     socket = context.socket(zmq.REP)
