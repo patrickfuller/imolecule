@@ -173,26 +173,36 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 		} else {
 
-			var factor = 1.0 + ( _zoomEnd.y - _zoomStart.y ) * _this.zoomSpeed;
+			var factor = 1.0 + ( _zoomEnd.y - _zoomStart.y ) * this.zoomSpeed;
 
 			if ( factor !== 1.0 && factor > 0.0 ) {
 
+			if ( this.object instanceof THREE.PerspectiveCamera ) {
+
 				_eye.multiplyScalar( factor );
 
-				if ( _this.staticMoving ) {
+			} else {
 
-					_zoomStart.copy( _zoomEnd );
+				this.object.left *= factor;
+				this.object.right *= factor;
+				this.object.top *= factor;
+				this.object.bottom *= factor;
 
-				} else {
+				this.object.updateProjectionMatrix();
+			}
 
-					_zoomStart.y += ( _zoomEnd.y - _zoomStart.y ) * this.dynamicDampingFactor;
+			if ( _this.staticMoving ) {
 
-				}
+				_zoomStart.copy( _zoomEnd );
+
+			} else {
+
+				_zoomStart.y += ( _zoomEnd.y - _zoomStart.y ) * this.dynamicDampingFactor;
 
 			}
 
 		}
-
+	}
 	};
 
 	this.panCamera = function () {

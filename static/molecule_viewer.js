@@ -68,6 +68,9 @@ var viewer = {
                 for (i = 0; i < this.atoms.length; i += 1) {
                     this.scene.remove(this.atoms[i].mesh);
                 }
+                for (i = 0; i < this.bonds.length; i += 1) {
+                    this.bonds[i].mesh.setMaterial(this.bonds[i].mesh.atomMaterial);
+                }
             } else if (type === "space filling") {
                 for (i = 0; i < this.atoms.length; i += 1) {
                     this.atoms[i].mesh.scale.divideScalar(0.3);
@@ -80,6 +83,9 @@ var viewer = {
             if (type === "ball and stick") {
                 for (i = 0; i < this.atoms.length; i += 1) {
                     this.scene.add(this.atoms[i].mesh);
+                }
+                for (i = 0; i < this.bonds.length; i += 1) {
+                    this.bonds[i].mesh.setMaterial(this.toonMaterials.bond);
                 }
             } else if (type === "space filling") {
                 for (i = 0; i < this.atoms.length; i += 1) {
@@ -96,6 +102,7 @@ var viewer = {
                     this.atoms[i].mesh.scale.multiplyScalar(0.3);
                 }
                 for (i = 0; i < this.bonds.length; i += 1) {
+                    this.bonds[i].mesh.setMaterial(this.toonMaterials.bond);
                     this.scene.add(this.bonds[i].mesh);
                 }
             } else if (type === "wireframe") {
@@ -104,6 +111,7 @@ var viewer = {
                     this.scene.remove(this.atoms[i].mesh);
                 }
                 for (i = 0; i < this.bonds.length; i += 1) {
+                    this.bonds[i].mesh.setMaterial(this.bonds[i].mesh.atomMaterial);
                     this.scene.add(this.bonds[i].mesh);
                 }
             }
@@ -118,13 +126,12 @@ var viewer = {
         } else if (type === "perspective") {
             this.camera = this.perspective;
         }
-        this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
     },
 
     // Draws a molecule. Duh.
     drawMolecule: function (molecule) {
 
-        var i, j, scale, vectors, atom, bond, material, mesh, mag, transY;
+        var i, j, k, scale, vectors, atom, bond, material, mesh, mag, transY;
 
         this.current = molecule;
         scale = this.drawingType === "space filling" ? 1.0 : 0.3;
@@ -164,26 +171,34 @@ var viewer = {
                 }
 
                 for (j = 0; j < bond.order; j += 1) {
-                    mesh = new THREE.Mesh(this.cylinderGeometry, this.toonMaterials.bond);
+                    for (k = 0; k < 2; k += 1) {
+                        mesh = new THREE.Mesh(this.cylinderGeometry, this.toonMaterials.bond);
+                        atom = molecule.atoms[bond.atoms[k]];
+                        mesh.atomMaterial = this.toonMaterials[atom.element];
 
-                    if (bond.order === 2) {
-                        transY = 0.5 * ((j === 1) ? 1 : -1);
-                    } else if (bond.order === 3 && j !== 0) {
-                        transY = ((j === 1) ? 1 : -1);
-                    } else {
-                        transY = 0;
+                        if (bond.order === 2) {
+                            transY = 0.5 * ((j === 1) ? 1 : -1);
+                        } else if (bond.order === 3 && j !== 0) {
+                            transY = ((j === 1) ? 1 : -1);
+                        } else {
+                            transY = 0;
+                        }
+
+                        mesh.position.addVectors(vectors[k === 0 ? "source" : "target"],
+                                vectors.cent).divideScalar(2);
+                        mesh.lookAt(vectors.target);
+                        mesh.scale.x = mesh.scale.y = 0.3 * this.atomicRadii.bond * 2;
+                        mesh.scale.z = mag / 2.0;
+                        mesh.translateY(0.3 * transY);
+
+                        if (this.drawingType === "wireframe") {
+                            mesh.material = mesh.atomMaterial;
+                        }
+                        if (this.drawingType !== "space filling") {
+                            this.scene.add(mesh);
+                        }
+                        this.bonds.push({mesh: mesh, data: bond});
                     }
-
-                    mesh.position.copy(vectors.cent);
-                    mesh.lookAt(vectors.target);
-                    mesh.scale.x = mesh.scale.y = 0.3 * this.atomicRadii.bond * 2;
-                    mesh.scale.z = mag;
-                    mesh.translateY(0.3 * transY);
-
-                    if (this.drawingType !== "space filling") {
-                        this.scene.add(mesh);
-                    }
-                    this.bonds.push({mesh: mesh, data: bond});
                 }
             }
         }
@@ -203,12 +218,13 @@ var viewer = {
         // Sets a camera with (view angle, aspect, near, far) and moves up z
         aspect = $element.width() / $element.height();
         this.perspective = new THREE.PerspectiveCamera(50, aspect, 1, 3000);
-        this.orthographic = new THREE.OrthographicCamera(-$element.width() / 16, $element.width() / 16,
-                                                         $element.height() / 16, -$element.height() / 16,
-                                                         1, 500);
+        this.orthographic = new THREE.OrthographicCamera(-$element.width() / 32,
+                $element.width() / 32, $element.height() / 32,
+                -$element.height() / 32, 1, 500);
         this.perspective.position.z = 15;
         this.camera = this.perspective;
         this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
+
         this.orthographic.position = this.perspective.position;
         this.orthographic.rotation = this.perspective.rotation;
 
@@ -243,8 +259,11 @@ var viewer = {
         window.addEventListener("resize", function () {
             self.renderer.setSize($element.width(), $element.height());
             self.perspective.aspect = $element.width() / $element.height();
-            self.orthographic.aspect = $element.width() / $element.height();
             self.perspective.updateProjectionMatrix();
+            self.orthographic.left = -$element.width() / 32.0;
+            self.orthographic.right = $element.width() / 32.0;
+            self.orthographic.top = $element.height() / 32.0;
+            self.orthographic.bottom = -$element.height() / 32.0;
             self.orthographic.updateProjectionMatrix();
         }, false);
 
