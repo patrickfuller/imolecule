@@ -31,17 +31,12 @@ import tornadio.router
 import tornadio.server
 
 import format_converter
-from config import HTTP_PORT, TCP_PORT
-
-ROOT = os.path.normpath(os.path.dirname(__file__))
-with open("index.html") as index_file:
-    index = index_file.read() % {"port": HTTP_PORT}
 
 
 class IndexHandler(tornado.web.RequestHandler):
 
     def get(self):
-        self.write(index)
+        self.write(INDEX)
 
 
 class ClientConnection(tornadio.SocketConnection):
@@ -63,30 +58,37 @@ class ClientConnection(tornadio.SocketConnection):
         self.send({"result": result, "error": error, "id": message["id"]})
 
 
-WebClientRouter = tornadio.get_router(ClientConnection)
-
-handler = [(r"/", IndexHandler), WebClientRouter.route()]
-kwargs = {"enabled_protocols": ["websocket", "flashsocket",
-                                "xhr-multipart", "xhr-polling"],
-          "flash_policy_port": 843,
-          "flash_policy_file": os.path.join(ROOT, "flashpolicy.xml"),
-          "static_path": os.path.join(ROOT, "static"),
-          "socket_io_port": HTTP_PORT}
-application = tornado.web.Application(handler, **kwargs)
-
 if __name__ == "__main__":
     import argparse
     import webbrowser
 
+    ROOT = os.path.normpath(os.path.dirname(__file__))
+
     parser = argparse.ArgumentParser(description="Opens a browser-based "
                                      "client that interfaces with the chemical"
                                      " format converter.")
-    parser.add_argument("--debug", action="store_true", help="prints all "
+    parser.add_argument("--debug", action="store_true", help="Prints all "
                         "transmitted data streams")
+    parser.add_argument("--http-port", type=int, default=8000, help="The port "
+                        "on which to serve the website")
+    parser.add_argument("--tcp-port", type=int, default=5000, help="The "
+                        "server-side tcp connection for python-js interaction")
     args = parser.parse_args()
 
+    HTTP_PORT, TCP_PORT = args.http_port, args.tcp_port
     if args.debug:
         logging.getLogger().setLevel(logging.DEBUG)
+
+    with open("index.html") as index_file:
+        INDEX = index_file.read() % {"port": HTTP_PORT}
+
+    WebClientRouter = tornadio.get_router(ClientConnection)
+    handler = [(r"/", IndexHandler), WebClientRouter.route(),
+               (r'/static/(.*)', tornado.web.StaticFileHandler,
+                {'path': ROOT})]
+    kwargs = {"enabled_protocols": ["websocket"],
+              "socket_io_port": HTTP_PORT}
+    application = tornado.web.Application(handler, **kwargs)
 
     webbrowser.open("http://localhost:%d/" % HTTP_PORT, new=2)
 

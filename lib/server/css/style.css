@@ -109,13 +109,13 @@ select {
     width: 300px;
 }
 
-.mof-viewer {
+.imolecule {
     width: 100%;
     height: 100%;
     position: relative;
     overflow: hidden;
 }
-    .mof-viewer>article {
+    .imolecule>article {
         position: absolute;
         bottom: 0;
         right: 0;
