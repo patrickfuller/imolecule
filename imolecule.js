@@ -12,7 +12,7 @@ var imolecule = {
 
         this.shader = options.hasOwnProperty("shader") ? options.shader : THREE.ShaderToon.toon2;
         this.drawingType = options.hasOwnProperty("drawingType") ? options.drawingType : "ball and stick";
-
+        this.boundaryType = options.hasOwnProperty("boundaryType") ? options.boundaryType : "unit cell";
         this.renderer = new THREE.WebGLRenderer({antialias: true});
         this.renderer.setSize($s.width(), $s.height());
         $s.append(this.renderer.domElement);
@@ -132,6 +132,50 @@ var imolecule = {
                 }
             }
         });
+
+        if (molecule.hasOwnProperty("periodic_connections")) {
+            this.drawCell(molecule.periodic_connections);
+        }
+            
+    
+    },
+
+    // Draws lines of unit cell
+    drawCell: function (periodic_connections) {
+        var v, vectors, points, trans, i, geometry, material;
+    
+        // Some basic conversions to handle math via THREE.Vector3
+        v = new THREE.Vector3(0, 0, 0);
+        vectors = [
+            v.clone().fromArray(periodic_connections[0]),
+            v.clone().fromArray(periodic_connections[1]),
+            v.clone().fromArray(periodic_connections[2])
+        ];
+        
+        // The eight corners of the unit cell are linear combinations of above
+        points = [
+            v.clone(), vectors[0], vectors[1], vectors[2],
+            v.clone().add(vectors[0]).add(vectors[1]).add(vectors[2]),
+            v.clone().add(vectors[1]).add(vectors[2]),
+            v.clone().add(vectors[0]).add(vectors[2]),
+            v.clone().add(vectors[0]).add(vectors[1])
+        ];
+
+        // Translate unit cell to center around mof + origin
+        trans = points[4].clone().multiplyScalar(0.5);
+        for (i = 0; i < points.length; i += 1) {
+            points[i].sub(trans);
+        }
+
+        // Draw the box line-by-line
+        geometry = new THREE.Geometry();
+        $.each([0, 1, 0, 2, 0, 3, 6, 1, 7, 2, 5, 3, 5, 4, 6, 4, 7], function (index, value) {
+            geometry.vertices.push(points[value]);
+        });
+       
+        material = new THREE.LineBasicMaterial({color: 0x000000, linewidth: 3});
+        this.corners = new THREE.Line(geometry, material);
+        this.scene.add(this.corners);
     },
 
     // Deletes any existing molecules.
@@ -142,6 +186,7 @@ var imolecule = {
         });
         this.atoms = [];
         this.bonds = [];
+        this.scene.remove(this.corners);
     },
 
     // Sets molecule drawing types ( ball and stick, space filling, wireframe )
@@ -224,6 +269,15 @@ var imolecule = {
         });
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
+    },
+    
+    // Sets molecule boundary type ( unit cell, no boundary )
+    setBoundaryType: function (type) {
+        if (type === "unit cell") {
+            this.scene.add(this.corners);
+        } else if (type === "no boundary") {
+            this.scene.remove(this.corners);
+        }
     },
 
     // Connects to Python via a socketio-zeromq bridge. Ignore everything below
