@@ -5,9 +5,7 @@ var imolecule = {
 
     // Creates a new instance of imolecule
     create: function (selector, options) {
-        var $s, vPreRotation, matrix, self, scripts, cwd;
-        $s = $(selector);
-        self = this;
+        var $s = $(selector), self = this;
         options = options || {};
 
         this.shader = options.hasOwnProperty("shader") ? options.shader : THREE.ShaderToon.toon2;
@@ -29,9 +27,8 @@ var imolecule = {
         this.cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 6, 3, false);
 
         // This orients the cylinder primitive so THREE.lookAt() works properly
-        vPreRotation = new THREE.Vector3(Math.PI / 2, Math.PI, 0);
-        matrix = new THREE.Matrix4().makeRotationFromEuler(vPreRotation);
-        this.cylinderGeometry.applyMatrix(matrix);
+        this.cylinderGeometry.applyMatrix(new THREE.Matrix4()
+            .makeRotationFromEuler(new THREE.Vector3(Math.PI / 2, Math.PI, 0)));
 
         this.light = new THREE.HemisphereLight(0xffffff, 1.0);
         this.light.position = this.camera.position;
@@ -77,7 +74,8 @@ var imolecule = {
 
     // Draws a molecule. Duh.
     draw: function (molecule) {
-        var mesh, self, a, scale, j, k, dy, cent, data;
+        var mesh, self, a, scale, j, k, dy, cent, data, v, vectors, points,
+            trans, geometry, material;
         self = this;
         cent = new THREE.Vector3();
         this.current = molecule;
@@ -111,7 +109,7 @@ var imolecule = {
                 } else {
                     dy = 0;
                 }
-                
+
                 for (k = 0; k < 2; k += 1) {
                     mesh = new THREE.Mesh(self.cylinderGeometry, self.data.bond.material);
                     cent.addVectors(a[0].position, a[1].position).divideScalar(2);
@@ -133,49 +131,37 @@ var imolecule = {
             }
         });
 
+        // If we're dealing with a crystal structure, draw the unit cell
         if (molecule.hasOwnProperty("periodic_connections")) {
-            this.drawCell(molecule.periodic_connections);
+            // Some basic conversions to handle math via THREE.Vector3
+            v = new THREE.Vector3(0, 0, 0);
+            vectors = [
+                v.clone().fromArray(molecule.periodic_connections[0]),
+                v.clone().fromArray(molecule.periodic_connections[1]),
+                v.clone().fromArray(molecule.periodic_connections[2])
+            ];
+            // The eight corners of the unit cell are linear combinations of above
+            points = [
+                v.clone(), vectors[0], vectors[1], vectors[2],
+                v.clone().add(vectors[0]).add(vectors[1]).add(vectors[2]),
+                v.clone().add(vectors[1]).add(vectors[2]),
+                v.clone().add(vectors[0]).add(vectors[2]),
+                v.clone().add(vectors[0]).add(vectors[1])
+            ];
+            // Translate unit cell to center around mof + origin
+            trans = points[4].clone().multiplyScalar(0.5);
+            for (j = 0; j < points.length; j += 1) {
+                points[j].sub(trans);
+            }
+            // Draw the box line-by-line
+            geometry = new THREE.Geometry();
+            $.each([0, 1, 0, 2, 0, 3, 6, 1, 7, 2, 5, 3, 5, 4, 6, 4, 7], function (index, value) {
+                geometry.vertices.push(points[value]);
+            });
+            material = new THREE.LineBasicMaterial({color: 0x000000, linewidth: 3});
+            this.corners = new THREE.Line(geometry, material);
+            this.scene.add(this.corners);
         }
-            
-    
-    },
-
-    // Draws lines of unit cell
-    drawCell: function (periodic_connections) {
-        var v, vectors, points, trans, i, geometry, material;
-    
-        // Some basic conversions to handle math via THREE.Vector3
-        v = new THREE.Vector3(0, 0, 0);
-        vectors = [
-            v.clone().fromArray(periodic_connections[0]),
-            v.clone().fromArray(periodic_connections[1]),
-            v.clone().fromArray(periodic_connections[2])
-        ];
-        
-        // The eight corners of the unit cell are linear combinations of above
-        points = [
-            v.clone(), vectors[0], vectors[1], vectors[2],
-            v.clone().add(vectors[0]).add(vectors[1]).add(vectors[2]),
-            v.clone().add(vectors[1]).add(vectors[2]),
-            v.clone().add(vectors[0]).add(vectors[2]),
-            v.clone().add(vectors[0]).add(vectors[1])
-        ];
-
-        // Translate unit cell to center around mof + origin
-        trans = points[4].clone().multiplyScalar(0.5);
-        for (i = 0; i < points.length; i += 1) {
-            points[i].sub(trans);
-        }
-
-        // Draw the box line-by-line
-        geometry = new THREE.Geometry();
-        $.each([0, 1, 0, 2, 0, 3, 6, 1, 7, 2, 5, 3, 5, 4, 6, 4, 7], function (index, value) {
-            geometry.vertices.push(points[value]);
-        });
-       
-        material = new THREE.LineBasicMaterial({color: 0x000000, linewidth: 3});
-        this.corners = new THREE.Line(geometry, material);
-        this.scene.add(this.corners);
     },
 
     // Deletes any existing molecules.
@@ -270,14 +256,10 @@ var imolecule = {
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
     },
-    
-    // Sets molecule boundary type ( unit cell, no boundary )
-    setBoundaryType: function (type) {
-        if (type === "unit cell") {
-            this.scene.add(this.corners);
-        } else if (type === "no boundary") {
-            this.scene.remove(this.corners);
-        }
+
+    // Either shows or hides the unit cell
+    showUnitCell: function (toggle) {
+        this.scene[toggle ? "add" : "remove"](this.corners);
     },
 
     // Connects to Python via a socketio-zeromq bridge. Ignore everything below

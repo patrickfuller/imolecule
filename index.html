@@ -30,11 +30,11 @@
                     <option>space filling</option>
                     <option>wireframe</option>
                 </select>
-                <select class="boundary-type" onchange="javascript:imolecule.setBoundaryType($('.options>.boundary-type').find(':selected').text())">
+                <select class="boundary-type" onchange="javascript:imolecule.showUnitCell($('.options>.boundary-type').find(':selected').text() === 'unit cell')">
                     <option>unit cell</option>
                     <option>no boundary</option>
                 </select>
-                
+
             </article>
         </div>
 
@@ -166,10 +166,11 @@
         </aside>
 
         <script type="text/javascript">
-            
+
             $(".formats").chosen();
             imolecule.create(".imolecule");
 
+            // Only show crystallographic options when we're looking at crystals
             (function () {
                 var oldDraw = imolecule.draw;
                 imolecule.draw = function() {
@@ -177,7 +178,7 @@
                     $(".camera-type, .boundary-type").toggle(this.current.hasOwnProperty("periodic_connections"));
                 };
             })();
-            
+
             // Connect a websocket to the server. The port notation is post-
             // processed server-side
             imolecule.connect(%(port)d);
