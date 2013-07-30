@@ -166,17 +166,24 @@
         </aside>
 
         <script type="text/javascript">
-
+            
             $(".formats").chosen();
             imolecule.create(".imolecule");
 
+            (function () {
+                var oldDraw = imolecule.draw;
+                imolecule.draw = function() {
+                    oldDraw.apply(this, arguments);
+                    $(".camera-type, .boundary-type").toggle(this.current.hasOwnProperty("periodic_connections"));
+                };
+            })();
+            
             // Connect a websocket to the server. The port notation is post-
             // processed server-side
             imolecule.connect(%(port)d);
 
             $.getJSON("static/lib/server/caffeine.json", function (molecule) {
                 imolecule.draw(molecule);
-                imolecule.chooseButtons(molecule);
             });
 
             // Basic file i/o logic
@@ -204,6 +211,7 @@
                 };
                 reader.readAsText(file);
             });
+
         </script>
 
         <!-- Google analytics -->

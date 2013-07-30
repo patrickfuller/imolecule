@@ -12,7 +12,7 @@ var imolecule = {
 
         this.shader = options.hasOwnProperty("shader") ? options.shader : THREE.ShaderToon.toon2;
         this.drawingType = options.hasOwnProperty("drawingType") ? options.drawingType : "ball and stick";
-        this.boundaryType = options.hasOwnProperty("boundaryType") ? options.drawingType : "unit cell";
+        this.boundaryType = options.hasOwnProperty("boundaryType") ? options.boundaryType : "unit cell";
         this.renderer = new THREE.WebGLRenderer({antialias: true});
         this.renderer.setSize($s.width(), $s.height());
         $s.append(this.renderer.domElement);
@@ -132,6 +132,12 @@ var imolecule = {
                 }
             }
         });
+
+        if (molecule.hasOwnProperty("periodic_connections")) {
+            this.drawCell(molecule.periodic_connections);
+        }
+            
+    
     },
 
     // Draws lines of unit cell
@@ -274,18 +280,6 @@ var imolecule = {
         }
     },
 
-    // Chooses to display 'perspective' and 'unit cell' buttons if molecule is 
-    // non-crystalline, as detected by presence of 'periodic_connections'
-    chooseButtons: function (data) {
-        if (!data.hasOwnProperty("periodic_connections")) {
-            $('.camera-type').hide();
-            $('.boundary-type').hide();
-        } else {
-            $('.camera-type').show();
-            $('.boundary-type').show();
-        }
-    },
-
     // Connects to Python via a socketio-zeromq bridge. Ignore everything below
     // if you're not using the client-server functionality
     connect: function (http_port) {
@@ -331,10 +325,6 @@ var imolecule = {
         if (inFormat === "json") {
             this.clear();
             this.draw($.parseJSON(data));
-            if ($.parseJSON(data).hasOwnProperty("periodic_connections")) {
-                this.drawCell($.parseJSON(data).periodic_connections);
-            }
-            this.chooseButtons($.parseJSON(data));
             return;
         }
 
