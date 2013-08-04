@@ -40,12 +40,6 @@ def convert(data, in_format, out_format, filename=None, pretty=False):
     if in_format == "json" and out_format == "json":
         return json.dumps(data)
 
-    # These are converted manually to retain crystallographic information
-    if in_format == "json" and out_format == "cif":
-        return json_to_cif(data)
-    elif in_format == "xyz" and out_format == "json":
-        return dumps(xyz_to_json(data, filename))
-
     # These use the open babel library to interconvert, with additions for json
     mol = (json_to_pybel(data) if in_format == "json" else
            pybel.readstring(in_format.encode("ascii"),
@@ -57,8 +51,8 @@ def convert(data, in_format, out_format, filename=None, pretty=False):
         mol.make3D()
     mol.OBMol.Center()
 
-    return (dumps(pybel_to_json(mol)) if out_format == "json"
-            else mol.write(out_format))
+    return (dumps(pybel_to_json(mol, name=filename)) if out_format == "json"
+            else mol.write(out_format.encode("ascii")))
 
 
 def json_to_pybel(data, center=True):
@@ -95,7 +89,7 @@ def json_to_pybel(data, center=True):
     return pybel.Molecule(obmol)
 
 
-def pybel_to_json(molecule):
+def pybel_to_json(molecule, name=None):
     """Converts a pybel molecule to json.
 
     Args:
@@ -119,6 +113,8 @@ def pybel_to_json(molecule):
         uc = molecule.unitcell
         output["periodic_connections"] = [[v.GetX(), v.GetY(), v.GetZ()]
                                           for v in uc.GetCellVectors()]
+    if name:
+        output["name"] = name
     return output
 
 

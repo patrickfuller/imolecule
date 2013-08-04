@@ -276,11 +276,11 @@ var imolecule = {
 
         var self = this;
         this.socket.on("message", function (data) {
-            var router, loaded, name;
+            var router, name;
             router = self.queue[data.id];
             delete self.queue[data.id];
             self.result = data.result;
-            loaded = $.parseJSON(data.result);
+            try { data.result = $.parseJSON(data.result); } catch (err) {}
 
             if (data.error) {
                 alert(data.result);
@@ -289,11 +289,11 @@ var imolecule = {
 
             if (router === "draw") {
                 self.clear();
-                self.draw(loaded);
+                self.draw(data.result);
             } else if (router === "save") {
-                name = (loaded.hasOwnProperty("name") && loaded.name !== "") ?
-                        loaded.name : "unnamed";
-                saveAs(new Blob([data.result], {type: "text/plain"}),
+                name = (data.result.hasOwnProperty("name") && data.result.name !== "") ?
+                        data.result.name : self.filename;
+                saveAs(new Blob([self.result], {type: "text/plain"}),
                         name + "." + self.outFormat);
             } else {
                 alert("Unsupported function: " + router);

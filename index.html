@@ -30,10 +30,6 @@
                     <option>space filling</option>
                     <option>wireframe</option>
                 </select>
-                <select class="boundary-type" onchange="javascript:imolecule.showUnitCell($('.options>.boundary-type').find(':selected').text() === 'unit cell')">
-                    <option>unit cell</option>
-                    <option>no boundary</option>
-                </select>
 
             </article>
         </div>
@@ -162,7 +158,7 @@
             </select>
 
             <button onclick="javascript:Avgrund.hide()">close</button>
-            <button onclick="javascript:client.convertAndSave(JSON.stringify(imolecule.current), $('select.formats option:selected').val())">save</button>
+            <button onclick="javascript:imolecule.convertAndSave(JSON.stringify(imolecule.current), $('select.formats option:selected').val())">save</button>
         </aside>
 
         <script type="text/javascript">
@@ -175,7 +171,7 @@
                 var oldDraw = imolecule.draw;
                 imolecule.draw = function() {
                     oldDraw.apply(this, arguments);
-                    $(".camera-type, .boundary-type").toggle(this.current.hasOwnProperty("periodic_connections"));
+                    $(".camera-type").toggle(this.current.hasOwnProperty("periodic_connections"));
                 };
             })();
 
@@ -184,6 +180,7 @@
             imolecule.connect(%(port)d);
 
             $.getJSON("static/lib/server/caffeine.json", function (molecule) {
+                imolecule.filename = "caffeine";
                 imolecule.draw(molecule);
             });
 

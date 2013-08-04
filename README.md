@@ -27,23 +27,22 @@ Automatic format conversion
 ===========================
 
 This requires the [Open Babel](http://openbabel.org/wiki/Main_Page) library
-and Python bindings for chemical file format parsing. which can be installed
-via apt-get/macports (the pip repository doesn't work).
+and Python bindings for chemical file format parsing. For the most up-to-date
+version of this library, install the dev version and build from source.
 
 ```bash
-apt-get/port install openbabel-python
+git clone https://github.com/openbabel/openbabel
+mkdir build && cd build
+cmake ../openbabel -DPYTHON_BINDINGS=ON
+make && make install
+export PYTHONPATH=/usr/local/lib:$PYTHONPATH # Put in your ~/.bashrc
 ```
 
-In the case of OSX + homebrew, the default installer doesn't include python
-bindings. Instead, use
+There are required dependencies (like eigen) and extra build options (like changing
+install directory). For more, read through the
+[open babel installation instructions](http://openbabel.org/docs/dev/Installation/install.html).
 
-```bash
-brew install https://raw.github.com/rwest/homebrew/open-babel-new/Library/Formula/eigen2.rb
-brew install https://raw.github.com/rwest/homebrew/open-babel-new/Library/Formula/open-babel.rb
-```
-
-If you have problems, refer to the Open Babel website. Additionally, running
-the browser as a server requires some socket infrastructure.
+Additionally, running the browser as a server requires some socket infrastructure.
 
 ```bash
 pip install pyzmq tornado tornadio
@@ -69,7 +68,7 @@ IPython support
 
 The IPython notebook is an open-source tool poised to replace MATLAB in many
 applications. As a scientist (of sorts), I'm all about it. Therefore, I made
-handles to use igraph with the notebook.
+handles to use imolecule with the notebook.
 
 Open a new notebook with `ipython notebook` and make sure that the `imolecule`
 directory is either in the directory you started the notebook or your
