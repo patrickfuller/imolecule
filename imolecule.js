@@ -11,7 +11,7 @@ var imolecule = {
         this.shader = options.hasOwnProperty("shader") ? options.shader : THREE.ShaderToon.toon2;
         this.drawingType = options.hasOwnProperty("drawingType") ? options.drawingType : "ball and stick";
         this.boundaryType = options.hasOwnProperty("boundaryType") ? options.boundaryType : "unit cell";
-        this.renderer = new THREE.WebGLRenderer({antialias: true});
+        this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
         this.renderer.setSize($s.width(), $s.height());
         $s.append(this.renderer.domElement);
 
@@ -28,7 +28,7 @@ var imolecule = {
 
         // This orients the cylinder primitive so THREE.lookAt() works properly
         this.cylinderGeometry.applyMatrix(new THREE.Matrix4()
-            .makeRotationFromEuler(new THREE.Vector3(Math.PI / 2, Math.PI, 0)));
+            .makeRotationFromEuler(new THREE.Euler(Math.PI / 2, Math.PI, 0)));
 
         this.light = new THREE.HemisphereLight(0xffffff, 1.0);
         this.light.position = this.camera.position;
