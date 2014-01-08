@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>imolecule by patrickfuller</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>imolecule</h1>
+        <p>An embeddable webGL molecule viewer and file format converter.</p>
+
+        <p class="view"><a href="https://github.com/patrickfuller/imolecule">View the Project on GitHub <small>patrickfuller/imolecule</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/patrickfuller/imolecule/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/patrickfuller/imolecule/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/patrickfuller/imolecule">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h1>
+
+<h1>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">imolecule</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">'my-selector'</span><span class="p">);</span>
+<span class="nx">imolecule</span><span class="p">.</span><span class="nx">draw</span><span class="p">(</span><span class="nx">myMolecule</span><span class="p">);</span>
+</pre></div>
+
+<p>where <code>'my-selector'</code> is where you want to place imolecule, and <code>myMolecule</code> is
+an object. See below for more on the object structure, or just check out the
+included examples. The <code>imolecule.create()</code> method takes a few optional parameters,
+specifying a few common drawing and camera types.</p>
+
+<h1>
+<a name="molecule-data-format" class="anchor" href="#molecule-data-format"><span class="octicon octicon-link"></span></a>Molecule Data Format</h1>
+
+<p>At its core, imolecule takes input chemical structures as javascript objects.
+As an example, consider benzene:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="p">{</span>
+    <span class="nx">atoms</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span> <span class="nx">element</span><span class="o">:</span> <span class="s2">"C"</span><span class="p">,</span> <span class="nx">location</span><span class="o">:</span> <span class="p">[</span> <span class="o">-</span><span class="mf">0.762160</span><span class="p">,</span> <span class="mf">1.168557</span><span class="p">,</span> <span class="mf">0.022754</span> <span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="nx">element</span><span class="o">:</span> <span class="s2">"C"</span><span class="p">,</span> <span class="nx">location</span><span class="o">:</span> <span class="p">[</span> <span class="mf">0.631044</span><span class="p">,</span> <span class="mf">1.242862</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.013022</span> <span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="nx">element</span><span class="o">:</span> <span class="s2">"C"</span><span class="p">,</span> <span class="nx">location</span><span class="o">:</span> <span class="p">[</span> <span class="mf">1.391783</span><span class="p">,</span> <span class="mf">0.076397</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.012244</span> <span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="nx">element</span><span class="o">:</span> <span class="s2">"C"</span><span class="p">,</span> <span class="nx">location</span><span class="o">:</span> <span class="p">[</span> <span class="mf">0.762101</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.168506</span><span class="p">,</span> <span class="mf">0.026080</span> <span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="nx">element</span><span class="o">:</span> <span class="s2">"C"</span><span class="p">,</span> <span class="nx">location</span><span class="o">:</span> <span class="p">[</span> <span class="o">-</span><span class="mf">0.631044</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.242903</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.011791</span> <span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="nx">element</span><span class="o">:</span> <span class="s2">"C"</span><span class="p">,</span> <span class="nx">location</span><span class="o">:</span> <span class="p">[</span> <span class="o">-</span><span class="mf">1.391806</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.076430</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.014083</span> <span class="p">]</span> <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="nx">bonds</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span> <span class="nx">atoms</span><span class="o">:</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="p">],</span> <span class="nx">order</span><span class="o">:</span> <span class="mi">2</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="nx">atoms</span><span class="o">:</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">],</span> <span class="nx">order</span><span class="o">:</span> <span class="mi">1</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="nx">atoms</span><span class="o">:</span> <span class="p">[</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">],</span> <span class="nx">order</span><span class="o">:</span> <span class="mi">2</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="nx">atoms</span><span class="o">:</span> <span class="p">[</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span> <span class="p">],</span> <span class="nx">order</span><span class="o">:</span> <span class="mi">1</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="nx">atoms</span><span class="o">:</span> <span class="p">[</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span> <span class="p">],</span> <span class="nx">order</span><span class="o">:</span> <span class="mi">2</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="nx">atoms</span><span class="o">:</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span> <span class="p">],</span> <span class="nx">order</span><span class="o">:</span> <span class="mi">1</span> <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>If you want to make properly formatted JSON, you can use either <code>format_converter.py</code> as a script
+or a running imolecule instance (like <a href="http://www.patrick-fuller.com/imolecule.html">this one</a>)
+to convert most chemical file formats to JSON.</p>
+
+<h1>
+<a name="chemical-file-format-conversion" class="anchor" href="#chemical-file-format-conversion"><span class="octicon octicon-link"></span></a>Chemical File Format Conversion</h1>
+
+<p>This program optionally uses <a href="http://www.tornadoweb.org/en/stable/">tornado</a> and <a href="http://zeromq.org/">zeroMQ</a> to connect to a server that handles chemical file format conversion with <a href="http://openbabel.org/wiki/Main_Page">Open Babel</a>.</p>
+
+<p>To run in its provided state, you will need some zeroMQ's Python bindings, Tornado, and Tornadio.</p>
+
+<pre><code>pip install pyzmq tornado tornadio
+</code></pre>
+
+<p>You will also need Open Babel, which is best installed from source. For more, read through the <a href="http://openbabel.org/docs/dev/Installation/install.html">Open Babel installation instructions</a>.</p>
+
+<pre><code>git clone https://github.com/openbabel/openbabel
+mkdir build &amp;&amp; cd build
+cmake ../openbabel -DPYTHON_BINDINGS=ON
+make &amp;&amp; make install
+</code></pre>
+
+<p>Once this is set up, run the full program with</p>
+
+<pre><code>python server.py
+</code></pre>
+
+<p>The default site allows for loading molecules via a simple file drag-and-drop interface.
+Drag a file to anywhere in the browser and drop to load. This interface
+communicates with openbabel via websocket, so most file formats should work. Be
+sure to set the extensions of your files to their data type (ie. "mol", "pdb",
+etc.) for format inference to work properly.</p>
+
+<p>If you have an existing web server, tornado can be easily switched out for other libraries. If you want to use imolecule as a starting point for a broader user interface, the server is written to be extensible. In both cases, read through the source code - it's surprisingly short.</p>
+
+<h1>
+<a name="ipython-support" class="anchor" href="#ipython-support"><span class="octicon octicon-link"></span></a>IPython support</h1>
+
+<p>The IPython notebook is an open-source tool poised to replace MATLAB in many
+applications. As a scientist of sorts, I'm all about it. Therefore, I made
+handles to use imolecule with the notebook.</p>
+
+<p>Open a new notebook and make sure that the imolecule
+directory is either in the directory you started the notebook or your
+PYTHONPATH. You can test the setup by typing:</p>
+
+<div class="highlight highlight-python"><pre><span class="kn">import</span> <span class="nn">imolecule</span>
+<span class="n">imolecule</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="s">"CC1(C(N2C(S1)C(C2=O)NC(=O)CC3=CC=CC=C3)C(=O)O)C"</span><span class="p">)</span>
+</pre></div>
+
+<p>into a notebook cell. This should convert, optimize and draw the specified
+SMILES structure (in this case, penicillin) into the notebook.</p>
+
+<p>The drawer can handle any format specified <a href="http://openbabel.org/docs/2.3.1/FileFormats/Overview.html">here</a>,
+and can be set up to better handle different use cases. Check out the docstrings
+associated with the IPython interface for more.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/patrickfuller">patrickfuller</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
