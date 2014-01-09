@@ -17,6 +17,7 @@
       <header>
         <h1>imolecule</h1>
         <p>An embeddable webGL molecule viewer and file format converter.</p>
+        <p><img src="img/imolecule.png" alt=""></p>
 
         <p class="view"><a href="https://github.com/patrickfuller/imolecule">View the Project on GitHub <small>patrickfuller/imolecule</small></a></p>
 
@@ -24,14 +25,17 @@
         <ul>
           <li><a href="https://github.com/patrickfuller/imolecule/zipball/master">Download <strong>ZIP File</strong></a></li>
           <li><a href="https://github.com/patrickfuller/imolecule/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/patrickfuller/imolecule">View On <strong>GitHub</strong></a></li>
+          <li><a href="https://github.com/patrickfuller/blender-chemicals">View <strong>Blender Tool</strong></a></li>
         </ul>
       </header>
       <section>
         <h1>
 <a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h1>
 
-<h1>
+<ul>
+<li><a href="http://ec2-184-73-149-254.compute-1.amazonaws.com:9000/">file format converter</a></li>
+<li><a href="http://patrickfuller.github.io/imolecule/examples/mof.html">metal-organic frameworks</a></li>
+</ul><h1>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
 
 <div class="highlight highlight-javascript"><pre><span class="nx">imolecule</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">'my-selector'</span><span class="p">);</span>
@@ -42,6 +46,14 @@
 an object. See below for more on the object structure, or just check out the
 included examples. The <code>imolecule.create()</code> method takes a few optional parameters,
 specifying a few common drawing and camera types.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">drawingType</span><span class="o">:</span> <span class="s2">"ball and stick"</span><span class="p">,</span> <span class="c1">// Can be "ball and stick", "wireframe", or "space filling"</span>
+    <span class="nx">cameraType</span><span class="o">:</span> <span class="s2">"perspective"</span><span class="p">,</span> <span class="c1">// Can be "perspective" or "orthogonal"</span>
+    <span class="nx">shader</span><span class="o">:</span> <span class="nx">THREE</span><span class="p">.</span><span class="nx">ShaderToon</span><span class="p">.</span><span class="nx">toon2</span><span class="p">,</span> <span class="c1">// three.js shader algorithm to use</span>
+    <span class="nx">z</span><span class="o">:</span> <span class="mf">15</span> <span class="c1">// Initial camera distance to origin</span>
+<span class="p">};</span>
+</pre></div>
 
 <h1>
 <a name="molecule-data-format" class="anchor" href="#molecule-data-format"><span class="octicon octicon-link"></span></a>Molecule Data Format</h1>
@@ -56,7 +68,7 @@ As an example, consider benzene:</p>
         <span class="p">{</span> <span class="nx">element</span><span class="o">:</span> <span class="s2">"C"</span><span class="p">,</span> <span class="nx">location</span><span class="o">:</span> <span class="p">[</span> <span class="mf">1.391783</span><span class="p">,</span> <span class="mf">0.076397</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.012244</span> <span class="p">]</span> <span class="p">},</span>
         <span class="p">{</span> <span class="nx">element</span><span class="o">:</span> <span class="s2">"C"</span><span class="p">,</span> <span class="nx">location</span><span class="o">:</span> <span class="p">[</span> <span class="mf">0.762101</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.168506</span><span class="p">,</span> <span class="mf">0.026080</span> <span class="p">]</span> <span class="p">},</span>
         <span class="p">{</span> <span class="nx">element</span><span class="o">:</span> <span class="s2">"C"</span><span class="p">,</span> <span class="nx">location</span><span class="o">:</span> <span class="p">[</span> <span class="o">-</span><span class="mf">0.631044</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.242903</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.011791</span> <span class="p">]</span> <span class="p">},</span>
-        <span class="p">{</span> <span class="nx">element</span><span class="o">:</span> <span class="s2">"C"</span><span class="p">,</span> <span class="nx">location</span><span class="o">:</span> <span class="p">[</span> <span class="o">-</span><span class="mf">1.391806</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.076430</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.014083</span> <span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="nx">element</span><span class="o">:</span> <span class="s2">"C"</span><span class="p">,</span> <span class="nx">location</span><span class="o">:</span> <span class="p">[</span> <span class="o">-</span><span class="mf">1.391806</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.076430</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.014083</span> <span class="p">]</span> <span class="p">}</span>
     <span class="p">],</span>
     <span class="nx">bonds</span><span class="o">:</span> <span class="p">[</span>
         <span class="p">{</span> <span class="nx">atoms</span><span class="o">:</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="p">],</span> <span class="nx">order</span><span class="o">:</span> <span class="mi">2</span> <span class="p">},</span>
@@ -76,9 +88,9 @@ to convert most chemical file formats to JSON.</p>
 <h1>
 <a name="chemical-file-format-conversion" class="anchor" href="#chemical-file-format-conversion"><span class="octicon octicon-link"></span></a>Chemical File Format Conversion</h1>
 
-<p>This program optionally uses <a href="http://www.tornadoweb.org/en/stable/">tornado</a> and <a href="http://zeromq.org/">zeroMQ</a> to connect to a server that handles chemical file format conversion with <a href="http://openbabel.org/wiki/Main_Page">Open Babel</a>.</p>
+<p>This program optionally uses <a href="http://www.tornadoweb.org/en/stable/">tornado</a> and <a href="http://zeromq.org/">zeroMQ</a> to create and connect to a server that handles chemical file format conversion with <a href="http://openbabel.org/wiki/Main_Page">Open Babel</a>.</p>
 
-<p>To run in its provided state, you will need some zeroMQ's Python bindings, Tornado, and Tornadio.</p>
+<p>To run in its provided state, you will need zeroMQ's Python bindings, Tornado, and Tornadio.</p>
 
 <pre><code>pip install pyzmq tornado tornadio
 </code></pre>
@@ -120,7 +132,8 @@ PYTHONPATH. You can test the setup by typing:</p>
 </pre></div>
 
 <p>into a notebook cell. This should convert, optimize and draw the specified
-SMILES structure (in this case, penicillin) into the notebook.</p>
+SMILES structure (in this case, penicillin) into the notebook. Note that this
+requires Open Babel to function.</p>
 
 <p>The drawer can handle any format specified <a href="http://openbabel.org/docs/2.3.1/FileFormats/Overview.html">here</a>,
 and can be set up to better handle different use cases. Check out the docstrings
