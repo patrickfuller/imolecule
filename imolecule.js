@@ -10,7 +10,6 @@ var imolecule = {
 
         this.shader = options.hasOwnProperty("shader") ? options.shader : THREE.ShaderToon.toon2;
         this.drawingType = options.hasOwnProperty("drawingType") ? options.drawingType : "ball and stick";
-        this.boundaryType = options.hasOwnProperty("boundaryType") ? options.boundaryType : "unit cell";
         this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
         this.renderer.setSize($s.width(), $s.height());
         $s.append(this.renderer.domElement);
