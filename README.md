@@ -7,7 +7,7 @@ http://patrickfuller.github.io/imolecule/
 Examples
 ========
 
- * [file format converter](http://www.patrick-fuller.com/imolecule.html)
+ * [file format converter](http://50.240.131.209:9000/)
  * [metal-organic frameworks](http://patrickfuller.github.io/imolecule/examples/mof.html)
 
 Usage
