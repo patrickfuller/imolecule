@@ -28,6 +28,12 @@ import tornadio.router
 import tornadio.server
 
 
+def _worker_process(msg):
+    """Wrapper function for worker process to execute."""
+    import format_converter
+    return getattr(format_converter, msg["method"])(**msg["params"])
+
+
 class IndexHandler(tornado.web.RequestHandler):
 
     def get(self):
@@ -36,37 +42,25 @@ class IndexHandler(tornado.web.RequestHandler):
 
 class ClientConnection(tornadio.SocketConnection):
 
+    pool = multiprocessing.Pool(processes=2)
+
     def on_message(self, message):
         """Evaluates the function pointed to by json-rpc."""
         logging.log(logging.DEBUG, message)
-        error = None
 
-        def f(m, q):
-            """Wrapper function for worker process to execute."""
-            import format_converter
-            q.put(getattr(format_converter, m["method"])(**m["params"]))
-
-        # Spawn a thread to protect the server against error signals
-        # For larger projects, this could easily be made asynchronous
-        queue = multiprocessing.Queue()
-        p = multiprocessing.Process(target=f, args=(message, queue))
-        p.start()
-        p.join(timeout=TIMEOUT)
-        if p.exitcode >= 0:
-            result = queue.get()
-        else:
+        # Spawn a process to protect the server against error signals
+        async = self.pool.apply_async(_worker_process, [message])
+        try:
+            result = async.get(timeout=TIMEOUT)
+            error = 0
+        except multiprocessing.TimeoutError:
+            result = ("File format conversion timed out! This is due "
+                      "either to a large input file or a segmentation "
+                      "fault in the underlying open babel library.")
             error = 1
-            if p.exitcode == -1:
-                result = traceback.format_exc()
-            elif p.exitcode is None:
-                result = ("File format conversion timed out! For larger "
-                          "files, please run imolecule locally with a large "
-                          "`--timeout` parameter.")
-            else:
-                result = ("Segfault occurred in Open Babel! Please email the "
-                          "Open Babel development team with the file used:\n"
-                          "<OpenBabel-discuss@lists.sourceforge.net>")
-        p.terminate()
+        except Exception:
+            result = traceback.format_exc()
+            error = 1
         logging.log(logging.DEBUG, result)
         self.send({"result": result, "error": error, "id": message["id"]})
 
