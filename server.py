@@ -42,7 +42,9 @@ class IndexHandler(tornado.web.RequestHandler):
 
 class ClientConnection(tornadio.SocketConnection):
 
-    pool = multiprocessing.Pool(processes=2)
+    def __init__(self, *args, **kwargs):
+        self.pool = multiprocessing.Pool(processes=WORKERS)
+        super(ClientConnection, self).__init__(*args, **kwargs)
 
     def on_message(self, message):
         """Evaluates the function pointed to by json-rpc."""
@@ -58,6 +60,8 @@ class ClientConnection(tornadio.SocketConnection):
                       "either to a large input file or a segmentation "
                       "fault in the underlying open babel library.")
             error = 1
+            self.pool.terminate()
+            self.pool = multiprocessing.Pool(processes=WORKERS)
         except Exception:
             result = traceback.format_exc()
             error = 1
@@ -83,9 +87,13 @@ if __name__ == "__main__":
     parser.add_argument("--timeout", type=int, default=5, help="The maximum "
                         "time, in seconds, allowed for a process to run "
                         "before returning an error")
+    parser.add_argument("--workers", type=int, default=2, help="The number of "
+                        "worker processes to use with the server.")
     args = parser.parse_args()
 
-    HTTP_PORT, TCP_PORT, TIMEOUT = args.http_port, args.tcp_port, args.timeout
+    HTTP_PORT, TCP_PORT = args.http_port, args.tcp_port
+    TIMEOUT, WORKERS = args.timeout, args.workers
+
     if args.debug:
         logging.getLogger().setLevel(logging.DEBUG)
 
