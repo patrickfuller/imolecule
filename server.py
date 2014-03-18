@@ -89,6 +89,8 @@ if __name__ == "__main__":
                         "before returning an error")
     parser.add_argument("--workers", type=int, default=2, help="The number of "
                         "worker processes to use with the server.")
+    parser.add_argument("--no-browser", action="store_true", help="Disables "
+                        "opening a browser window on startup.")
     args = parser.parse_args()
 
     HTTP_PORT, TCP_PORT = args.http_port, args.tcp_port
@@ -108,7 +110,8 @@ if __name__ == "__main__":
               "socket_io_port": HTTP_PORT}
     application = tornado.web.Application(handler, **kwargs)
 
-    webbrowser.open("http://localhost:%d/" % HTTP_PORT, new=2)
+    if not args.no_browser:
+        webbrowser.open("http://localhost:%d/" % HTTP_PORT, new=2)
 
     context = zmq.Context()
     socket = context.socket(zmq.REP)
