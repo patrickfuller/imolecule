@@ -97,7 +97,7 @@ if __name__ == "__main__":
     if args.debug:
         logging.getLogger().setLevel(logging.DEBUG)
 
-    with open("index.html") as index_file:
+    with open(os.path.join(ROOT, "index.html")) as index_file:
         INDEX = index_file.read() % {"port": HTTP_PORT}
 
     WebClientRouter = tornadio.get_router(ClientConnection)
