@@ -45,11 +45,11 @@
 <p>where <code>'my-selector'</code> is where you want to place imolecule, and <code>myMolecule</code> is
 an object. See below for more on the object structure, or just check out the
 included examples. The <code>imolecule.create()</code> method takes a few optional parameters,
-specifying a few common drawing and camera types.</p>
+specifying common drawing and camera types.</p>
 
 <div class="highlight highlight-javascript"><pre><span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">drawingType</span><span class="o">:</span> <span class="s2">"ball and stick"</span><span class="p">,</span> <span class="c1">// Can be "ball and stick", "wireframe", or "space filling"</span>
-    <span class="nx">cameraType</span><span class="o">:</span> <span class="s2">"perspective"</span><span class="p">,</span> <span class="c1">// Can be "perspective" or "orthogonal"</span>
+    <span class="nx">cameraType</span><span class="o">:</span> <span class="s2">"perspective"</span><span class="p">,</span> <span class="c1">// Can be "perspective" or "orthographic"</span>
     <span class="nx">shader</span><span class="o">:</span> <span class="nx">THREE</span><span class="p">.</span><span class="nx">ShaderToon</span><span class="p">.</span><span class="nx">toon2</span><span class="p">,</span> <span class="c1">// three.js shader algorithm to use</span>
     <span class="nx">z</span><span class="o">:</span> <span class="mf">15</span> <span class="c1">// Initial camera distance to origin</span>
 <span class="p">};</span>
@@ -82,8 +82,7 @@ As an example, consider benzene:</p>
 </pre></div>
 
 <p>If you want to make properly formatted JSON, you can use either <code>format_converter.py</code> as a script
-or a running imolecule instance (like <a href="http://www.patrick-fuller.com/imolecule.html">this one</a>)
-to convert most chemical file formats to JSON.</p>
+or a running imolecule instance to convert most chemical file formats to JSON.</p>
 
 <h1>
 <a name="chemical-file-format-conversion" class="anchor" href="#chemical-file-format-conversion"><span class="octicon octicon-link"></span></a>Chemical File Format Conversion</h1>
