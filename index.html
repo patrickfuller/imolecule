@@ -177,7 +177,7 @@
 
             // Connect a websocket to the server. The port notation is post-
             // processed server-side
-            imolecule.connect(%(port)d);
+            imoleculeClient.connect(%(port)d);
 
             $.getJSON("static/lib/server/caffeine.json", function (molecule) {
                 imolecule.filename = "caffeine";
@@ -205,7 +205,7 @@
                 reader.onload = function (loaded) {
                     var name = file.name.split(".");
                     imolecule.filename = name[0];
-                    imolecule.convertAndDraw(loaded.target.result, name[1]);
+                    imoleculeClient.convertAndDraw(loaded.target.result, name[1]);
                 };
                 reader.readAsText(file);
             });

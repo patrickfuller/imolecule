@@ -238,10 +238,12 @@ var imolecule = {
         });
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
-    },
+    }
+};
 
-    // Connects to Python via a socketio-zeromq bridge. Ignore everything below
-    // if you're not using the client-server functionality
+// Connects to Python via a socketio-zeromq bridge. Ignore
+// if you're not using the client-server functionality
+var imoleculeClient = {
     connect: function (http_port) {
         this.socket = new io.Socket(window.location.hostname,
                                     {port: http_port, rememberTransport: false});
@@ -283,8 +285,8 @@ var imolecule = {
     convertAndDraw: function (data, inFormat) {
         // Skips a socket call if not needed
         if (inFormat === "json") {
-            this.clear();
-            this.draw($.parseJSON(data));
+            imolecule.clear();
+            imolecule.draw($.parseJSON(data));
             return;
         }
 
