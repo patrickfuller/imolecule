@@ -73,7 +73,7 @@ var imolecule = {
         var i, j, k, l, atom, bond, index, numBonds, usedMaterials, usedElements,
             data, joinedGeometry, scale, mesh, colorBonds, a, dy, v, points,
             vectors, trans, geometry, material;
-        this.current = molecule;
+        this.current = jQuery.extend(true, {}, molecule);
 
         // Rather than adding meshes to a scene, this combines meshes
         // into one big geometry. Big performance gains, but you lose the ability
@@ -268,8 +268,8 @@ var imoleculeClient = {
             }
 
             if (router === "draw") {
-                self.clear();
-                self.draw(data.result);
+                imolecule.clear();
+                imolecule.draw(data.result);
             } else if (router === "save") {
                 name = (data.result.hasOwnProperty("name") && data.result.name !== "") ?
                         data.result.name : self.filename;
