@@ -1,6 +1,99 @@
 /*global THREE, $, jQuery, console, window, requestAnimationFrame, document, io, alert, Blob, saveAs*/
 "use strict";
 
+var imoleculeData = {
+    Ac: { color: 0x70aaf9, radius: 1.95 },
+    Ag: { color: 0xbfbfbf, radius: 1.6 },
+    Al: { color: 0xbfa5a5, radius: 1.25 },
+    Am: { color: 0x545bf2, radius: 1.75 },
+    Ar: { color: 0x80d1e2, radius: 0.71 },
+    As: { color: 0xbc80e2, radius: 1.15 },
+    Au: { color: 0xffd123, radius: 1.35 },
+    B: { color: 0xffb5b5, radius: 0.85 },
+    Ba: { color: 0x00c800, radius: 2.15 },
+    Be: { color: 0xc1ff00, radius: 1.05 },
+    Bi: { color: 0x9e4fb5, radius: 1.6 },
+    Br: { color: 0xa52828, radius: 1.15 },
+    C: { color: 0x909090, radius: 0.7 },
+    Ca: { color: 0x3dff00, radius: 1.8 },
+    Cd: { color: 0xffd88e, radius: 1.55 },
+    Ce: { color: 0xffffc6, radius: 1.85 },
+    Cl: { color: 0x1fef1f, radius: 1.0 },
+    Co: { color: 0xef90a0, radius: 1.35 },
+    Cr: { color: 0x8999c6, radius: 1.4 },
+    Cs: { color: 0x56178e, radius: 2.6 },
+    Cu: { color: 0xc88033, radius: 1.35 },
+    Dy: { color: 0x1fffc6, radius: 1.75 },
+    Er: { color: 0x00e675, radius: 1.75 },
+    Eu: { color: 0x60ffc6, radius: 1.85 },
+    F: { color: 0x90df4f, radius: 0.5 },
+    Fe: { color: 0xdf6633, radius: 1.4 },
+    Ga: { color: 0xc18e8e, radius: 1.3 },
+    Gd: { color: 0x44ffc6, radius: 1.8 },
+    Ge: { color: 0x668e8e, radius: 1.25 },
+    H: { color: 0xffffff, radius: 0.25 },
+    Hf: { color: 0x4dc1ff, radius: 1.55 },
+    Hg: { color: 0xb8b8cf, radius: 1.5 },
+    Ho: { color: 0x00ff9c, radius: 1.75 },
+    I: { color: 0x930093, radius: 1.4 },
+    In: { color: 0xa57572, radius: 1.55 },
+    Ir: { color: 0x175487, radius: 1.35 },
+    K: { color: 0x8e3fd4, radius: 2.2 },
+    La: { color: 0x70d4ff, radius: 1.95 },
+    Li: { color: 0xcc80ff, radius: 1.45 },
+    Lu: { color: 0x00aa23, radius: 1.75 },
+    Mg: { color: 0x89ff00, radius: 1.5 },
+    Mn: { color: 0x9c79c6, radius: 1.4 },
+    Mo: { color: 0x54b5b5, radius: 1.45 },
+    N: { color: 0x2f4ff7, radius: 0.65 },
+    Na: { color: 0xaa5bf2, radius: 1.8 },
+    Nb: { color: 0x72c1c8, radius: 1.45 },
+    Nd: { color: 0xc6ffc6, radius: 1.85 },
+    Ni: { color: 0x4fcf4f, radius: 1.35 },
+    Np: { color: 0x0080ff, radius: 1.75 },
+    O: { color: 0xff0d0d, radius: 0.6 },
+    Os: { color: 0x266695, radius: 1.3 },
+    P: { color: 0xff8000, radius: 1.0 },
+    Pa: { color: 0x00a1ff, radius: 1.8 },
+    Pb: { color: 0x565960, radius: 1.8 },
+    Pd: { color: 0x006985, radius: 1.4 },
+    Pm: { color: 0xa3ffc6, radius: 1.85 },
+    Po: { color: 0xaa5b00, radius: 1.9 },
+    Pr: { color: 0xd8ffc6, radius: 1.85 },
+    Pt: { color: 0xcfcfdf, radius: 1.35 },
+    Pu: { color: 0x006bff, radius: 1.75 },
+    Ra: { color: 0x007c00, radius: 2.15 },
+    Rb: { color: 0x702daf, radius: 2.35 },
+    Re: { color: 0x267caa, radius: 1.35 },
+    Rh: { color: 0x0a7c8c, radius: 1.35 },
+    Ru: { color: 0x238e8e, radius: 1.3 },
+    S: { color: 0xffff2f, radius: 1.0 },
+    Sb: { color: 0x9e62b5, radius: 1.45 },
+    Sc: { color: 0xe6e6e6, radius: 1.6 },
+    Se: { color: 0xffa100, radius: 1.15 },
+    Si: { color: 0xefc8a0, radius: 1.1 },
+    Sm: { color: 0x8effc6, radius: 1.85 },
+    Sn: { color: 0x668080, radius: 1.45 },
+    Sr: { color: 0x00ff00, radius: 2.0 },
+    Ta: { color: 0x4da5ff, radius: 1.45 },
+    Tb: { color: 0x2fffc6, radius: 1.75 },
+    Tc: { color: 0x3b9e9e, radius: 1.35 },
+    Te: { color: 0xd47900, radius: 1.4 },
+    Th: { color: 0x00baff, radius: 1.8 },
+    Ti: { color: 0xbfc1c6, radius: 1.4 },
+    Tl: { color: 0xa5544d, radius: 1.9 },
+    Tm: { color: 0x00d452, radius: 1.75 },
+    U: { color: 0x008eff, radius: 1.75 },
+    V: { color: 0xa5a5aa, radius: 1.35 },
+    W: { color: 0x2193d6, radius: 1.35 },
+    Y: { color: 0x93ffff, radius: 1.8 },
+    Yb: { color: 0x00bf38, radius: 1.75 },
+    Zn: { color: 0x7c80af, radius: 1.35 },
+    Zr: { color: 0x93dfdf, radius: 1.55 },
+    bond: { color: 0x0c0c0c, radius: 0.18 },
+    unknown: { color: 0x000000, radius: 0.8 }
+};
+
 var imolecule = {
 
     // Creates a new instance of imolecule
@@ -48,6 +141,11 @@ var imolecule = {
             value.material = material;
         });
 
+        // Stores atom locations as THREE.Vector3 objects
+        this.atomVectors = [];
+        this.usedElements = {};
+        this.usedMaterials = [];
+
         // Initializes a scene and appends objects to be drawn
         this.scene = new THREE.Scene();
         this.scene.add(this.perspective);
@@ -70,46 +168,53 @@ var imolecule = {
 
     // Draws a molecule. Duh.
     draw: function (molecule) {
-        var i, j, k, l, atom, bond, index, numBonds, usedMaterials, usedElements,
-            data, joinedGeometry, scale, mesh, colorBonds, a, dy, v, points,
-            vectors, trans, geometry, material;
-        this.current = jQuery.extend(true, {}, molecule);
+        var i, j, k, l, element, bond, index, numBonds, radius, joinedGeometry,
+            scale, mesh, colorBonds, a, dy, v, points, vectors, trans, geometry,
+            material, atomPos;
+        this.current = molecule;
 
         // Rather than adding meshes to a scene, this combines meshes
         // into one big geometry. Big performance gains, but you lose the ability
         // to perform atom-specific operations.
         joinedGeometry = new THREE.Geometry();
-        usedMaterials = [];
-        usedElements = [];
 
-        // Draws atoms and saves Vector3 position objects
-        scale = this.drawingType === "space filling" ? 1.0 : 0.3;
-        for (i = 0; i < molecule.atoms.length; i += 1) {
-            atom = molecule.atoms[i];
-
-            // Save a Vector3 object to the molecule for later math
-            if (atom.hasOwnProperty("location")) {
-                atom.position = new THREE.Vector3().fromArray(atom.location);
-                delete atom.location;
+        // Save Vector3 objects for later math
+        if (this.atomVectors.length === 0) {
+            for (i = 0; i < molecule.atoms.length; i += 1) {
+                this.atomVectors.push(new THREE.Vector3().fromArray(molecule.atoms[i].location));
             }
+        }
 
-            // Low-level index mapping to reduce number of materials loaded
-            data = imoleculeData[atom.element] || imoleculeData.unknown;
-            index = usedElements.indexOf(atom.element);
-            if (index === -1) {
-                usedMaterials.push(data.material);
-                usedElements.push(atom.element);
-                index = usedElements.length - 1;
+        // Low-level index mapping to reduce number of materials loaded
+        if (jQuery.isEmptyObject(this.usedElements)) {
+            index = 0;
+            for (i = 0; i < molecule.atoms.length; i += 1) {
+                element = molecule.atoms[i].element;
+                if (!Object.prototype.hasOwnProperty.call(this.usedElements, element)) {
+                    this.usedElements[element] = index;
+                    this.usedMaterials.push(imoleculeData[element].material || imoleculeData.unknown.material);
+                    index += 1;
+                }
             }
+            this.usedMaterials.push(imoleculeData.bond.material);
+        }
 
-            // Add mesh to main geometry if not drawing wireframe
-            if (this.drawingType !== "wireframe") {
+        // Draws atoms
+        if (this.drawingType !== "wireframe") {
+            scale = this.drawingType === "space filling" ? 1.0 : 0.3;
+            for (i = 0; i < molecule.atoms.length; i += 1) {
+                element = molecule.atoms[i].element;
+
                 mesh = new THREE.Mesh(this.sphereGeometry);
-                mesh.position = atom.position;
-                mesh.scale.set(1, 1, 1).multiplyScalar(scale * data.radius * 2);
+                mesh.position = this.atomVectors[i];
+                radius = imoleculeData[element].radius || imoleculeData.unknown.radius;
+                mesh.scale.set(1, 1, 1).multiplyScalar(scale * radius * 2);
+
+                index = this.usedElements[element];
                 for (j = 0; j < mesh.geometry.faces.length; j += 1) {
                     mesh.geometry.faces[j].materialIndex = index;
                 }
+
                 THREE.GeometryUtils.merge(joinedGeometry, mesh);
             }
         }
@@ -118,48 +223,51 @@ var imolecule = {
         if (!molecule.hasOwnProperty("bonds")) { molecule.bonds = []; }
 
         // Variables to control default vs. wireframe bond coloring
-        usedMaterials.push(imoleculeData.bond.material);
-        index = usedMaterials.length - 1;
         colorBonds = (this.drawingType === "wireframe");
+        index = this.usedMaterials.length - 1;
         numBonds = colorBonds ? 2 : 1;
 
         // Bonds require some basic vector math
-        for (i = 0; i < molecule.bonds.length; i += 1) {
-            if (this.drawingType === "space filling") {
-                break;
-            }
-            bond = molecule.bonds[i];
-            a = [molecule.atoms[bond.atoms[0]], molecule.atoms[bond.atoms[1]]];
+        if (this.drawingType !== "space filling") {
+            for (i = 0; i < molecule.bonds.length; i += 1) {
+                bond = molecule.bonds[i];
+                a = [this.atomVectors[bond.atoms[0]], this.atomVectors[bond.atoms[1]]];
 
-            for (j = 0; j < bond.order; j += 1) {
-                if (bond.order === 2) {
-                    dy = 0.5 * ((j === 1) ? 1 : -1);
-                } else if (bond.order === 3 && j !== 0) {
-                    dy = ((j === 1) ? 1 : -1);
-                } else {
-                    dy = 0;
-                }
+                for (j = 0; j < bond.order; j += 1) {
+                    if (bond.order === 2) {
+                        dy = 0.5 * ((j === 1) ? 1 : -1);
+                    } else if (bond.order === 3 && j !== 0) {
+                        dy = ((j === 1) ? 1 : -1);
+                    } else {
+                        dy = 0;
+                    }
 
-                for (k = 0; k < numBonds; k += 1) {
-                    mesh = new THREE.Mesh(this.cylinderGeometry);
-                    mesh.position.addVectors(a[0].position, a[1].position).divideScalar(2);
-                    mesh.lookAt(a[1].position);
-                    mesh.scale.x = mesh.scale.y = 0.3 * imoleculeData.bond.radius * 2;
-                    mesh.scale.z = a[1].position.distanceTo(a[0].position);
-                    if (colorBonds) {
-                        mesh.position.add(a[k].position).divideScalar(2);
-                        mesh.scale.z /= 2;
-                        index = usedElements.indexOf(a[k].element);
+                    for (k = 0; k < numBonds; k += 1) {
+                        mesh = new THREE.Mesh(this.cylinderGeometry);
+                        mesh.position.addVectors(a[0], a[1]).divideScalar(2);
+                        mesh.lookAt(a[1]);
+                        mesh.scale.x = mesh.scale.y = 0.3 * imoleculeData.bond.radius * 2;
+                        mesh.scale.z = a[1].distanceTo(a[0]);
+
+                        if (colorBonds) {
+                            mesh.position.add(a[k]).divideScalar(2);
+                            mesh.scale.z /= 2;
+                            index = this.usedElements[molecule.atoms[bond.atoms[k]].element];
+                        }
+
+                        mesh.translateY(0.3 * dy);
+
+                        for (l = 0; l < mesh.geometry.faces.length; l += 1) {
+                            mesh.geometry.faces[l].materialIndex = index;
+                        }
+
+                        THREE.GeometryUtils.merge(joinedGeometry, mesh);
                     }
-                    mesh.translateY(0.3 * dy);
-                    for (l = 0; l < mesh.geometry.faces.length; l += 1) {
-                        mesh.geometry.faces[l].materialIndex = index;
-                    }
-                    THREE.GeometryUtils.merge(joinedGeometry, mesh);
                 }
             }
         }
-        this.mesh = new THREE.Mesh(joinedGeometry, new THREE.MeshFaceMaterial(usedMaterials));
+
+        this.mesh = new THREE.Mesh(joinedGeometry, new THREE.MeshFaceMaterial(this.usedMaterials));
         this.scene.add(this.mesh);
 
         // Back-compatibility with a stupid naming scheme
@@ -167,6 +275,7 @@ var imolecule = {
             molecule.unitcell = molecule.periodic_connections;
             delete molecule.periodic_connections;
         }
+
         // If we're dealing with a crystal structure, draw the unit cell
         if (molecule.hasOwnProperty("unitcell")) {
             // Some basic conversions to handle math via THREE.Vector3
@@ -200,17 +309,27 @@ var imolecule = {
         }
     },
 
+    // Draws the same molecule again, but maintains internal data structures.
+    // Useful for handling parameter changes.
+    redraw: function () {
+        this.scene.remove(this.mesh);
+        this.scene.remove(this.corners);
+        this.draw(this.current);
+    },
+
     // Deletes any existing molecules.
     clear: function () {
         this.scene.remove(this.mesh);
         this.scene.remove(this.corners);
+        this.atomVectors = [];
+        this.usedElements = {};
+        this.usedMaterials = [];
     },
 
     // Sets molecule drawing types ( ball and stick, space filling, wireframe )
     setDrawingType: function (type) {
         this.drawingType = type;
-        this.clear();
-        this.draw(this.current);
+        this.redraw();
     },
 
     // Sets camera type (orthogonal, perspective)
@@ -320,95 +439,3 @@ var imoleculeClient = {
     }
 };
 
-var imoleculeData = {
-    Ac: { color: 0x70aaf9, radius: 1.95 },
-    Ag: { color: 0xbfbfbf, radius: 1.6 },
-    Al: { color: 0xbfa5a5, radius: 1.25 },
-    Am: { color: 0x545bf2, radius: 1.75 },
-    Ar: { color: 0x80d1e2, radius: 0.71 },
-    As: { color: 0xbc80e2, radius: 1.15 },
-    Au: { color: 0xffd123, radius: 1.35 },
-    B: { color: 0xffb5b5, radius: 0.85 },
-    Ba: { color: 0x00c800, radius: 2.15 },
-    Be: { color: 0xc1ff00, radius: 1.05 },
-    Bi: { color: 0x9e4fb5, radius: 1.6 },
-    Br: { color: 0xa52828, radius: 1.15 },
-    C: { color: 0x909090, radius: 0.7 },
-    Ca: { color: 0x3dff00, radius: 1.8 },
-    Cd: { color: 0xffd88e, radius: 1.55 },
-    Ce: { color: 0xffffc6, radius: 1.85 },
-    Cl: { color: 0x1fef1f, radius: 1.0 },
-    Co: { color: 0xef90a0, radius: 1.35 },
-    Cr: { color: 0x8999c6, radius: 1.4 },
-    Cs: { color: 0x56178e, radius: 2.6 },
-    Cu: { color: 0xc88033, radius: 1.35 },
-    Dy: { color: 0x1fffc6, radius: 1.75 },
-    Er: { color: 0x00e675, radius: 1.75 },
-    Eu: { color: 0x60ffc6, radius: 1.85 },
-    F: { color: 0x90df4f, radius: 0.5 },
-    Fe: { color: 0xdf6633, radius: 1.4 },
-    Ga: { color: 0xc18e8e, radius: 1.3 },
-    Gd: { color: 0x44ffc6, radius: 1.8 },
-    Ge: { color: 0x668e8e, radius: 1.25 },
-    H: { color: 0xffffff, radius: 0.25 },
-    Hf: { color: 0x4dc1ff, radius: 1.55 },
-    Hg: { color: 0xb8b8cf, radius: 1.5 },
-    Ho: { color: 0x00ff9c, radius: 1.75 },
-    I: { color: 0x930093, radius: 1.4 },
-    In: { color: 0xa57572, radius: 1.55 },
-    Ir: { color: 0x175487, radius: 1.35 },
-    K: { color: 0x8e3fd4, radius: 2.2 },
-    La: { color: 0x70d4ff, radius: 1.95 },
-    Li: { color: 0xcc80ff, radius: 1.45 },
-    Lu: { color: 0x00aa23, radius: 1.75 },
-    Mg: { color: 0x89ff00, radius: 1.5 },
-    Mn: { color: 0x9c79c6, radius: 1.4 },
-    Mo: { color: 0x54b5b5, radius: 1.45 },
-    N: { color: 0x2f4ff7, radius: 0.65 },
-    Na: { color: 0xaa5bf2, radius: 1.8 },
-    Nb: { color: 0x72c1c8, radius: 1.45 },
-    Nd: { color: 0xc6ffc6, radius: 1.85 },
-    Ni: { color: 0x4fcf4f, radius: 1.35 },
-    Np: { color: 0x0080ff, radius: 1.75 },
-    O: { color: 0xff0d0d, radius: 0.6 },
-    Os: { color: 0x266695, radius: 1.3 },
-    P: { color: 0xff8000, radius: 1.0 },
-    Pa: { color: 0x00a1ff, radius: 1.8 },
-    Pb: { color: 0x565960, radius: 1.8 },
-    Pd: { color: 0x006985, radius: 1.4 },
-    Pm: { color: 0xa3ffc6, radius: 1.85 },
-    Po: { color: 0xaa5b00, radius: 1.9 },
-    Pr: { color: 0xd8ffc6, radius: 1.85 },
-    Pt: { color: 0xcfcfdf, radius: 1.35 },
-    Pu: { color: 0x006bff, radius: 1.75 },
-    Ra: { color: 0x007c00, radius: 2.15 },
-    Rb: { color: 0x702daf, radius: 2.35 },
-    Re: { color: 0x267caa, radius: 1.35 },
-    Rh: { color: 0x0a7c8c, radius: 1.35 },
-    Ru: { color: 0x238e8e, radius: 1.3 },
-    S: { color: 0xffff2f, radius: 1.0 },
-    Sb: { color: 0x9e62b5, radius: 1.45 },
-    Sc: { color: 0xe6e6e6, radius: 1.6 },
-    Se: { color: 0xffa100, radius: 1.15 },
-    Si: { color: 0xefc8a0, radius: 1.1 },
-    Sm: { color: 0x8effc6, radius: 1.85 },
-    Sn: { color: 0x668080, radius: 1.45 },
-    Sr: { color: 0x00ff00, radius: 2.0 },
-    Ta: { color: 0x4da5ff, radius: 1.45 },
-    Tb: { color: 0x2fffc6, radius: 1.75 },
-    Tc: { color: 0x3b9e9e, radius: 1.35 },
-    Te: { color: 0xd47900, radius: 1.4 },
-    Th: { color: 0x00baff, radius: 1.8 },
-    Ti: { color: 0xbfc1c6, radius: 1.4 },
-    Tl: { color: 0xa5544d, radius: 1.9 },
-    Tm: { color: 0x00d452, radius: 1.75 },
-    U: { color: 0x008eff, radius: 1.75 },
-    V: { color: 0xa5a5aa, radius: 1.35 },
-    W: { color: 0x2193d6, radius: 1.35 },
-    Y: { color: 0x93ffff, radius: 1.8 },
-    Yb: { color: 0x00bf38, radius: 1.75 },
-    Zn: { color: 0x7c80af, radius: 1.35 },
-    Zr: { color: 0x93dfdf, radius: 1.55 },
-    bond: { color: 0x0c0c0c, radius: 0.18 },
-    unknown: { color: 0x000000, radius: 0.8 }
-};
