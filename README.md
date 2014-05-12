@@ -21,12 +21,12 @@ imolecule.draw(myMolecule);
 where `'my-selector'` is where you want to place imolecule, and `myMolecule` is
 an object. See below for more on the object structure, or just check out the
 included examples. The `imolecule.create()` method takes a few optional parameters,
-specifying a few common drawing and camera types.
+specifying common drawing and camera types.
 
 ```javascript
 options = {
     drawingType: "ball and stick", // Can be "ball and stick", "wireframe", or "space filling"
-    cameraType: "perspective", // Can be "perspective" or "orthogonal"
+    cameraType: "perspective", // Can be "perspective" or "orthographic"
     shader: THREE.ShaderToon.toon2, // three.js shader algorithm to use
     z: 15 // Initial camera distance to origin
 };
@@ -60,8 +60,7 @@ As an example, consider benzene:
 ```
 
 If you want to make properly formatted JSON, you can use either `format_converter.py` as a script
-or a running imolecule instance (like [this one](http://www.patrick-fuller.com/imolecule.html))
-to convert most chemical file formats to JSON.
+or a running imolecule instance to convert most chemical file formats to JSON.
 
 Chemical File Format Conversion
 ===============================
