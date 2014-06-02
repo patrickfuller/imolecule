@@ -87,11 +87,11 @@ or a running imolecule instance to convert most chemical file formats to JSON.</
 <h1>
 <a name="chemical-file-format-conversion" class="anchor" href="#chemical-file-format-conversion"><span class="octicon octicon-link"></span></a>Chemical File Format Conversion</h1>
 
-<p>This program optionally uses <a href="http://www.tornadoweb.org/en/stable/">tornado</a> and <a href="http://zeromq.org/">zeroMQ</a> to create and connect to a server that handles chemical file format conversion with <a href="http://openbabel.org/wiki/Main_Page">Open Babel</a>.</p>
+<p>This program optionally uses <a href="http://www.tornadoweb.org/en/stable/">tornado</a> to create and connect to a server that handles chemical file format conversion with <a href="http://openbabel.org/wiki/Main_Page">Open Babel</a>.</p>
 
-<p>To run in its provided state, you will need zeroMQ's Python bindings, Tornado, and Tornadio.</p>
+<p>To run in its provided state, you will need Tornado.</p>
 
-<pre><code>pip install pyzmq tornado tornadio
+<pre><code>pip install tornado
 </code></pre>
 
 <p>You will also need Open Babel, which is best installed from source. For more, read through the <a href="http://openbabel.org/docs/dev/Installation/install.html">Open Babel installation instructions</a>.</p>
