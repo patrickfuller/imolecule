@@ -130,14 +130,20 @@ var imolecule = {
             }
         });
 
-        // If we're dealing with a crystal structure, draw the unit cell
+        // Back-compatibility with a stupid naming scheme
         if (molecule.hasOwnProperty("periodic_connections")) {
+            molecule.unitcell = molecule.periodic_connections;
+            delete molecule.periodic_connections;
+        }
+
+        // If we're dealing with a crystal structure, draw the unit cell
+        if (molecule.hasOwnProperty("unitcell")) {
             // Some basic conversions to handle math via THREE.Vector3
             v = new THREE.Vector3(0, 0, 0);
             vectors = [
-                v.clone().fromArray(molecule.periodic_connections[0]),
-                v.clone().fromArray(molecule.periodic_connections[1]),
-                v.clone().fromArray(molecule.periodic_connections[2])
+                v.clone().fromArray(molecule.unitcell[0]),
+                v.clone().fromArray(molecule.unitcell[1]),
+                v.clone().fromArray(molecule.unitcell[2])
             ];
             // The eight corners of the unit cell are linear combinations of above
             points = [

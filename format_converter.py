@@ -116,8 +116,8 @@ def pybel_to_json(molecule, name=None):
     # If there's unit cell data, save it to the json output
     if hasattr(molecule, "unitcell"):
         uc = molecule.unitcell
-        output["periodic_connections"] = [[v.GetX(), v.GetY(), v.GetZ()]
-                                          for v in uc.GetCellVectors()]
+        output["unitcell"] = [[v.GetX(), v.GetY(), v.GetZ()]
+                              for v in uc.GetCellVectors()]
     if name:
         output["name"] = name
     return output
