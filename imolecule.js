@@ -1,4 +1,4 @@
-/*global THREE, $, jQuery, console, window, requestAnimationFrame, document, io, alert, Blob, saveAs*/
+/*global THREE, $, jQuery, console, window, requestAnimationFrame, document, WebSocket, alert, Blob, saveAs*/
 "use strict";
 
 var imolecule = {
@@ -263,41 +263,40 @@ var imolecule = {
 
     // Connects to Python via a socketio-zeromq bridge. Ignore everything below
     // if you're not using the client-server functionality
-    connect: function (http_port) {
-        this.socket = new io.Socket(window.location.hostname,
-                                    {port: http_port, rememberTransport: false});
-        this.socket.connect();
+    connect: function (port) {
+        var self = this;
+        this.socket = new WebSocket("ws://" + window.location.hostname + ":" + port + "/websocket");
         this.queue = {};
 
-        this.socket.on("connect", function () {
+        this.socket.onopen = function () {
             console.log("Connected!");
-        });
+        };
 
-        var self = this;
-        this.socket.on("message", function (data) {
-            var router, name;
-            router = self.queue[data.id];
-            delete self.queue[data.id];
-            self.result = data.result;
-            try { data.result = $.parseJSON(data.result); } catch (err) {}
+        this.socket.onmessage = function (messageEvent) {
+            var router, jsonRpc, name;
 
-            if (data.error) {
-                alert(data.result);
-                return;
-            }
+            jsonRpc = $.parseJSON(messageEvent.data);
+            router = self.queue[jsonRpc.id];
+            delete self.queue[jsonRpc.id];
+            self.result = jsonRpc.result;
 
-            if (router === "draw") {
+            if (jsonRpc.error) {
+                alert(jsonRpc.result);
+
+            } else if (router === "draw") {
                 self.clear();
-                self.draw(data.result);
+                self.draw(jsonRpc.result);
+
             } else if (router === "save") {
-                name = (data.result.hasOwnProperty("name") && data.result.name !== "") ?
-                        data.result.name : self.filename;
+                name = (jsonRpc.result.hasOwnProperty("name") && jsonRpc.result.name !== "") ?
+                        jsonRpc.result.name : self.filename;
                 saveAs(new Blob([self.result], {type: "text/plain"}),
                         name + "." + self.outFormat);
+
             } else {
                 alert("Unsupported function: " + router);
             }
-        });
+        };
     },
 
     // Standardizes chemical drawing formats and draws
@@ -310,20 +309,20 @@ var imolecule = {
         }
 
         var uuid = this.uuid();
-        this.socket.send({method: "convert", id: uuid,
+        this.socket.send(JSON.stringify({method: "convert", id: uuid,
                           params: {data: data, in_format: inFormat,
-                                   out_format: "json", pretty: false}
-                         });
+                                   out_format: "object", pretty: false}
+                         }));
         this.queue[uuid] = "draw";
     },
 
     // Converts and saves output
     convertAndSave: function (data, outFormat) {
         var uuid = this.uuid();
-        this.socket.send({method: "convert", id: uuid,
+        this.socket.send(JSON.stringify({method: "convert", id: uuid,
                           params: {data: data, in_format: "json",
                                    out_format: outFormat, pretty: true}
-                         });
+                         }));
         this.outFormat = outFormat;
         this.queue[uuid] = "save";
     },

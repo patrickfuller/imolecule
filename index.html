@@ -14,7 +14,6 @@
         <script src="static/lib/server/FileSaver.min.js" type="text/javascript"></script>
         <script src="static/lib/server/avgrund.js" type="text/javascript"></script>
         <script src="static/lib/server/chosen.jquery.min.js" type="text/javascript"></script>
-        <script src="static/lib/server/socket.io.js" type="text/javascript"></script>
     </head>
     <body>
         <div class="imolecule">
@@ -177,7 +176,7 @@
 
             // Connect a websocket to the server. The port notation is post-
             // processed server-side
-            imolecule.connect(%(port)d);
+            imolecule.connect({{port}});
 
             $.getJSON("static/lib/server/caffeine.json", function (molecule) {
                 imolecule.filename = "caffeine";

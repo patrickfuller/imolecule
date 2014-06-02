@@ -51,8 +51,13 @@ def convert(data, in_format, out_format, filename=None, pretty=False):
         mol.make3D()
     mol.OBMol.Center()
 
-    return (dumps(pybel_to_json(mol, name=filename)) if out_format == "json"
-            else mol.write(out_format.encode("ascii")))
+    # "object" does not convert to a string. "json" does.
+    if out_format == "object":
+        return pybel_to_json(mol, name=filename)
+    elif out_format == "json":
+        return dumps(pybel_to_json(mol, name=filename))
+    else:
+        return mol.write(out_format.encode("ascii"))
 
 
 def json_to_pybel(data, center=True):

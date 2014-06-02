@@ -66,15 +66,18 @@ to convert most chemical file formats to JSON.
 Chemical File Format Conversion
 ===============================
 
-This program optionally uses [tornado](http://www.tornadoweb.org/en/stable/) and [zeroMQ](http://zeromq.org/) to create and connect to a server that handles chemical file format conversion with [Open Babel](http://openbabel.org/wiki/Main_Page).
+This program optionally uses [tornado](http://www.tornadoweb.org/en/stable/) to
+create and connect to a server that handles chemical file format conversion
+with [Open Babel](http://openbabel.org/wiki/Main_Page).
 
-To run in its provided state, you will need zeroMQ's Python bindings, Tornado, and Tornadio.
+To run in its provided state, you will need Tornado.
 
 ```
-pip install pyzmq tornado tornadio
+pip install tornado
 ```
 
-You will also need Open Babel, which is best installed from source. For more, read through the [Open Babel installation instructions](http://openbabel.org/docs/dev/Installation/install.html).
+You will also need Open Babel, which is best installed from source. For more,
+read through the [Open Babel installation instructions](http://openbabel.org/docs/dev/Installation/install.html).
 
 ```
 git clone https://github.com/openbabel/openbabel
@@ -95,7 +98,10 @@ communicates with openbabel via websocket, so most file formats should work. Be
 sure to set the extensions of your files to their data type (ie. "mol", "pdb",
 etc.) for format inference to work properly.
 
-If you have an existing web server, tornado can be easily switched out for other libraries. If you want to use imolecule as a starting point for a broader user interface, the server is written to be extensible. In both cases, read through the source code - it's surprisingly short.
+If you have an existing web server, tornado can be easily switched out for
+other libraries. If you want to use imolecule as a starting point for a
+broader user interface, the server is written to be extensible. In both cases,
+read through the source code - it's surprisingly short.
 
 IPython support
 ===============
