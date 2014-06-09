@@ -10,7 +10,11 @@ var imolecule = {
 
         this.shader = options.hasOwnProperty("shader") ? options.shader : THREE.ShaderToon.toon2;
         this.drawingType = options.hasOwnProperty("drawingType") ? options.drawingType : "ball and stick";
-        this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+        //this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+        this.renderer = new THREE.SVGRenderer();
+        this.renderer.setClearColor(0xeeeeee);
+        this.renderer.setQuality("low");
+
         this.renderer.setSize($s.width(), $s.height());
         $s.append(this.renderer.domElement);
 
@@ -19,42 +23,44 @@ var imolecule = {
                 $s.width() / 32, $s.height() / 32, -$s.height() / 32, -100, 1000);
         this.perspective.position.z = options.hasOwnProperty("z") ? options.z : 15;
         this.orthographic.position = this.perspective.position;
-        this.orthographic.rotation = this.perspective.rotation;
+        //this.orthographic.rotation = this.perspective.rotation;
         this.setCameraType(options.hasOwnProperty("cameraType") ? options.cameraType : "perspective");
 
-        this.sphereGeometry = new THREE.SphereGeometry(1, 16, 12);
-        this.cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 6, 3, false);
+        //this.sphereGeometry = new THREE.SphereGeometry(1, 16, 12);
+        this.circleGeometry = new THREE.CircleGeometry(1, 32);
+        //this.cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 6, 3, false);
 
         // This orients the cylinder primitive so THREE.lookAt() works properly
-        this.cylinderGeometry.applyMatrix(new THREE.Matrix4()
-            .makeRotationFromEuler(new THREE.Euler(Math.PI / 2, Math.PI, 0)));
+        //this.circleGeometry.applyMatrix(new THREE.Matrix4()
+        //    .makeRotationFromEuler(new THREE.Euler(Math.PI / 2, Math.PI, 0)));
 
         this.light = new THREE.HemisphereLight(0xffffff, 1.0);
         this.light.position = this.camera.position;
-        this.light.rotation = this.camera.rotation;
+        //this.light.rotation = this.camera.rotation;
 
         this.atoms = [];
         this.bonds = [];
 
         // Makes toon-shaded materials from scratch
         $.each(this.data, function (key, value) {
-            var material = new THREE.ShaderMaterial({
-                uniforms: THREE.UniformsUtils.clone(self.shader.uniforms),
-                vertexShader: self.shader.vertexShader,
-                fragmentShader: self.shader.fragmentShader
-            });
-            material.uniforms.uDirLightPos.value.set(1, 1, 1)
-                             .multiplyScalar(self.camera.position.z);
-            value.color = new THREE.Color(value.color);
-            material.uniforms.uDirLightColor.value = value.color;
-            material.uniforms.uBaseColor.value = value.color;
-            value.material = material;
+            //var material = new THREE.ShaderMaterial({
+            //    uniforms: THREE.UniformsUtils.clone(self.shader.uniforms),
+            //    vertexShader: self.shader.vertexShader,
+            //    fragmentShader: self.shader.fragmentShader
+            //});
+            //material.uniforms.uDirLightPos.value.set(1, 1, 1)
+            //                 .multiplyScalar(self.camera.position.z);
+            //value.color = new THREE.Color(value.color);
+            //material.uniforms.uDirLightColor.value = value.color;
+            //material.uniforms.uBaseColor.value = value.color;
+            //value.material = material;
+            value.material = new THREE.MeshBasicMaterial({color: value.color});
         });
 
         // Initializes a scene and appends objects to be drawn
         this.scene = new THREE.Scene();
         this.scene.add(this.perspective);
-        this.scene.add(this.orthographic);
+        //this.scene.add(this.orthographic);
         this.scene.add(this.light);
 
         $(window).resize(function () {
@@ -74,20 +80,20 @@ var imolecule = {
     // Draws a molecule. Duh.
     draw: function (molecule) {
         var mesh, self, a, scale, j, k, dy, cent, data, v, vectors, points,
-            trans, geometry, material;
+            trans, geometry, material, direction;
         self = this;
         cent = new THREE.Vector3();
+        direction = new THREE.Vector3();
+        v = new THREE.Vector3();
         this.current = molecule;
 
         scale = this.drawingType === "space filling" ? 1.0 : 0.3;
 
-        // Don't hate on formats without bond information
-        if (!molecule.hasOwnProperty("bonds")) { molecule.bonds = []; }
-
         // Draws atoms and saves references
         $.each(molecule.atoms, function (i, atom) {
             data = self.data[atom.element] || self.data.unknown;
-            mesh = new THREE.Mesh(self.sphereGeometry, data.material);
+            mesh = new THREE.Mesh(self.circleGeometry, data.material);
+            mesh.lookAt(self.camera.position);
             mesh.position.fromArray(atom.location);
             mesh.scale.set(1, 1, 1).multiplyScalar(scale * data.radius * 2);
             if (self.drawingType !== "wireframe") {
@@ -97,9 +103,19 @@ var imolecule = {
             self.atoms.push(mesh);
         });
 
+        // Don't hate on formats without bond information
+        if (!molecule.hasOwnProperty("bonds")) { molecule.bonds = []; }
+
         // Bonds require some basic vector math
         $.each(molecule.bonds, function (i, bond) {
             a = [self.atoms[bond.atoms[0]], self.atoms[bond.atoms[1]]];
+
+            // Get midpoint between vectors and perpendicular direction
+            cent.addVectors(a[0].position, a[1].position).divideScalar(2);
+            direction.crossVectors(v.clone().subVectors(self.camera.position, cent),
+                                   v.clone().subVectors(a[1].position, a[0].position))
+                     .setLength(self.data.bond.radius * 0.3);
+
             for (j = 0; j < bond.order; j += 1) {
                 if (bond.order === 2) {
                     dy = 0.5 * ((j === 1) ? 1 : -1);
@@ -110,14 +126,22 @@ var imolecule = {
                 }
 
                 for (k = 0; k < 2; k += 1) {
-                    mesh = new THREE.Mesh(self.cylinderGeometry, self.data.bond.material);
-                    cent.addVectors(a[0].position, a[1].position).divideScalar(2);
+
+                    geometry = new THREE.Geometry();
+                    geometry.vertices.push(v.clone().addVectors(a[0].position, direction));
+                    geometry.vertices.push(v.clone().subVectors(a[0].position, direction));
+                    geometry.vertices.push(v.clone().subVectors(a[1].position, direction));
+                    geometry.vertices.push(v.clone().addVectors(a[1].position, direction));
+
+                    // This should be doable with two faces
+                    geometry.faces.push(new THREE.Face3(2, 3, 1));
+                    geometry.faces.push(new THREE.Face3(2, 3, 0));
+                    geometry.faces.push(new THREE.Face3(0, 1, 2));
+                    mesh = new THREE.Mesh(geometry, self.data.bond.material);
+
                     mesh.atomMaterial = self.data[a[k].element].material;
-                    mesh.position.addVectors(cent, a[k].position).divideScalar(2);
-                    mesh.lookAt(a[1].position);
-                    mesh.scale.x = mesh.scale.y = 0.3 * self.data.bond.radius * 2;
-                    mesh.scale.z = a[1].position.distanceTo(a[0].position) / 2.0;
-                    mesh.translateY(0.3 * dy);
+                    mesh.translateOnAxis(direction, 4.0 * dy);
+                    mesh.translateZ(-0.1);
 
                     if (self.drawingType === "wireframe") {
                         mesh.material = mesh.atomMaterial;
@@ -254,11 +278,16 @@ var imolecule = {
 
     // Runs the main window animation in an infinite loop
     animate: function () {
-        var self = this;
+        var self = this, i;
         window.requestAnimationFrame(function () {
             return self.animate();
         });
         this.controls.update();
+
+        for (i = 0; i < this.atoms.length; i += 1) {
+            this.atoms[i].lookAt(this.camera.position);
+        }
+
         this.renderer.render(this.scene, this.camera);
     },
 

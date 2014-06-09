@@ -120,3 +120,8 @@ select {
         bottom: 0;
         right: 0;
     }
+
+path {
+    stroke: #000;
+    stroke-width: 2;
+}
