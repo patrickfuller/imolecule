@@ -1,18 +1,13 @@
-from IPython.display import Javascript, display
+from IPython.display import HTML, display
 import os
+import uuid
 import json_formatter as json
 import format_converter
 
-# Load required assets on import (IPython comes with jQuery)
-PATH = os.path.normpath(os.path.dirname(__file__))
-LIB = ["lib/three.min.js", "lib/TrackballControls.js",
-       "lib/ShaderToon.js", "imolecule.js"]
-
-# This is the only way I found to use local copies of js libraries in IPython
-lib_script = ""
-for filename in LIB:
-    with open(os.path.join(PATH, filename)) as in_js:
-        lib_script += in_js.read()
+LOCAL_PATH = "/nbextensions/imolecule.min"
+REMOTE_PATH = ("https://raw.githubusercontent.com/patrickfuller/"
+               "imolecule/master/build/imolecule.min")
+FILE_PATH = os.path.normpath(os.path.dirname(__file__))
 
 
 def draw(data, format="auto", size=(400, 225), drawing_type="ball and stick",
@@ -41,17 +36,32 @@ def draw(data, format="auto", size=(400, 225), drawing_type="ball and stick",
         raise Exception("Invalid camera type! Please use 'perspective' or"
                         "'orthographic'.")
 
-    # Magic.
-    script = ("var $d = $('<div/>').attr('id', 'molecule_' + utils.uuid());"
-              "$d.width(%d); $d.height(%d);"
-              "imolecule.create($d, {drawingType: '%s', cameraType: '%s'});"
-              "imolecule.draw(%s);"
-              "container.show();"
-              "element.append($d);" % (size[0], size[1], drawing_type,
-              camera_type, generate(data, format)))
+    # Try using IPython >=2.0 to install js locally
+    try:
+        from IPython.html.nbextensions import install_nbextension
+        install_nbextension([os.path.join(FILE_PATH,
+                             "build/imolecule.min.js")], verbose=0)
+    except:
+        pass
+
+    # Try using local copy. If that fails, use remote copy.
+    div_id = uuid.uuid4()
+    html = """<div id="molecule_%s"></div>
+           <script type="text/javascript">
+           requirejs.config({paths: {imolecule: ['%s', '%s']}});
+           require(['imolecule'], function () {
+               var $d = $('#molecule_%s');
+               $d.width(%d); $d.height(%d);
+               $d.imolecule = jQuery.extend({}, imolecule);
+               $d.imolecule.create($d, {drawingType: '%s', cameraType: '%s'});
+               $d.imolecule.draw(%s);
+           });
+           </script>""" % (div_id, LOCAL_PATH, REMOTE_PATH, div_id, size[0],
+                           size[1], drawing_type, camera_type,
+                           generate(data, format))
 
     # Execute js and display the results in a div (see script for more)
-    display(Javascript(data=lib_script + script))
+    display(HTML(html))
 
 
 def generate(data, format="auto"):
@@ -76,6 +86,7 @@ def generate(data, format="auto"):
         if format == "auto":
             format = "smi"
     return format_converter.convert(data, format, "json")
+
 
 def to_json(data, compress=False):
     """Converts the output of `generate(...)` to formatted json.
