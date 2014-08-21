@@ -33,17 +33,15 @@ def convert(data, in_format, out_format, name=None, pretty=False):
     # Decide on a json formatter depending on desired prettiness
     dumps = json.dumps if pretty else json.compress
 
-    # If it's a json string, load it
-    if in_format == "json" and is_string(data):
-        data = json.loads(data)
-
-    # A little "hack" to format inputted json
-    if in_format == "json" and out_format == "json":
-        return json.dumps(data)
+    # Bring up with open babel dev: mmcif seems to be a better parser than cif
+    if in_format == "cif":
+        in_format = "mmcif"
 
     # These use the open babel library to interconvert, with additions for json
     if in_format == "json":
-        mol = json_to_pybel(data)
+        mol = json_to_pybel(json.loads(data) if is_string(data) else data)
+    elif in_format == "pybel":
+        mol = data
     else:
         mol = pybel.readstring(in_format, data)
 
@@ -51,13 +49,17 @@ def convert(data, in_format, out_format, name=None, pretty=False):
     if not mol.OBMol.HasNonZeroCoords():
         mol.make3D()
 
-    # Make P1 if that's a thing
+    # Make P1 if that's a thing, recalculating bonds in process
     if hasattr(mol, "unitcell"):
         mol.unitcell.FillUnitCell(mol.OBMol)
+        mol.OBMol.ConnectTheDots()
+        mol.OBMol.PerceiveBondOrders()
 
     mol.OBMol.Center()
 
-    if out_format == "object":
+    if out_format == "pybel":
+        return mol
+    elif out_format == "object":
         return pybel_to_json(mol, name)
     elif out_format == "json":
         return dumps(pybel_to_json(mol, name))
@@ -85,6 +87,9 @@ def json_to_pybel(data, infer_bonds=False):
         obatom = obmol.NewAtom()
         obatom.SetAtomicNum(table.GetAtomicNum(str(atom["element"])))
         obatom.SetVector(*atom["location"])
+        if "charge" in atom:
+            obatom.SetPartialCharge(atom["charge"])
+
     # If there is no bond data, try to infer them
     if "bonds" not in data or not data["bonds"]:
         if infer_bonds:
@@ -119,18 +124,23 @@ def pybel_to_json(molecule, name=None):
         molecule: An instance of `pybel.Molecule`
         name: (Optional) If specified, will save a "name" property
     Returns:
-        A Python dictionary containing atom and bond data
+       A Python dictionary containing atom and bond data
     """
     # Save atom element type and 3D location.
     atoms = [{"element": table.GetSymbol(atom.atomicnum),
-              "location": atom.coords}
+              "location": list(atom.coords)}
              for atom in molecule.atoms]
+    # Recover partial charge data, if exists
+    for atom, pybel_atom in zip(atoms, molecule.atoms):
+        if pybel_atom.partialcharge != 0:
+            atom["charge"] = pybel_atom.partialcharge
+
     # Save number of bonds and indices of endpoint atoms
     bonds = [{"atoms": [b.GetBeginAtom().GetIndex(),
                         b.GetEndAtom().GetIndex()],
               "order": b.GetBondOrder()}
              for b in ob.OBMolBondIter(molecule.OBMol)]
-    output = {"atoms": atoms, "bonds": bonds}
+    output = {"atoms": atoms, "bonds": bonds, "units": {}}
 
     # If there's unit cell data, save it to the json output
     if hasattr(molecule, "unitcell"):
@@ -139,7 +149,8 @@ def pybel_to_json(molecule, name=None):
                               for v in uc.GetCellVectors()]
         density = (sum(atom.atomicmass for atom in molecule.atoms) /
                    (uc.GetCellVolume() * 0.6022))
-        output["density"] = "%.2f kg / L" % density
+        output["density"] = density
+        output["units"]["density"] = "kg / L"
 
     # Save the formula to json. Use Hill notation, just to have a standard.
     element_count = Counter(table.GetSymbol(a.atomicnum) for a in molecule)
@@ -156,7 +167,8 @@ def pybel_to_json(molecule, name=None):
 
     output["formula"] = "".join(n if c / div == 1 else "%s%d" % (n, c / div)
                                 for n, c in hill_count)
-    output["molecular_weight"] = "%.1f g / mol" % (molecule.molwt / div)
+    output["molecular_weight"] = molecule.molwt / div
+    output["units"]["molecular_weight"] = "g / mol"
 
     # If the input has been given a name, add that
     if name:
