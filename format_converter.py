@@ -8,7 +8,7 @@ from functools import reduce
 import pybel
 ob = pybel.ob
 
-import mofgen.json_formatter as json
+import imolecule.json_formatter as json
 
 table = ob.OBElementTable()
 

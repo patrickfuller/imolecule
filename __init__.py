@@ -1,13 +1,14 @@
 from IPython.display import HTML, display
 import os
 import uuid
-import json_formatter as json
-import format_converter
+import imolecule.json_formatter as json
+from imolecule import format_converter
 
-LOCAL_PATH = "/nbextensions/imolecule.min"
-REMOTE_PATH = ("https://raw.githubusercontent.com/patrickfuller/"
-               "imolecule/master/build/imolecule.min")
-FILE_PATH = os.path.normpath(os.path.dirname(__file__))
+filename = "imolecule.min.js"
+file_path = os.path.normpath(os.path.dirname(__file__))
+local_path = os.path.join("nbextensions", filename)
+remote_path = ("https://rawgit.com/patrickfuller/imolecule/master/"
+               "build/imolecule.min.js")
 
 
 def draw(data, format="auto", size=(400, 225), drawing_type="ball and stick",
@@ -39,26 +40,28 @@ def draw(data, format="auto", size=(400, 225), drawing_type="ball and stick",
     # Try using IPython >=2.0 to install js locally
     try:
         from IPython.html.nbextensions import install_nbextension
-        install_nbextension([os.path.join(FILE_PATH,
-                             "build/imolecule.min.js")], verbose=0)
+        install_nbextension([os.path.join(file_path,
+                             "build", filename)], verbose=0)
     except:
         pass
 
-    # Try using local copy. If that fails, use remote copy.
+    json_mol = generate(data, format)
     div_id = uuid.uuid4()
     html = """<div id="molecule_%s"></div>
            <script type="text/javascript">
-           requirejs.config({paths: {imolecule: ['%s', '%s']}});
+           requirejs.config({baseUrl: "/",
+                             paths: {imolecule: ['%s', '%s']}});
            require(['imolecule'], function () {
                var $d = $('#molecule_%s');
                $d.width(%d); $d.height(%d);
                $d.imolecule = jQuery.extend({}, imolecule);
-               $d.imolecule.create($d, {drawingType: '%s', cameraType: '%s'});
+               $d.imolecule.create($d, {drawingType: '%s',
+                                        cameraType: '%s'});
                $d.imolecule.draw(%s);
            });
-           </script>""" % (div_id, LOCAL_PATH, REMOTE_PATH, div_id, size[0],
-                           size[1], drawing_type, camera_type,
-                           generate(data, format))
+           </script>""" % (div_id, local_path[:-3], remote_path[:-3],
+                           div_id, size[0], size[1], drawing_type,
+                           camera_type, json_mol)
 
     # Execute js and display the results in a div (see script for more)
     display(HTML(html))

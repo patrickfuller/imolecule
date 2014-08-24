@@ -17,10 +17,8 @@ var imolecule = {
         this.perspective = new THREE.PerspectiveCamera(50, $s.width() / $s.height());
         this.orthographic = new THREE.OrthographicCamera(-$s.width() / 32,
                 $s.width() / 32, $s.height() / 32, -$s.height() / 32, -100, 1000);
-        this.perspective.position.z = options.hasOwnProperty("z") ? options.z : 15;
-        this.orthographic.position = this.perspective.position;
-        this.orthographic.rotation = this.perspective.rotation;
         this.setCameraType(options.hasOwnProperty("cameraType") ? options.cameraType : "perspective");
+        this.camera.translateZ(options.hasOwnProperty("z") ? options.z : 15);
 
         this.sphereGeometry = new THREE.SphereGeometry(1, 16, 12);
         this.cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 6, 3, false);
@@ -30,8 +28,8 @@ var imolecule = {
             .makeRotationFromEuler(new THREE.Euler(Math.PI / 2, Math.PI, 0)));
 
         this.light = new THREE.HemisphereLight(0xffffff, 1.0);
-        this.light.position = this.camera.position;
-        this.light.rotation = this.camera.rotation;
+        this.light.position.set(this.camera.position);
+        this.light.rotation.set(this.camera.rotation);
 
         this.atoms = [];
         this.bonds = [];
