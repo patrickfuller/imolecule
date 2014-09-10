@@ -11,7 +11,7 @@ remote_path = ("https://rawgit.com/patrickfuller/imolecule/master/"
                "build/imolecule.min.js")
 
 
-def draw(data, format="auto", size=(400, 225), drawing_type="ball and stick",
+def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
          camera_type="perspective"):
     """Draws an interactive 3D visualization of the inputted chemical.
 
@@ -49,7 +49,7 @@ def draw(data, format="auto", size=(400, 225), drawing_type="ball and stick",
     div_id = uuid.uuid4()
     html = """<div id="molecule_%s"></div>
            <script type="text/javascript">
-           requirejs.config({baseUrl: "/",
+           require.config({baseUrl: "/",
                              paths: {imolecule: ['%s', '%s']}});
            require(['imolecule'], function () {
                var $d = $('#molecule_%s');
@@ -58,10 +58,18 @@ def draw(data, format="auto", size=(400, 225), drawing_type="ball and stick",
                $d.imolecule.create($d, {drawingType: '%s',
                                         cameraType: '%s'});
                $d.imolecule.draw(%s);
+
+               $d.resizable({
+                   aspectRatio: %d / %d,
+                   resize: function (evt, ui) {
+                       $d.imolecule.renderer.setSize(ui.size.width,
+                                                     ui.size.height);
+                   }
+               });
            });
            </script>""" % (div_id, local_path[:-3], remote_path[:-3],
                            div_id, size[0], size[1], drawing_type,
-                           camera_type, json_mol)
+                           camera_type, json_mol, size[0], size[1])
 
     # Execute js and display the results in a div (see script for more)
     display(HTML(html))

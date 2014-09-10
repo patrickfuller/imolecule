@@ -18,7 +18,6 @@ var imolecule = {
         this.orthographic = new THREE.OrthographicCamera(-$s.width() / 32,
                 $s.width() / 32, $s.height() / 32, -$s.height() / 32, -100, 1000);
         this.setCameraType(options.hasOwnProperty("cameraType") ? options.cameraType : "perspective");
-        this.camera.translateZ(options.hasOwnProperty("z") ? options.z : 15);
 
         this.sphereGeometry = new THREE.SphereGeometry(1, 16, 12);
         this.cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 6, 3, false);
@@ -42,7 +41,7 @@ var imolecule = {
                 fragmentShader: self.shader.fragmentShader
             });
             material.uniforms.uDirLightPos.value.set(1, 1, 1)
-                             .multiplyScalar(self.camera.position.z);
+                             .multiplyScalar(15);
             value.color = new THREE.Color(value.color);
             material.uniforms.uDirLightColor.value = value.color;
             material.uniforms.uBaseColor.value = value.color;
@@ -72,7 +71,7 @@ var imolecule = {
     // Draws a molecule. Duh.
     draw: function (molecule) {
         var mesh, self, a, scale, j, k, dy, cent, data, v, vectors, points,
-            trans, geometry, material;
+            trans, geometry, material, maxHeight, maxZ, cameraZ;
         self = this;
         cent = new THREE.Vector3();
         this.current = molecule;
@@ -83,6 +82,8 @@ var imolecule = {
         if (!molecule.hasOwnProperty("bonds")) { molecule.bonds = []; }
 
         // Draws atoms and saves references
+        maxHeight = 0;
+        maxZ = 0;
         $.each(molecule.atoms, function (i, atom) {
             data = self.data[atom.element] || self.data.unknown;
             mesh = new THREE.Mesh(self.sphereGeometry, data.material);
@@ -93,7 +94,14 @@ var imolecule = {
             }
             mesh.element = atom.element;
             self.atoms.push(mesh);
+
+            maxHeight = Math.max(maxHeight, Math.abs(atom.location[0]), Math.abs(atom.location[1]));
+            maxZ = Math.max(maxZ, atom.location[2]);
         });
+
+        // Sets camera position to view whole molecule in bounds with some buffer
+        cameraZ = (maxHeight / Math.tan(Math.PI * self.camera.fov / 360) + maxZ) / 0.8;
+        self.camera.translateZ(cameraZ);
 
         // Bonds require some basic vector math
         $.each(molecule.bonds, function (i, bond) {
