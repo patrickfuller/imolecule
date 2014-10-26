@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>imolecule</title>
-        <link href="style.css" rel="stylesheet" type="text/css" />
+        <link href="../css/examples.css" rel="stylesheet" type="text/css" />
         <script src="../lib/jquery-1.11.1.min.js"></script>
         <script src="../build/imolecule.min.js"></script>
     </head>
@@ -37,15 +37,12 @@
 
         <script type="text/javascript">
             imolecule.create('#imolecule', {shader: "toon"});
-            $.getJSON('penicillin.json', function (molecule) {
+            $.getJSON('../data/penicillin.json', function (molecule) {
                 imolecule.draw(molecule);
             });
 
             $('#shader-types').change(function () {
-                imolecule.shader = $(this).find(':selected').text();
-                imolecule.makeMaterials();
-                imolecule.clear();
-                imolecule.draw(imolecule.current, false);
+                imolecule.setShader($(this).find(':selected').text());
             });
         </script>
     </body>
