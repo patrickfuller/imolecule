@@ -8,8 +8,8 @@
         <script src="../build/imolecule.min.js"></script>
     </head>
     <body>
-        <div class="mof"></div>
-        <div class="description">
+        <div id="imolecule"></div>
+        <div id="description">
             <h1>metal-organic frameworks</h1>
             <p>
                 Metal-organic frameworks, or MOFs, are precisely arranged
@@ -36,7 +36,7 @@
         <a href="https://github.com/patrickfuller/imolecule"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 
         <script type="text/javascript">
-            imolecule.create('.mof', {z: 50});
+            imolecule.create('#imolecule', {z: 50});
             $.getJSON('nu_125.json', function (mof) {
                 imolecule.draw(mof);
             });

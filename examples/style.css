@@ -38,13 +38,51 @@ a {
         color: #f76f76;
     }
 
-.mof {
+select,
+button {
+    border: 0px;
+    padding: 8px 10px;
+    margin: 15px 30px 15px 0px;
+    border-radius: 1px;
+    height: 35px;
+    width: 150px;
+
+    cursor: pointer;
+    color: #fff;
+    background: #7aa76d;
+    font-size: 15px;
+    text-align: left;
+
+    -webkit-transition: 0.15s background ease;
+       -moz-transition: 0.15s background ease;
+        -ms-transition: 0.15s background ease;
+         -o-transition: 0.15s background ease;
+            transition: 0.15s background ease;
+}
+    select:hover,
+    button:hover {
+        background: #91cd85;
+    }
+    select:active,
+    button:active {
+        background: #60895a;
+    }
+
+select {
+    -webkit-appearance: none;
+       -moz-appearance: none;
+        -ms-appearance: none;
+         -o-appearance: none;
+            appearance: none;
+}
+
+#imolecule {
     width: 100%;
     height: 100%;
     position: absolute;
 }
 
-.description {
+#description {
     width: 400px;
     position: absolute;
     z-index: 100;

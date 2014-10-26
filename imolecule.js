@@ -8,7 +8,7 @@ var imolecule = {
         var $s = $(selector), self = this;
         options = options || {};
 
-        this.shader = options.hasOwnProperty("shader") ? options.shader : THREE.ShaderToon.toon2;
+        this.shader = options.hasOwnProperty("shader") ? options.shader : "toon";
         this.drawingType = options.hasOwnProperty("drawingType") ? options.drawingType : "ball and stick";
         this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
         this.renderer.setSize($s.width(), $s.height());
@@ -27,32 +27,23 @@ var imolecule = {
             .makeRotationFromEuler(new THREE.Euler(Math.PI / 2, Math.PI, 0)));
 
         this.light = new THREE.HemisphereLight(0xffffff, 1.0);
-        this.light.position.set(this.camera.position);
-        this.light.rotation.set(this.camera.rotation);
+        this.light.position.copy(this.camera.position);
+        this.light.rotation.copy(this.camera.rotation);
+
+        this.directionalLight = new THREE.DirectionalLight(0xffffff);
+        this.directionalLight.position.set(1, 1, 1).normalize();
 
         this.atoms = [];
         this.bonds = [];
-
-        // Makes toon-shaded materials from scratch
-        $.each(this.data, function (key, value) {
-            var material = new THREE.ShaderMaterial({
-                uniforms: THREE.UniformsUtils.clone(self.shader.uniforms),
-                vertexShader: self.shader.vertexShader,
-                fragmentShader: self.shader.fragmentShader
-            });
-            material.uniforms.uDirLightPos.value.set(1, 1, 1)
-                             .multiplyScalar(15);
-            value.color = new THREE.Color(value.color);
-            material.uniforms.uDirLightColor.value = value.color;
-            material.uniforms.uBaseColor.value = value.color;
-            value.material = material;
-        });
 
         // Initializes a scene and appends objects to be drawn
         this.scene = new THREE.Scene();
         this.scene.add(this.perspective);
         this.scene.add(this.orthographic);
         this.scene.add(this.light);
+        this.scene.add(this.directionalLight);
+
+        this.makeMaterials();
 
         $(window).resize(function () {
             self.renderer.setSize($s.width(), $s.height());
@@ -68,8 +59,42 @@ var imolecule = {
         this.animate();
     },
 
+    makeMaterials: function () {
+        var self = this, threeMaterial;
+
+        // If a different shader is specified, use uncustomized materials
+        if ($.inArray(self.shader, ["basic", "phong", "lambert"]) !== -1) {
+            threeMaterial = "Mesh" + self.shader.charAt(0).toUpperCase() +
+                            self.shader.slice(1) + "Material";
+            $.each(self.data, function (key, value) {
+                value.material = new THREE[threeMaterial]({color: value.color});
+            });
+
+        // If toon, use materials with some shader edits
+        } else if (this.shader === "toon") {
+            $.each(this.data, function (key, value) {
+                var shader, material;
+                shader = THREE.ShaderToon.toon2;
+                material = new THREE.ShaderMaterial({
+                    uniforms: THREE.UniformsUtils.clone(shader.uniforms),
+                    vertexShader: shader.vertexShader,
+                    fragmentShader: shader.fragmentShader
+                });
+                material.uniforms.uDirLightPos.value.set(1, 1, 1)
+                                 .multiplyScalar(15);
+                value.color = new THREE.Color(value.color);
+                material.uniforms.uDirLightColor.value = value.color;
+                material.uniforms.uBaseColor.value = value.color;
+                value.material = material;
+            });
+        } else {
+            throw new Error(this.shader + " shader does not exist. Use " +
+                            "'toon', 'basic', 'phong', or 'lambert'.");
+        }
+    },
+
     // Draws a molecule. Duh.
-    draw: function (molecule) {
+    draw: function (molecule, resetCamera) {
         var mesh, self, a, scale, j, k, dy, cent, data, v, vectors, points,
             trans, geometry, material, maxHeight, maxZ, cameraZ;
         self = this;
@@ -100,8 +125,10 @@ var imolecule = {
         });
 
         // Sets camera position to view whole molecule in bounds with some buffer
-        cameraZ = (maxHeight / Math.tan(Math.PI * self.camera.fov / 360) + maxZ) / 0.8;
-        self.camera.translateZ(cameraZ);
+        if (typeof resetCamera === "undefined" || resetCamera) {
+            cameraZ = (maxHeight / Math.tan(Math.PI * self.camera.fov / 360) + maxZ) / 0.8;
+            self.camera.translateZ(cameraZ);
+        }
 
         // Bonds require some basic vector math
         $.each(molecule.bonds, function (i, bond) {

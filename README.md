@@ -9,6 +9,7 @@ Examples
 
  * [file format converter](http://50.240.131.209:9000/)
  * [metal-organic frameworks](http://patrickfuller.github.io/imolecule/examples/mof.html)
+ * [shading options](http://patrickfuller.github.io/imolecule/examples/shading.html)
 
 Usage
 =====
@@ -27,8 +28,7 @@ specifying a few common drawing and camera types.
 options = {
     drawingType: "ball and stick", // Can be "ball and stick", "wireframe", or "space filling"
     cameraType: "perspective", // Can be "perspective" or "orthogonal"
-    shader: THREE.ShaderToon.toon2, // three.js shader algorithm to use
-    z: 15 // Initial camera distance to origin
+    shader: "toon" // three.js shader to use, can be "toon", "basic", "phong", or "lambert"
 };
 ```
 
