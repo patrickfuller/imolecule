@@ -31,7 +31,7 @@ var imolecule = {
         this.light.rotation.copy(this.camera.rotation);
 
         this.directionalLight = new THREE.DirectionalLight(0xffffff);
-        this.directionalLight.position.set(1, 1, 1).normalize();
+        this.directionalLight.position.set(0, 50, 50);
 
         this.atoms = [];
         this.bonds = [];
@@ -41,7 +41,7 @@ var imolecule = {
         this.scene.add(this.perspective);
         this.scene.add(this.orthographic);
         this.scene.add(this.light);
-        this.scene.add(this.directionalLight);
+        this.camera.add(this.directionalLight);
 
         this.makeMaterials();
 
