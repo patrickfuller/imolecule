@@ -35,6 +35,7 @@
 <ul>
 <li><a href="http://50.240.131.209:9000/">file format converter</a></li>
 <li><a href="http://patrickfuller.github.io/imolecule/examples/mof.html">metal-organic frameworks</a></li>
+<li><a href="http://patrickfuller.github.io/imolecule/examples/shading.html">shading options</a></li>
 </ul><h1>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
 
@@ -50,8 +51,8 @@ specifying common drawing and camera types.</p>
 <div class="highlight highlight-javascript"><pre><span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">drawingType</span><span class="o">:</span> <span class="s2">"ball and stick"</span><span class="p">,</span> <span class="c1">// Can be "ball and stick", "wireframe", or "space filling"</span>
     <span class="nx">cameraType</span><span class="o">:</span> <span class="s2">"perspective"</span><span class="p">,</span> <span class="c1">// Can be "perspective" or "orthographic"</span>
-    <span class="nx">shader</span><span class="o">:</span> <span class="nx">THREE</span><span class="p">.</span><span class="nx">ShaderToon</span><span class="p">.</span><span class="nx">toon2</span><span class="p">,</span> <span class="c1">// three.js shader algorithm to use</span>
-    <span class="nx">z</span><span class="o">:</span> <span class="mf">15</span> <span class="c1">// Initial camera distance to origin</span>
+    <span class="nx">shader</span><span class="o">:</span> <span
+    class="s2">"toon"</span> <span class="c1">// three.js shader to use, can be "toon", "basic", "phong", or "lambert"</span>
 <span class="p">};</span>
 </pre></div>
 
