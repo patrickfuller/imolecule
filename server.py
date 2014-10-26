@@ -12,6 +12,11 @@ import webbrowser
 import tornado.web
 import tornado.websocket
 
+# Load supported open babel formats for save as options
+PATH = os.path.dirname(os.path.realpath(__file__))
+with open(os.path.join(PATH, "data/openbabel_formats.json")) as in_file:
+    OB_FORMATS = json.load(in_file)
+
 
 def _worker_process(msg):
     """Wrapper function for worker process to execute."""
@@ -22,7 +27,8 @@ def _worker_process(msg):
 class IndexHandler(tornado.web.RequestHandler):
 
     def get(self):
-        self.render("index.html", port=args.port)
+        self.render("examples/server.template", port=args.port,
+                    formats=OB_FORMATS)
 
 
 class WebSocket(tornado.websocket.WebSocketHandler):

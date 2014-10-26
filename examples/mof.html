@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>imolecule</title>
-        <link href="style.css" rel="stylesheet" type="text/css" />
+        <link href="../css/examples.css" rel="stylesheet" type="text/css" />
         <script src="../lib/jquery-1.11.1.min.js"></script>
         <script src="../build/imolecule.min.js"></script>
     </head>
@@ -37,7 +37,7 @@
 
         <script type="text/javascript">
             imolecule.create('#imolecule', {z: 50});
-            $.getJSON('nu_125.json', function (mof) {
+            $.getJSON('../data/nu_125.json', function (mof) {
                 imolecule.draw(mof);
             });
 

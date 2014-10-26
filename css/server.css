@@ -22,7 +22,8 @@ body {
 
     font-family: 'Lato', Helvetica, sans-serif;
     font-size: 16px;
-    color: #222;
+    font-weight: 300;
+    color: #383533;
 
     -webkit-overflow-scrolling: touch;
 
@@ -105,17 +106,28 @@ select {
     width: 133px;
 }
 
-.formats {
-    width: 300px;
+#avgrund-buttons > button, #header-container > button, #header-container > select,
+.header > button, .header > select {
+    width: 150px;
 }
 
-.imolecule {
+#right-avgrund {
+    position: absolute;
+    right: 0;
+    margin-right: 20px;
+}
+
+#formats {
+    width: 100%;
+}
+
+#imolecule {
     width: 100%;
     height: 100%;
     position: relative;
     overflow: hidden;
 }
-    .imolecule>article {
+    #imolecule>article {
         position: absolute;
         bottom: 0;
         right: 0;

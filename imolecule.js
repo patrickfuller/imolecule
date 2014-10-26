@@ -127,7 +127,7 @@ var imolecule = {
         // Sets camera position to view whole molecule in bounds with some buffer
         if (typeof resetCamera === "undefined" || resetCamera) {
             cameraZ = (maxHeight / Math.tan(Math.PI * self.camera.fov / 360) + maxZ) / 0.8;
-            self.camera.translateZ(cameraZ);
+            self.camera.position.z = cameraZ;
         }
 
         // Bonds require some basic vector math
@@ -283,6 +283,14 @@ var imolecule = {
             this.camera.position.copy(this.orthographic.position);
         }
         this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
+    },
+
+    // Sets shader (toon, basic, phong, lambert) and redraws
+    setShader: function (shader) {
+        this.shader = shader;
+        this.makeMaterials();
+        this.clear();
+        this.draw(this.current, false);
     },
 
     // Runs the main window animation in an infinite loop

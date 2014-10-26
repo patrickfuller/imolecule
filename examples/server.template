@@ -13,6 +13,7 @@
       {% end %}
 
         <script src="static/build/imolecule.min.js" type="text/javascript"></script>
+        <script src="static/lib/main.js" type="text/javascript"></script>
     </head>
     <body>
         <div id="imolecule">
@@ -68,7 +69,6 @@
             </div>
         </aside>
 
-        <script src="static/lib/main.js" type="text/javascript"></script>
         <script type="text/javascript">
             // Connect a websocket to the server. The port notation is post-
             // processed server-side

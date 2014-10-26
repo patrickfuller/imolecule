@@ -1,0 +1,118 @@
+{
+    "2D drawing formats": {
+        "cdxml": "ChemDraw CDXML format",
+        "cht": "Chemtool format",
+        "ct": "ChemDraw Connection Table format"
+    },
+    "3D viewer formats": {
+        "bs": "Ball and Stick format",
+        "c3d1": "Chem3D Cartesian 1 format",
+        "c3d2": "Chem3D Cartesian 2 format",
+        "crk3d": "Chemical Resource Kit 3D format",
+        "gpr": "Ghemical format",
+        "molden": "Molden format",
+        "pcm": "PCModel Format",
+        "unixyz": "UniChem XYZ format",
+        "vmol": "ViewMol format",
+        "yob": "YASARA.org YOB format"
+    },
+    "Biological data formats": {
+        "fasta": "FASTA format",
+        "pqr": "PQR format"
+    },
+    "Common cheminformatics formats": {
+        "can": "Canonical SMILES format",
+        "cif": "Crystallographic Information File",
+        "cml": "Chemical Markup Language",
+        "inchi": "InChI format",
+        "inchikey": "InChIKey",
+        "ml2": "Sybyl Mol2 format",
+        "mol": "MDL MOL format",
+        "pdb": "Protein Data Bank format",
+        "smi": "SMILES format"
+    },
+    "Computational chemistry formats": {
+        "CONTCAR": "VASP format",
+        "adf": "ADF cartesian input format",
+        "caccrt": "Cacao Cartesian format",
+        "cache": "CAChe MolStruct format",
+        "cacint": "Cacao Internal format",
+        "fh": "Fenske-Hall Z-Matrix format",
+        "fhiaims": "FHIaims XYZ format",
+        "gjf": "Gaussian 98/03 Input",
+        "gukin": "GAMESS-UK Input",
+        "gukout": "GAMESS-UK Output",
+        "gzmat": "Gaussian Z-Matrix Input",
+        "hin": "HyperChem HIN format",
+        "inp": "GAMESS Input",
+        "jin": "Jaguar input format",
+        "mopcrt": "MOPAC Cartesian format",
+        "mopin": "MOPAC Internal",
+        "mp": "Molpro input format",
+        "mpqcin": "MPQC simplified input format",
+        "nw": "NWChem input format",
+        "outmol": "DMol3 coordinates format",
+        "pqs": "Parallel Quantum Solutions format",
+        "qcin": "Q-Chem input format",
+        "tmol": "TurboMole Coordinate format",
+        "zin": "ZINDO input format"
+    },
+    "Crystallography formats": {
+        "cif": "Crystallographic Information File",
+        "cssr": "CSD CSSR format",
+        "fract": "Free Form Fractional format",
+        "mmcif": "Macromolecular Crystallographic Info"
+    },
+    "Image formats": {
+        "pov": "POV-Ray input format",
+        "svg": "SVG 2D depiction"
+    },
+    "Kinetics and Thermodynamics formats": {
+        "ck": "ChemKin format",
+        "tdd": "Thermo format"
+    },
+    "Miscellaneous formats": {
+        "msms": "M.F. Sanner\u2019s MSMS input format"
+    },
+    "Molecular dynamics and docking formats": {
+        "CONFIG": "DL-POLY CONFIG",
+        "box": "Dock 3.5 Box format",
+        "gr96": "GROMOS96 format",
+        "gro": "GRO format",
+        "mmod": "MacroModel format",
+        "pdbqt": "AutoDock PDQBT format",
+        "txyz": "Tinker XYZ format"
+    },
+    "Obscure formats": {
+        "alc": "Alchemy format",
+        "feat": "Feature format",
+        "fix": "SMILES FIX format",
+        "xed": "XED format"
+    },
+    "Other cheminformatics formats": {
+        "bgf": "MSI BGF format",
+        "mcdl": "MCDL format"
+    },
+    "Reaction formats": {
+        "cmlr": "CML Reaction format",
+        "rsmi": "Reaction SMILES format",
+        "rxn": "MDL RXN format"
+    },
+    "Utility formats": {
+        "fpt": "Fingerprint format",
+        "fs": "Fastsearch format",
+        "k": "Compare molecules using InChI",
+        "mna": "Multilevel Neighborhoods of Atoms",
+        "molreport": "Open Babel molecule report",
+        "mpd": "MolPrint2D format",
+        "report": "Open Babel report format",
+        "xyz": "XYZ cartesian coordinates format"
+    },
+    "Volume data formats": {
+        "cube": "Gaussian cube format",
+        "dx": "OpenDX cube format for APBS"
+    },
+    "imolecule format": {
+        "json": "Javascript Object Notation"
+    }
+}
