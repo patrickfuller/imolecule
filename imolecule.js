@@ -26,12 +26,9 @@ var imolecule = {
         this.cylinderGeometry.applyMatrix(new THREE.Matrix4()
             .makeRotationFromEuler(new THREE.Euler(Math.PI / 2, Math.PI, 0)));
 
-        this.light = new THREE.HemisphereLight(0xffffff, 1.0);
-        this.light.position.copy(this.camera.position);
-        this.light.rotation.copy(this.camera.rotation);
-
-        this.directionalLight = new THREE.DirectionalLight(0xffffff);
-        this.directionalLight.position.set(0, 50, 50);
+        this.light = new THREE.HemisphereLight(0xffffff, 0.5);
+        this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        this.directionalLight.position.set(1, 1, 1);
 
         this.atoms = [];
         this.bonds = [];
@@ -40,7 +37,7 @@ var imolecule = {
         this.scene = new THREE.Scene();
         this.scene.add(this.perspective);
         this.scene.add(this.orthographic);
-        this.scene.add(this.light);
+        this.camera.add(this.light);
         this.camera.add(this.directionalLight);
 
         this.makeMaterials();
