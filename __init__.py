@@ -12,16 +12,18 @@ remote_path = ("https://rawgit.com/patrickfuller/imolecule/master/"
 
 
 def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
-         camera_type="perspective"):
+         camera_type="perspective", shader="toon"):
     """Draws an interactive 3D visualization of the inputted chemical.
 
     Args:
-        data: A string or file representing a chemical
-        format: The format of the `data` variable (default is "auto")
-        size: Dimensions of visualization, in pixels (default is (400, 225))
+        data: A string or file representing a chemical.
+        format: The format of the `data` variable (default is "auto").
+        size: Starting dimensions of visualization, in pixels.
         drawing_type: Specifies the molecular representation. Can be "ball and
-            stick", "wireframe", or "space filling"
-        camera_type: Can be "perspective" or "orthographic"
+            stick", "wireframe", or "space filling".
+        camera_type: Can be "perspective" or "orthographic".
+        shader: Specifies shading algorithm to use. Can be "toon", "basic",
+            "phong", or "lambert".
 
     The `format` can be any value specified by Open Babel
     (http://openbabel.org/docs/2.3.1/FileFormats/Overview.html). The "auto"
@@ -30,12 +32,17 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
     """
     # Catch errors on string-based input before getting js involved
     draw_options = ["ball and stick", "wireframe", "space filling"]
+    camera_options = ["perspective", "orthographic"]
+    shader_options = ["toon", "basic", "phong", "lambert"]
     if drawing_type not in draw_options:
         raise Exception("Invalid drawing type! Please use one of: "
                         + ", ".join(draw_options))
-    if camera_type not in ["perspective", "orthographic"]:
-        raise Exception("Invalid camera type! Please use 'perspective' or"
-                        "'orthographic'.")
+    if camera_type not in camera_options:
+        raise Exception("Invalid camera type! Please use one of: "
+                        + ", ".join(camera_options))
+    if shader not in shader_options:
+        raise Exception("Invalid shader! Please use one of: "
+                        + ", ".join(shader_options))
 
     # Try using IPython >=2.0 to install js locally
     try:
@@ -56,7 +63,8 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
                $d.width(%d); $d.height(%d);
                $d.imolecule = jQuery.extend({}, imolecule);
                $d.imolecule.create($d, {drawingType: '%s',
-                                        cameraType: '%s'});
+                                        cameraType: '%s',
+                                        shader: '%s'});
                $d.imolecule.draw(%s);
 
                $d.resizable({
@@ -69,7 +77,7 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
            });
            </script>""" % (div_id, local_path[:-3], remote_path[:-3],
                            div_id, size[0], size[1], drawing_type,
-                           camera_type, json_mol, size[0], size[1])
+                           camera_type, shader, json_mol, size[0], size[1])
 
     # Execute js and display the results in a div (see script for more)
     display(HTML(html))

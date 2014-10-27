@@ -50,7 +50,7 @@ def convert(data, in_format, out_format, name=None, pretty=False):
         mol.make3D()
 
     # Make P1 if that's a thing, recalculating bonds in process
-    if hasattr(mol, "unitcell"):
+    if in_format == "mmcif" and hasattr(mol, "unitcell"):
         mol.unitcell.FillUnitCell(mol.OBMol)
         mol.OBMol.ConnectTheDots()
         mol.OBMol.PerceiveBondOrders()
@@ -87,8 +87,11 @@ def json_to_pybel(data, infer_bonds=False):
         obatom = obmol.NewAtom()
         obatom.SetAtomicNum(table.GetAtomicNum(str(atom["element"])))
         obatom.SetVector(*atom["location"])
-        if "charge" in atom:
-            obatom.SetPartialCharge(atom["charge"])
+        if "label" in atom:
+            pd = ob.OBPairData()
+            pd.SetAttribute("_atom_site_label")
+            pd.SetValue(atom["label"])
+            obatom.CloneData(pd)
 
     # If there is no bond data, try to infer them
     if "bonds" not in data or not data["bonds"]:
@@ -114,7 +117,16 @@ def json_to_pybel(data, infer_bonds=False):
         uc.SetSpaceGroup("P1")
         obmol.CloneData(uc)
     obmol.EndModify()
-    return pybel.Molecule(obmol)
+
+    mol = pybel.Molecule(obmol)
+
+    # Add partial charges
+    if "charge" in data["atoms"][0]:
+        mol.OBMol.SetPartialChargesPerceived()
+        for atom, pyatom in zip(data["atoms"], mol.atoms):
+            pyatom.OBAtom.SetPartialCharge(atom["charge"])
+
+    return mol
 
 
 def pybel_to_json(molecule, name=None):
@@ -130,10 +142,13 @@ def pybel_to_json(molecule, name=None):
     atoms = [{"element": table.GetSymbol(atom.atomicnum),
               "location": list(atom.coords)}
              for atom in molecule.atoms]
-    # Recover partial charge data, if exists
-    for atom, pybel_atom in zip(atoms, molecule.atoms):
+    # Recover auxiliary data, if exists
+    for json_atom, pybel_atom in zip(atoms, molecule.atoms):
         if pybel_atom.partialcharge != 0:
-            atom["charge"] = pybel_atom.partialcharge
+            json_atom["charge"] = pybel_atom.partialcharge
+        if pybel_atom.OBAtom.HasData("_atom_site_label"):
+            obatom = pybel_atom.OBAtom
+            json_atom["label"] = obatom.GetData("_atom_site_label").GetValue()
 
     # Save number of bonds and indices of endpoint atoms
     bonds = [{"atoms": [b.GetBeginAtom().GetIndex(),

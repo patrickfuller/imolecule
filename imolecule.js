@@ -10,6 +10,8 @@ var imolecule = {
 
         this.shader = options.hasOwnProperty("shader") ? options.shader : "toon";
         this.drawingType = options.hasOwnProperty("drawingType") ? options.drawingType : "ball and stick";
+        this.cameraType = options.hasOwnProperty("cameraType") ? options.cameraType : "perspective";
+        this.updateCamera = (this.cameraType === "orthographic");
         this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
         this.renderer.setSize($s.width(), $s.height());
         $s.append(this.renderer.domElement);
@@ -17,7 +19,8 @@ var imolecule = {
         this.perspective = new THREE.PerspectiveCamera(50, $s.width() / $s.height());
         this.orthographic = new THREE.OrthographicCamera(-$s.width() / 32,
                 $s.width() / 32, $s.height() / 32, -$s.height() / 32, -100, 1000);
-        this.setCameraType(options.hasOwnProperty("cameraType") ? options.cameraType : "perspective");
+        this.setCameraType("perspective");
+        this.orthographic.z = 10;
 
         this.sphereGeometry = new THREE.SphereGeometry(1, 16, 12);
         this.cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 6, 3, false);
@@ -37,8 +40,10 @@ var imolecule = {
         this.scene = new THREE.Scene();
         this.scene.add(this.perspective);
         this.scene.add(this.orthographic);
-        this.camera.add(this.light);
-        this.camera.add(this.directionalLight);
+        this.perspective.add(this.light);
+        this.perspective.add(this.directionalLight);
+        this.orthographic.add(this.light);
+        this.orthographic.add(this.directionalLight);
 
         this.makeMaterials();
 
@@ -124,7 +129,7 @@ var imolecule = {
         // Sets camera position to view whole molecule in bounds with some buffer
         if (typeof resetCamera === "undefined" || resetCamera) {
             cameraZ = (maxHeight / Math.tan(Math.PI * self.camera.fov / 360) + maxZ) / 0.8;
-            self.camera.position.z = cameraZ;
+            self.perspective.position.z = cameraZ;
         }
 
         // Bonds require some basic vector math
@@ -196,6 +201,14 @@ var imolecule = {
             material = new THREE.LineBasicMaterial({color: 0x000000, linewidth: 3});
             this.corners = new THREE.Line(geometry, material);
             this.scene.add(this.corners);
+        }
+
+        // If drawing in orthographic, controls need to be initialized *after*
+        // building the molecule. This should be triggered at most once, and only
+        // when imolecule.create($d, {cameraType: "orthographic"}) is used.
+        if (this.updateCamera) {
+            this.setCameraType(this.cameraType);
+            this.updateCamera = false;
         }
     },
 
