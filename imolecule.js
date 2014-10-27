@@ -19,7 +19,6 @@ var imolecule = {
         this.perspective = new THREE.PerspectiveCamera(50, $s.width() / $s.height());
         this.orthographic = new THREE.OrthographicCamera(-$s.width() / 32,
                 $s.width() / 32, $s.height() / 32, -$s.height() / 32, -100, 1000);
-        this.setCameraType("perspective");
         this.orthographic.z = 10;
 
         this.sphereGeometry = new THREE.SphereGeometry(1, 16, 12);
@@ -40,11 +39,8 @@ var imolecule = {
         this.scene = new THREE.Scene();
         this.scene.add(this.perspective);
         this.scene.add(this.orthographic);
-        this.perspective.add(this.light);
-        this.perspective.add(this.directionalLight);
-        this.orthographic.add(this.light);
-        this.orthographic.add(this.directionalLight);
 
+        this.setCameraType("perspective");
         this.makeMaterials();
 
         $(window).resize(function () {
@@ -293,6 +289,8 @@ var imolecule = {
             this.camera.position.copy(this.orthographic.position);
         }
         this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
+        this.camera.add(this.light);
+        this.camera.add(this.directionalLight);
     },
 
     // Sets shader (toon, basic, phong, lambert) and redraws
