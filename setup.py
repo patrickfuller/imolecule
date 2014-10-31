@@ -1,16 +1,4 @@
-import os
 from setuptools import setup
-from distutils.command.install import INSTALL_SCHEMES
-
-# Ensures that data files (e.g. javascript) get installed in imolecule folder
-for scheme in INSTALL_SCHEMES.values():
-    scheme["data"] = scheme["purelib"]
-
-# Gets a list of all required data files for the server
-server_files = []
-for p in ["data", "js", "css"]:
-    path = "server/" + p
-    server_files += [os.path.join(path, f) for f in os.listdir(path)]
 
 setup(
     name="imolecule",
