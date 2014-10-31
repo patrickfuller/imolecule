@@ -13,7 +13,11 @@ import json
 from json import encoder
 encoder.FLOAT_REPR = lambda o: format(o, '.6f')
 
-import numpy as np
+try:
+    import numpy as np
+    HAS_NUMPY = True
+except ImportError:
+    HAS_NUMPY = False
 
 load = json.load
 loads = json.loads
@@ -35,7 +39,7 @@ class CustomEncoder(json.JSONEncoder):
         """Fired when an unserializable object is hit."""
         if hasattr(obj, '__dict__'):
             return obj.__dict__.copy()
-        elif isinstance(obj, np.ndarray):
+        elif HAS_NUMPY and isinstance(obj, np.ndarray):
             return obj.copy().tolist()
         else:
             raise TypeError(("Object of type %s with value of %s is not JSON "

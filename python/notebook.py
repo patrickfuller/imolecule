@@ -8,7 +8,7 @@ filename = "imolecule.min.js"
 file_path = os.path.normpath(os.path.dirname(__file__))
 local_path = os.path.join("nbextensions", filename)
 remote_path = ("https://rawgit.com/patrickfuller/imolecule/master/"
-               "build/imolecule.min.js")
+               "js/build/imolecule.min.js")
 
 
 def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
@@ -48,7 +48,7 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
     try:
         from IPython.html.nbextensions import install_nbextension
         install_nbextension([os.path.join(file_path,
-                             "build", filename)], verbose=0)
+                             "js/build", filename)], verbose=0)
     except:
         pass
 

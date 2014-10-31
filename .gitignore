@@ -2,3 +2,6 @@
 *.pyc
 *.swp
 node_modules
+dist
+build
+*.egg-info

@@ -8,12 +8,12 @@
         <link href="static/css/{{lib}}.css" rel="stylesheet" type="text/css" />
       {% end %}
 
-      {% for lib in ["jquery-1.11.1.min", "FileSaver.min", "avgrund", "chosen.jquery.min"] %}
-        <script src="static/lib/{{lib}}.js" type="text/javascript"></script>
+      {% for lib in ["jquery.min", "FileSaver.min", "avgrund", "chosen.jquery.min"] %}
+        <script src="static/js/{{lib}}.js" type="text/javascript"></script>
       {% end %}
 
-        <script src="static/build/imolecule.min.js" type="text/javascript"></script>
-        <script src="static/lib/main.js" type="text/javascript"></script>
+        <script src="static/js/imolecule.min.js" type="text/javascript"></script>
+        <script src="static/js/main.js" type="text/javascript"></script>
     </head>
     <body>
         <div id="imolecule">

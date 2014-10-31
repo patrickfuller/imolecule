@@ -7,13 +7,76 @@ http://patrickfuller.github.io/imolecule/
 Examples
 ========
 
+ * [IPython notebook](http://patrickfuller.github.io/imolecule/examples/ipython.html)
  * [file format converter](http://50.240.131.209:9000/)
  * [metal-organic frameworks](http://patrickfuller.github.io/imolecule/examples/mof.html)
  * [shading options](http://patrickfuller.github.io/imolecule/examples/shading.html)
- * [IPython notebook](http://patrickfuller.github.io/imolecule/examples/ipython.html)
 
-Usage
-=====
+IPython
+=======
+
+The IPython notebook is an open-source tool poised to replace MATLAB in many
+applications. As a scientist of sorts, I'm all about it. Therefore, I made
+handles to use imolecule with the notebook. Install through pip:
+
+```
+pip install imolecule
+```
+
+Open a new notebook and test the setup by typing:
+
+```python
+import imolecule
+imolecule.draw("CC1(C(N2C(S1)C(C2=O)NC(=O)CC3=CC=CC=C3)C(=O)O)C")
+```
+
+into a notebook cell. This should convert, optimize and draw the specified
+SMILES structure (in this case, penicillin) into the notebook.
+
+Note that this requires Open Babel to function. If you do not have Open Babel,
+see below for installation details.
+
+The drawer can handle any format specified [here](http://openbabel.org/docs/2.3.1/FileFormats/Overview.html),
+and can be set up to better handle different use cases. Check out the docstrings
+associated with the IPython interface for more.
+
+Server
+======
+
+If you want to run the [file format converter](http://50.240.131.209:9000/) on
+your own computer, install the library with:
+
+```
+pip install imolecule
+```
+
+Then run from the command line with:
+
+```
+imolecule
+````
+
+The default site allows for loading molecules via a simple file drag-and-drop
+interface.  Drag a file to anywhere in the browser and drop to load. This
+interface communicates with openbabel via websocket, so most file formats should
+work. Be sure to set the extensions of your files to their data type (ie. "mol",
+"pdb", etc.) for format inference to work properly.
+
+If you have an existing web server, tornado can be easily switched out for
+other libraries. If you want to use imolecule as a starting point for a
+broader user interface, the server is written to be extensible. In both cases,
+read through the source code - it's surprisingly short.
+
+Javascript
+==========
+
+Start by downloading the minified javascript file:
+
+```
+wget https://raw.githubusercontent.com/patrickfuller/imolecule/master/js/build/imolecule.min.js
+```
+
+Include this file alongside [jQuery](http://jquery.com/) in your project, and then use with:
 
 ```javascript
 imolecule.create('my-selector');
@@ -60,25 +123,18 @@ As an example, consider benzene:
 }
 ```
 
-If you want to make properly formatted JSON, you can use either `format_converter.py` as a script
-or a running imolecule instance (like [this one](http://www.patrick-fuller.com/imolecule.html))
-to convert most chemical file formats to JSON.
+If you want to make properly formatted JSON, you can use either `format_converter.py` as a script or run your own imolecule server to convert most chemical file formats to JSON.
 
-Chemical File Format Conversion
-===============================
+Open Babel
+==========
 
-This program optionally uses [tornado](http://www.tornadoweb.org/en/stable/) to
-create and connect to a server that handles chemical file format conversion
-with [Open Babel](http://openbabel.org/wiki/Main_Page).
+[Open Babel](http://openbabel.org/wiki/Main_Page) is an open-source library
+for interconverting over 100 chemical file formats. imolecule uses Open Babel
+to convert input formats to JSON before drawing. Therefore, to use imolecule
+with non-JSON formats, you will need Open Babel.
 
-To run in its provided state, you will need Tornado.
-
-```
-pip install tornado
-```
-
-You will also need Open Babel, which is best installed from source. For more,
-read through the [Open Babel installation instructions](http://openbabel.org/docs/dev/Installation/install.html).
+Open Babel is best installed from source. For more, read through the
+[Open Babel installation instructions](http://openbabel.org/docs/dev/Installation/install.html).
 
 ```
 git clone https://github.com/openbabel/openbabel
@@ -87,43 +143,7 @@ cmake ../openbabel -DPYTHON_BINDINGS=ON
 make && make install
 ```
 
-Once this is set up, run the full program with
-
-```
-python server.py
-```
-
-The default site allows for loading molecules via a simple file drag-and-drop interface.
-Drag a file to anywhere in the browser and drop to load. This interface
-communicates with openbabel via websocket, so most file formats should work. Be
-sure to set the extensions of your files to their data type (ie. "mol", "pdb",
-etc.) for format inference to work properly.
-
-If you have an existing web server, tornado can be easily switched out for
-other libraries. If you want to use imolecule as a starting point for a
-broader user interface, the server is written to be extensible. In both cases,
-read through the source code - it's surprisingly short.
-
-IPython support
-===============
-
-The IPython notebook is an open-source tool poised to replace MATLAB in many
-applications. As a scientist of sorts, I'm all about it. Therefore, I made
-handles to use imolecule with the notebook.
-
-Open a new notebook and make sure that the imolecule
-directory is either in the directory you started the notebook or your
-PYTHONPATH. You can test the setup by typing:
-
-```python
-import imolecule
-imolecule.draw("CC1(C(N2C(S1)C(C2=O)NC(=O)CC3=CC=CC=C3)C(=O)O)C")
-```
-
-into a notebook cell. This should convert, optimize and draw the specified
-SMILES structure (in this case, penicillin) into the notebook. Note that this
-requires Open Babel to function.
-
-The drawer can handle any format specified [here](http://openbabel.org/docs/2.3.1/FileFormats/Overview.html),
-and can be set up to better handle different use cases. Check out the docstrings
-associated with the IPython interface for more.
+Older versions of open babel can be found through standard package managers,
+and do support most of the functionality of the development version. If you 
+are struggling with building from source, check your package manager for
+openbabel.

@@ -1,0 +1,3 @@
+include README.md LICENSE.txt
+include js/build/imolecule.min.js
+include server/data/* server/js/* server/css/* server/*.template
