@@ -1,0 +1,174 @@
+#------------------------------------------------------------------------------
+#$Date: 2013-05-05 14:21:46 +0000 (Sun, 05 May 2013) $
+#$Revision: 85285 $
+#$URL: file:///home/coder/svn-repositories/cod/cif/9/00/53/9005387.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/. The original data for this entry
+# were provided the American Mineralogist Crystal Structure Database,
+# http://rruff.geo.arizona.edu/AMS/amcsd.php
+#
+# The file may be used within the scientific community so long as
+# proper attribution is given to the journal article from which the
+# data were obtained.
+#
+data_9005387
+loop_
+_publ_author_name
+'Porcher, F.'
+'Souhassou, M.'
+'Dusausoy, Y.'
+'Lecomte, C.'
+_publ_section_title
+;
+ The crystal structure of a low-silica dehydrated NaX zeolite
+;
+_journal_name_full               'European Journal of Mineralogy'
+_journal_page_first              333
+_journal_page_last               343
+_journal_volume                  11
+_journal_year                    1999
+_chemical_formula_sum            'Al3 Na2.92 O12 Si3'
+_chemical_name_mineral           Faujasite-Na
+_space_group_IT_number           203
+_symmetry_space_group_name_Hall  '-F 2uv 2vw 3'
+_symmetry_space_group_name_H-M   'F d -3 :2'
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                90
+_cell_length_a                   25.104
+_cell_length_b                   25.104
+_cell_length_c                   25.104
+_cell_volume                     15820.812
+_exptl_crystal_density_diffrn    1.425
+_[local]_cod_cif_authors_sg_H-M  'F d 3'
+_[local]_cod_chemical_formula_sum_orig 'Si3 Al3 O12 Na2.92'
+_cod_database_code               9005387
+loop_
+_symmetry_equiv_pos_as_xyz
+x,y,z
+x,1/2+y,1/2+z
+1/2+x,y,1/2+z
+1/2+x,1/2+y,z
+1/4+z,1/4+x,-y
+1/4+z,3/4+x,1/2-y
+3/4+z,1/4+x,1/2-y
+3/4+z,3/4+x,-y
+1/4+z,-x,1/4+y
+1/4+z,1/2-x,3/4+y
+3/4+z,-x,3/4+y
+3/4+z,1/2-x,1/4+y
+-z,1/4+x,1/4+y
+-z,3/4+x,3/4+y
+1/2-z,1/4+x,3/4+y
+1/2-z,3/4+x,1/4+y
+-z,-x,-y
+-z,1/2-x,1/2-y
+1/2-z,-x,1/2-y
+1/2-z,1/2-x,-y
+y,3/4-z,3/4-x
+y,1/4-z,1/4-x
+1/2+y,3/4-z,1/4-x
+1/2+y,1/4-z,3/4-x
+3/4-y,3/4-z,x
+3/4-y,1/4-z,1/2+x
+1/4-y,3/4-z,1/2+x
+1/4-y,1/4-z,x
+3/4-y,z,3/4-x
+3/4-y,1/2+z,1/4-x
+1/4-y,z,1/4-x
+1/4-y,1/2+z,3/4-x
+y,z,x
+y,1/2+z,1/2+x
+1/2+y,z,1/2+x
+1/2+y,1/2+z,x
+1/4+x,-y,1/4+z
+1/4+x,1/2-y,3/4+z
+3/4+x,-y,3/4+z
+3/4+x,1/2-y,1/4+z
+-x,1/4+y,1/4+z
+-x,3/4+y,3/4+z
+1/2-x,1/4+y,3/4+z
+1/2-x,3/4+y,1/4+z
+1/4+x,1/4+y,-z
+1/4+x,3/4+y,1/2-z
+3/4+x,1/4+y,1/2-z
+3/4+x,3/4+y,-z
+-x,-y,-z
+-x,1/2-y,1/2-z
+1/2-x,-y,1/2-z
+1/2-x,1/2-y,-z
+3/4-z,3/4-x,y
+3/4-z,1/4-x,1/2+y
+1/4-z,3/4-x,1/2+y
+1/4-z,1/4-x,y
+3/4-z,x,3/4-y
+3/4-z,1/2+x,1/4-y
+1/4-z,x,1/4-y
+1/4-z,1/2+x,3/4-y
+z,3/4-x,3/4-y
+z,1/4-x,1/4-y
+1/2+z,3/4-x,1/4-y
+1/2+z,1/4-x,3/4-y
+z,x,y
+z,1/2+x,1/2+y
+1/2+z,x,1/2+y
+1/2+z,1/2+x,y
+-y,1/4+z,1/4+x
+-y,3/4+z,3/4+x
+1/2-y,1/4+z,3/4+x
+1/2-y,3/4+z,1/4+x
+1/4+y,1/4+z,-x
+1/4+y,3/4+z,1/2-x
+3/4+y,1/4+z,1/2-x
+3/4+y,3/4+z,-x
+1/4+y,-z,1/4+x
+1/4+y,1/2-z,3/4+x
+3/4+y,-z,3/4+x
+3/4+y,1/2-z,1/4+x
+-y,-z,-x
+-y,1/2-z,1/2-x
+1/2-y,-z,1/2-x
+1/2-y,1/2-z,-x
+3/4-x,y,3/4-z
+3/4-x,1/2+y,1/4-z
+1/4-x,y,1/4-z
+1/4-x,1/2+y,3/4-z
+x,3/4-y,3/4-z
+x,1/4-y,1/4-z
+1/2+x,3/4-y,1/4-z
+1/2+x,1/4-y,3/4-z
+3/4-x,3/4-y,z
+3/4-x,1/4-y,1/2+z
+1/4-x,3/4-y,1/2+z
+1/4-x,1/4-y,z
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_U_11
+_atom_site_aniso_U_22
+_atom_site_aniso_U_33
+_atom_site_aniso_U_12
+_atom_site_aniso_U_13
+_atom_site_aniso_U_23
+Si 0.02370 0.01930 0.01610 -0.00530 0.00070 -0.00340
+Al 0.02370 0.01480 0.01800 0.00060 -0.00370 -0.00280
+O1 0.03100 0.05800 0.03200 -0.01400 -0.00200 -0.01000
+O2 0.02900 0.03100 0.03700 0.00900 -0.01100 -0.01200
+O3 0.05500 0.03000 0.02900 -0.00400 -0.00100 0.00600
+O4 0.03500 0.03800 0.03900 -0.00200 -0.00100 -0.02200
+Na1 0.05800 0.05800 0.05800 0.01000 0.01000 0.01000
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+Si Si -0.05427 0.12553 0.03502 1.00000
+Al Al -0.05519 0.03586 0.12401 1.00000
+O1 O -0.10980 -0.00020 0.10580 1.00000
+O2 O -0.00110 -0.00290 0.14140 1.00000
+O3 O -0.03450 0.07500 0.07100 1.00000
+O4 O -0.06930 0.07320 0.17940 1.00000
+Na1 Na 0.04750 0.04750 0.04750 0.97000
