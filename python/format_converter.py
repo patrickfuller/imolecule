@@ -149,6 +149,9 @@ def pybel_to_json(molecule, name=None):
         if pybel_atom.OBAtom.HasData("_atom_site_label"):
             obatom = pybel_atom.OBAtom
             json_atom["label"] = obatom.GetData("_atom_site_label").GetValue()
+        if pybel_atom.OBAtom.HasData("color"):
+            obatom = pybel_atom.OBAtom
+            json_atom["color"] = obatom.GetData("color").GetValue()
 
     # Save number of bonds and indices of endpoint atoms
     bonds = [{"atoms": [b.GetBeginAtom().GetIndex(),
