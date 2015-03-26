@@ -24,6 +24,8 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
         camera_type: Can be "perspective" or "orthographic".
         shader: Specifies shading algorithm to use. Can be "toon", "basic",
             "phong", or "lambert".
+        display_html: If True (default), embed the html in a IPython display,
+            if False, returns the html as a string.
 
     The `format` can be any value specified by Open Babel
     (http://openbabel.org/docs/2.3.1/FileFormats/Overview.html). The "auto"
@@ -80,7 +82,7 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
                            camera_type, shader, json_mol, size[0], size[1])
 
     # Execute js and display the results in a div (see script for more)
-    if display_html is True:
+    if display_html:
         display(HTML(html))
     else:
         return html
