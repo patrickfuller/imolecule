@@ -52,6 +52,7 @@ var imolecule = {
             self.orthographic.top = $s.height() / 32.0;
             self.orthographic.bottom = -$s.height() / 32.0;
             self.orthographic.updateProjectionMatrix();
+            self.render();
         });
         this.render();
     },
@@ -308,7 +309,6 @@ var imolecule = {
     // Sets camera type (orthogonal, perspective)
     setCameraType: function (type) {
         var self = this;
-        
         if (type === "orthographic") {
             this.camera = this.orthographic;
             this.camera.position.copy(this.perspective.position);
@@ -340,8 +340,7 @@ var imolecule = {
     },
 
     render: function () {
-        var self = this;
-        self.renderer.render(this.scene, this.camera);
+        this.renderer.render(this.scene, this.camera);
     },
 
     // Either shows or hides the unit cell
