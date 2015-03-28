@@ -264,6 +264,7 @@ var imolecule = {
             this.setCameraType(this.cameraType);
             this.updateCamera = false;
         }
+        this.render();
         this.animate();
     },
 
