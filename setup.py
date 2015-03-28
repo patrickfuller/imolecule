@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="imolecule",
-    version="0.1.2",
+    version="0.1.3",
     description="View molecules in the IPython notebook.",
     url="http://github.com/patrickfuller/imolecule/",
     license="MIT",

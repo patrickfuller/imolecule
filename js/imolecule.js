@@ -81,6 +81,9 @@ var imolecule = {
             self.orthographic.updateProjectionMatrix();
             self.render();
         });
+
+        $s.find("canvas").bind("mousewheel DOMMouseScroll", function () { self.render(); });
+
         this.render();
     },
 
@@ -347,7 +350,7 @@ var imolecule = {
             this.camera.position.copy(this.orthographic.position);
         }
         this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
-        this.controls.addEventListener( 'change', function() { return self.render(); });
+        this.controls.addEventListener("change", function () { self.render(); });
         this.camera.add(this.light);
         this.camera.add(this.directionalLight);
         this.render();
@@ -380,6 +383,7 @@ var imolecule = {
     // Either shows or hides the unit cell
     showUnitCell: function (toggle) {
         this.scene[toggle ? "add" : "remove"](this.corners);
+        this.render();
     },
 
     // Connects to Python via a socketio-zeromq bridge. Ignore everything below
