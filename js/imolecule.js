@@ -27,14 +27,16 @@ var imolecule = {
             this.renderMode = "webgl";
             this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
         } else if (hasCanvas) {
-            $s.append('<p class="alert alert-warning" align="center">Your web browser does not support WebGL. Using Canvas as a fallback.</p>');
+            $s.append('<p class="alert alert-warning" align="center">Your web browser ' +
+                      'does not support WebGL. Using Canvas as a fallback.</p>');
             this.renderMode = "canvas";
             if (this.shader === "toon") {
                 this.shader = "basic";
             }
             this.renderer = new THREE.CanvasRenderer();
         } else {
-            $s.append('<p class="alert alert-danger" align="center">Your web browser does not support either WebGL or Canvas. Please upgrade.</p>');
+            $s.append('<p class="alert alert-danger" align="center">Your web browser ' +
+                      'does not support either WebGL or Canvas. Please upgrade.</p>');
             return;
         }
 
@@ -82,10 +84,10 @@ var imolecule = {
         this.render();
     },
 
-    makeHighlight: function(color) {
-        var self = this, threeMaterial;
-        var highlight = new THREE.MeshPhongMaterial( { color: color, emissive: color, specular: color, transparent: true, opacity: 0.3, shininess: 100, depthWrite: false } );
-        return highlight.clone();
+    makeHighlight: function (color) {
+        return new THREE.MeshPhongMaterial({color: color, emissive: color, specular: color,
+                                            transparent: true, opacity: 0.3, shininess: 100,
+                                            depthWrite: false});
     },
 
     makeMaterials: function () {
@@ -127,7 +129,7 @@ var imolecule = {
     // Draws a molecule. Duh.
     draw: function (molecule, resetCamera) {
         var mesh, self, a, scale, j, k, dy, cent, data, v, vectors, points,
-            trans, geometry, material, maxHeight, maxZ, cameraZ;
+            trans, geometry, material, maxHeight, maxZ, cameraZ, highlightedMesh;
         self = this;
         cent = new THREE.Vector3();
         this.current = molecule;
@@ -147,11 +149,11 @@ var imolecule = {
             mesh.scale.set(1, 1, 1).multiplyScalar(scale * data.radius * 2);
             // We set the color and material to be the highlighted one
             if (atom.hasOwnProperty("color")) {
-                var mesh_hl = new THREE.Mesh(self.sphereGeometry.clone(), self.makeHighlight(atom.color));
-                mesh_hl.position.copy(mesh.position);
-                mesh_hl.scale.set(1, 1, 1).multiplyScalar(scale * data.radius * 2 * 1.2);
-                self.scene.add(mesh_hl);
-                mesh.highlighted_material=mesh_hl.material;
+                highlightedMesh = new THREE.Mesh(self.sphereGeometry.clone(), self.makeHighlight(atom.color));
+                highlightedMesh.position.copy(mesh.position);
+                highlightedMesh.scale.set(1, 1, 1).multiplyScalar(scale * data.radius * 2 * 1.2);
+                self.scene.add(highlightedMesh);
+                mesh.highlightedMaterial = highlightedMesh.material;
             }
             if (self.drawingType !== "wireframe") {
                 self.scene.add(mesh);
@@ -191,16 +193,16 @@ var imolecule = {
                     mesh.scale.z = a[1].position.distanceTo(a[0].position) / 2.0;
                     mesh.translateY(0.3 * dy);
 
-                    if (a[0].hasOwnProperty("highlighted_material") && a[1].hasOwnProperty("highlighted_material")) {
-                        var mesh_hl = new THREE.Mesh(self.cylinderGeometry, a[0].highlighted_material);
+                    if (a[0].hasOwnProperty("highlightedMaterial") && a[1].hasOwnProperty("highlightedMaterial")) {
+                        highlightedMesh = new THREE.Mesh(self.cylinderGeometry, a[0].highlightedMaterial);
                         cent.addVectors(a[0].position, a[1].position).divideScalar(2);
-                        mesh_hl.atomMaterial = self.data[a[k].element].material;
-                        mesh_hl.position.addVectors(cent, a[k].position).divideScalar(2);
-                        mesh_hl.lookAt(a[1].position);
-                        mesh_hl.scale.x = mesh_hl.scale.y = 0.3 * self.data.bond.radius * 2 * 1.2; // 1.2 is the highlight ratio
-                        mesh_hl.scale.z = a[1].position.distanceTo(a[0].position) / 2.0;
-                        mesh_hl.translateY(0.3 * dy);
-                        self.scene.add(mesh_hl);
+                        highlightedMesh.atomMaterial = self.data[a[k].element].material;
+                        highlightedMesh.position.addVectors(cent, a[k].position).divideScalar(2);
+                        highlightedMesh.lookAt(a[1].position);
+                        highlightedMesh.scale.x = highlightedMesh.scale.y = 0.3 * self.data.bond.radius * 2 * 1.2; // 1.2 is the highlight ratio
+                        highlightedMesh.scale.z = a[1].position.distanceTo(a[0].position) / 2.0;
+                        highlightedMesh.translateY(0.3 * dy);
+                        self.scene.add(highlightedMesh);
                     }
 
                     if (self.drawingType === "wireframe") {
