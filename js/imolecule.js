@@ -5,14 +5,39 @@ var imolecule = {
 
     // Creates a new instance of imolecule
     create: function (selector, options) {
-        var $s = $(selector), self = this;
+        var $s = $(selector), self = this, hasCanvas, hasWebgl;
         options = options || {};
 
         this.shader = options.hasOwnProperty("shader") ? options.shader : "toon";
         this.drawingType = options.hasOwnProperty("drawingType") ? options.drawingType : "ball and stick";
         this.cameraType = options.hasOwnProperty("cameraType") ? options.cameraType : "perspective";
         this.updateCamera = (this.cameraType === "orthographic");
-        this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+
+        // Adapted from http://japhr.blogspot.com/2012/07/fallback-from-webgl-to-canvas-in-threejs.html
+        hasCanvas = !!window.CanvasRenderingContext2D;
+        hasWebgl = (function () {
+            try {
+                return !!window.WebGLRenderingContext &&
+                       !!document.createElement("canvas").getContext("experimental-webgl");
+            } catch(e) {
+                return false;
+            }})();
+
+        if (hasWebgl) {
+            this.renderMode = "webgl";
+            this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+        } else if (hasCanvas) {
+            $s.append('<p class="alert alert-warning" align="center">Your web browser does not support WebGL. Using Canvas as a fallback.</p>');
+            this.renderMode = "canvas";
+            if (this.shader === "toon") {
+                this.shader = "basic";
+            }
+            this.renderer = new THREE.CanvasRenderer();
+        } else {
+            $s.append('<p class="alert alert-danger" align="center">Your web browser does not support either WebGL or Canvas. Please upgrade.</p>');
+            return;
+        }
+
         this.renderer.setSize($s.width(), $s.height());
         $s.append(this.renderer.domElement);
 
@@ -64,14 +89,16 @@ var imolecule = {
     },
 
     makeMaterials: function () {
-        var self = this, threeMaterial;
+        var self = this, threeMaterial, overdraw;
 
         // If a different shader is specified, use uncustomized materials
         if ($.inArray(self.shader, ["basic", "phong", "lambert"]) !== -1) {
             threeMaterial = "Mesh" + self.shader.charAt(0).toUpperCase() +
                             self.shader.slice(1) + "Material";
+            overdraw = this.renderMode === "canvas" ? 0.5 : 0;
             $.each(self.data, function (key, value) {
-                value.material = new THREE[threeMaterial]({color: value.color});
+                value.material = new THREE[threeMaterial]({color: value.color,
+                                                           overdraw: overdraw});
             });
 
         // If toon, use materials with some shader edits
@@ -324,6 +351,9 @@ var imolecule = {
 
     // Sets shader (toon, basic, phong, lambert) and redraws
     setShader: function (shader) {
+        if (this.renderMode !== "webgl" && shader === "toon") {
+            throw new Error("Toon shading requires webGL.");
+        }
         this.shader = shader;
         this.makeMaterials();
         this.clear();
