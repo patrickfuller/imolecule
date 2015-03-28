@@ -333,6 +333,7 @@ var imolecule = {
             }
         }
         this.drawingType = type;
+        this.render();
     },
 
     // Sets camera type (orthogonal, perspective)
@@ -349,6 +350,7 @@ var imolecule = {
         this.controls.addEventListener( 'change', function() { return self.render(); });
         this.camera.add(this.light);
         this.camera.add(this.directionalLight);
+        this.render();
     },
 
     // Sets shader (toon, basic, phong, lambert) and redraws
