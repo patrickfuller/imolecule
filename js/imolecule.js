@@ -52,9 +52,9 @@ var imolecule = {
             self.orthographic.top = $s.height() / 32.0;
             self.orthographic.bottom = -$s.height() / 32.0;
             self.orthographic.updateProjectionMatrix();
+            self.render();
         });
-
-        this.animate();
+        this.render();
     },
 
     makeHighlight: function(color) {
@@ -232,6 +232,7 @@ var imolecule = {
             this.setCameraType(this.cameraType);
             this.updateCamera = false;
         }
+        this.animate();
     },
 
     // Deletes any existing molecules.
@@ -307,6 +308,7 @@ var imolecule = {
 
     // Sets camera type (orthogonal, perspective)
     setCameraType: function (type) {
+        var self = this;
         if (type === "orthographic") {
             this.camera = this.orthographic;
             this.camera.position.copy(this.perspective.position);
@@ -315,6 +317,7 @@ var imolecule = {
             this.camera.position.copy(this.orthographic.position);
         }
         this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
+        this.controls.addEventListener( 'change', function() { return self.render(); });
         this.camera.add(this.light);
         this.camera.add(this.directionalLight);
     },
@@ -334,6 +337,9 @@ var imolecule = {
             return self.animate();
         });
         this.controls.update();
+    },
+
+    render: function () {
         this.renderer.render(this.scene, this.camera);
     },
 
