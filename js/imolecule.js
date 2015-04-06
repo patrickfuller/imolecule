@@ -8,7 +8,7 @@ var imolecule = {
         var $s = $(selector), self = this, hasCanvas, hasWebgl;
         options = options || {};
 
-        this.shader = options.hasOwnProperty("shader") ? options.shader : "toon";
+        this.shader = options.hasOwnProperty("shader") ? options.shader : "basic";
         this.drawingType = options.hasOwnProperty("drawingType") ? options.drawingType : "ball and stick";
         this.cameraType = options.hasOwnProperty("cameraType") ? options.cameraType : "perspective";
         this.updateCamera = (this.cameraType === "orthographic");
@@ -82,17 +82,18 @@ var imolecule = {
             self.render();
         });
 
-        $s.find("canvas").bind("mousewheel DOMMouseScroll", function () { self.render(); });
-
         this.render();
+        this.animate();
     },
 
+    // Makes a material for highlighting atoms and bonds
     makeHighlight: function (color) {
-        return new THREE.MeshPhongMaterial({color: color, emissive: color, specular: color,
+        return new THREE.MeshBasicMaterial({color: color, emissive: color, specular: color,
                                             transparent: true, opacity: 0.3, shininess: 100,
                                             depthWrite: false});
     },
 
+    // Makes materials according to specified shader
     makeMaterials: function () {
         var self = this, threeMaterial, overdraw;
 
@@ -150,6 +151,7 @@ var imolecule = {
             mesh = new THREE.Mesh(self.sphereGeometry, data.material);
             mesh.position.fromArray(atom.location);
             mesh.scale.set(1, 1, 1).multiplyScalar(scale * data.radius * 2);
+
             // We set the color and material to be the highlighted one
             if (atom.hasOwnProperty("color")) {
                 highlightedMesh = new THREE.Mesh(self.sphereGeometry.clone(), self.makeHighlight(atom.color));
@@ -158,6 +160,7 @@ var imolecule = {
                 self.scene.add(highlightedMesh);
                 mesh.highlightedMaterial = highlightedMesh.material;
             }
+
             if (self.drawingType !== "wireframe") {
                 self.scene.add(mesh);
             }
@@ -265,7 +268,6 @@ var imolecule = {
             this.updateCamera = false;
         }
         this.render();
-        this.animate();
     },
 
     // Deletes any existing molecules.
@@ -343,6 +345,7 @@ var imolecule = {
     // Sets camera type (orthogonal, perspective)
     setCameraType: function (type) {
         var self = this;
+        this.cameraType = type;
         if (type === "orthographic") {
             this.camera = this.orthographic;
             this.camera.position.copy(this.perspective.position);
@@ -374,6 +377,9 @@ var imolecule = {
         window.requestAnimationFrame(function () {
             return self.animate();
         });
+        if (this.cameraType === "orthographic") {
+            this.render();
+        }
         this.controls.update();
     },
 
@@ -492,7 +498,7 @@ var imolecule = {
             Ga: { color: 0xc18e8e, radius: 1.3 },
             Gd: { color: 0x44ffc6, radius: 1.8 },
             Ge: { color: 0x668e8e, radius: 1.25 },
-            H: { color: 0xffffff, radius: 0.25 },
+            H: { color: 0xeeeeee, radius: 0.25 },
             Hf: { color: 0x4dc1ff, radius: 1.55 },
             Hg: { color: 0xb8b8cf, radius: 1.5 },
             Ho: { color: 0x00ff9c, radius: 1.75 },

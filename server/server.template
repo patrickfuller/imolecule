@@ -33,6 +33,12 @@
                     <option>{{option}}</option>
                   {% end %}
                 </select>
+
+                <select id="shaders" onchange="javascript:onShader();">
+                  {% for option in ["basic", "lambert", "phong", "toon"] %}
+                    <option>{{option}}</option>
+                  {% end %}
+                </select>
             </article>
         </div>
 

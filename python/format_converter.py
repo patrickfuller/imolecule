@@ -1,14 +1,14 @@
 """
 Methods to interconvert between json and other (cif, mol, smi, etc.) files
 """
+import imolecule.json_formatter as json
+
 from collections import Counter
 from fractions import gcd
 from functools import reduce
 
 import pybel
 ob = pybel.ob
-
-import imolecule.json_formatter as json
 
 table = ob.OBElementTable()
 

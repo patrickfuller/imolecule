@@ -17,6 +17,8 @@ PATH = os.path.dirname(os.path.realpath(__file__))
 with open(os.path.join(PATH, "data/openbabel_formats.json")) as in_file:
     OB_FORMATS = json.load(in_file)
 
+args = None
+
 
 def _worker_process(msg):
     """Wrapper function for worker process to execute."""

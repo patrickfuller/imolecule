@@ -5,7 +5,7 @@ $(document).ready(function () {
 
     $("#formats").chosen();
     imolecule.create("#imolecule");
-    
+
     // Only show crystallographic options when we're looking at crystals
     (function () {
         var oldDraw = imolecule.draw;
@@ -14,30 +14,30 @@ $(document).ready(function () {
             $("#camera-type").toggle(this.current.hasOwnProperty("unitcell"));
         };
     }());
-    
+
     // Draw a sample molecule
     $.getJSON("static/data/caffeine.json", function (molecule) {
         imolecule.filename = "caffeine";
         imolecule.draw(molecule);
     });
-    
+
     // Basic file i/o logic + background coloring on file hover
-    var selector = $("body, body>*");
+    var selector = $("body");
     selector.bind("dragover", function (e) {
         e.stopPropagation();
         e.preventDefault();
         e.originalEvent.dataTransfer.dropEffect = "copy";
-        $("body, body>*").css("background", "#dfd");
+        selector.css("background", "#449d44");
     });
     selector.bind("dragleave", function (e) {
-        $("body, body>*").css("background", "#eee");
+        selector.css("background", "#fff");
     });
     selector.bind("drop", function (e) {
         var reader, file, name;
         e.stopPropagation();
         e.preventDefault();
-        $("body, body>*").css("background", "#eee");
-    
+        selector.css("background", "#fff");
+
         reader = new FileReader();
         file = e.originalEvent.dataTransfer.files[0];
         reader.onload = function (loaded) {
@@ -48,7 +48,7 @@ $(document).ready(function () {
         reader.readAsText(file);
     });
 });
-    
+
 // Functions encoding button click behavior
 var onSaveAsOpen = function () {
     Avgrund.show(".avgrund-popup");
@@ -68,4 +68,8 @@ var onCameraType = function () {
 
 var onDrawingType = function () {
     imolecule.setDrawingType($("#drawing-types").find(":selected").text());
+};
+
+var onShader = function () {
+    imolecule.setShader($("#shaders").find(":selected").text());
 };

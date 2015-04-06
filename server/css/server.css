@@ -1,134 +1,137 @@
-* {
-    margin: 0;
-    padding: 0;
-}
-
 html, body {
-    height: 100%;
-    overflow: hidden;
+  height: 100%;
+  overflow: hidden;
 }
 
 html {
-    background-color: #222;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGklEQVQIW2NkYGD4D8SMQAwGcAY2AbBKDBUAVuYCBQPd34sAAAAASUVORK5CYII=);
-    background-repeat: repeat;
+  background-color: #222;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGklEQVQIW2NkYGD4D8SMQAwGcAY2AbBKDBUAVuYCBQPd34sAAAAASUVORK5CYII=);
+  background-repeat: repeat;
 }
 
 body {
-    background: #eee;
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
+  background: #fff;
+  color: #222;
+  font-family: Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  height: 100%;
+  margin: 0;
+  overflow-x: hidden;
+  width: 100%;
 
-    font-family: 'Lato', Helvetica, sans-serif;
-    font-size: 16px;
-    font-weight: 300;
-    color: #383533;
+  -webkit-overflow-scrolling: touch;
 
-    -webkit-overflow-scrolling: touch;
-
-    -webkit-box-sizing: border-box;
-       -moz-box-sizing: border-box;
-            box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
 }
-    body>article {
-        margin: 20px 40px;
-        max-width: 400px;
-    }
-    body p {
-        margin: 10px 0 10px 0;
-        font-size: 16px;
-        line-height: 1.32;
-    }
-    article p {
-        text-align: right;
-        margin-right: 30px;
-    }
+
+p {
+  font-size: 16px;
+  line-height: 1.32;
+  margin: 10px 0 10px 0;
+}
 
 a {
-    color: #c2575b;
-    text-decoration: none;
+  color: #2f4ff7;
+  cursor: pointer;
+  text-decoration: none;
 
-    -webkit-transition: 0.15s color ease;
-       -moz-transition: 0.15s color ease;
-        -ms-transition: 0.15s color ease;
-         -o-transition: 0.15s color ease;
-            transition: 0.15s color ease;
+  -webkit-transition: 0.15s color ease;
+     -moz-transition: 0.15s color ease;
+      -ms-transition: 0.15s color ease;
+       -o-transition: 0.15s color ease;
+          transition: 0.15s color ease;
 }
-    a:hover {
-        color: #f76f76;
-    }
+
+a:hover {
+  color: #6282ff;
+}
 
 h1,
 h2 {
-    font-size: 28px;
+  font-size: 28px;
+  margin: 0;
 }
 
 select,
 button {
-    border: 0px;
-    padding: 8px 10px;
-    margin: 15px 30px 15px 0px;
-    border-radius: 1px;
-    height: 35px;
-    width: 150px;
+  background: #2f4ff7;
+  border: 0;
+  border-radius: 1px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 400;
+  height: 35px;
+  margin: 5px;
+  width: 100px;
 
-    cursor: pointer;
-    color: #fff;
-    background: #7aa76d;
-    font-size: 15px;
-    text-align: left;
+  text-align: left;
 
-    -webkit-transition: 0.15s background ease;
-       -moz-transition: 0.15s background ease;
-        -ms-transition: 0.15s background ease;
-         -o-transition: 0.15s background ease;
-            transition: 0.15s background ease;
+  -webkit-transition: 0.15s background ease;
+     -moz-transition: 0.15s background ease;
+      -ms-transition: 0.15s background ease;
+       -o-transition: 0.15s background ease;
+          transition: 0.15s background ease;
 }
-    select:hover,
-    button:hover {
-        background: #91cd85;
-    }
-    select:active,
-    button:active {
-        background: #60895a;
-    }
 
 select {
-    -webkit-appearance: none;
-       -moz-appearance: none;
-        -ms-appearance: none;
-         -o-appearance: none;
-            appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+      -ms-appearance: none;
+       -o-appearance: none;
+          appearance: none;
+}
+
+select:hover,
+button:hover,
+select:active,
+button:active {
+  background: #6282ff;
 }
 
 .avgrund-popup > button {
-    width: 133px;
+  width: 133px;
 }
 
-#avgrund-buttons > button, #header-container > button, #header-container > select,
-.header > button, .header > select {
-    width: 150px;
+#avgrund-buttons > button,
+#header-container > button,
+#header-container > select,
+.header > button,
+.header > select {
+  font-size: 16px;
+  margin: 10px 20px 0 0;
+  width: 150px;
 }
 
 #right-avgrund {
-    position: absolute;
-    right: 0;
-    margin-right: 20px;
+  margin-right: 20px;
+  position: absolute;
+  right: 0;
 }
 
 #formats {
-    width: 100%;
+  width: 100%;
 }
 
 #imolecule {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
 }
-    #imolecule>article {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-    }
+
+#options {
+  bottom: 0;
+  margin: 20px 40px;
+  position: absolute;
+  right: 0;
+  text-align: right;
+  width: 100%;
+}
+
+#options > p {
+  margin-right: 5px;
+}
