@@ -3,65 +3,68 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>imolecule</title>
-        <link href="css/examples.css" rel="stylesheet" type="text/css" />
+        <link href="main.css" rel="stylesheet" type="text/css" />
         <script src="../js/jquery-1.11.1.min.js"></script>
         <script src="../js/build/imolecule.min.js"></script>
     </head>
     <body>
-        <div id="imolecule"></div>
-        <div id="description">
+        <div class="molecule"></div>
+        <div class="description">
             <h1>metal-organic frameworks</h1>
             <p>
                 Metal-organic frameworks, or MOFs, are precisely arranged
                 crystals containing metal corners and organic linkers. Much like
                 polymers, there are many different types of MOFs, each of which
                 has different characteristics in certain applications. The MOF
-                shown here is NU-125, created at Northwestern University.
+                shown here is <a class="mof">NU-125</a>, created at Northwestern University.
+                Other MOFs include <a class="mof">HKUST-1</a>, <a class="mof">UiO-66</a>,
+                and <a class="mof">Fe-MOF-74</a>.
             </p>
-            <br />
             <p>
-                Check out NU-125 as a <a id="space-filling">space-filling</a>
-                model. You can also view its core structure as a <a id="wireframe">wireframe</a>,
-                and go back to <a id="ball-and-stick">ball-and-stick</a>.
+                Get a more accurate feel for pore size by looking at these MOFs with a
+                <a class="drawing-type">space-filling</a> model. You can also view
+                its core structure as a <a class="drawing-type">wireframe</a>,
+                or go back to <a class="drawing-type">ball and stick</a>.
             </p>
-            <br />
             <p>
-                As I deal with crystal, I added some extra features for
-                crystallography. Crystallographers like viewing these structures with an
-                <a id="orthographic">orthographic</a> camera. Unlike a <a id="perspective">perspective</a> view, this does not distinguish depth with a focal length.
-                You can also turn unit cell display <a id="on">on</a> and <a id="off">off</a>.
+                imolecule uses a <a class="shader">basic</a> shader by default, but can also use
+                <a class="shader">phong</a>, <a class="shader">lambert</a>, and <a class="shader">toon</a> shading.
+            </p>
+            <p>
+                As I work with crystals, I've added some extra features for these structures. Crystallographers like viewing these structures with an
+                <a class="camera">orthographic</a> camera. Unlike a <a class="camera">perspective</a> view, this does not distinguish depth with a focal length.
+                You can also turn unit cell display <a class="unitcell">on</a> and <a class="unitcell">off</a>.
             </p>
         </div>
 
         <a href="https://github.com/patrickfuller/imolecule"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 
         <script type="text/javascript">
-            imolecule.create('#imolecule', {z: 50});
+            imolecule.create('.molecule');
             $.getJSON('data/nu_125.json', function (mof) {
                 imolecule.draw(mof);
             });
 
+            $('.mof').click(function () {
+                var name = $(this).text().toLowerCase().replace(/-/g, '_');
+                $.getJSON('data/' + name + '.json', function (mof) {
+                    imolecule.clear();
+                    imolecule.draw(mof);
+                });
+            });
+
             // Functionalize text links to demo this feature
-            $('#space-filling').click(function () {
-                imolecule.setDrawingType("space filling");
+            $('.drawing-type').click(function () {
+                imolecule.setDrawingType($(this).text().replace('-', ' '));
             });
-            $('#wireframe').click(function () {
-                imolecule.setDrawingType("wireframe");
+            $('.shader').click(function () {
+                imolecule.setShader($(this).text());
             });
-            $('#ball-and-stick').click(function () {
-                imolecule.setDrawingType("ball and stick");
+            $('.camera').click(function () {
+                imolecule.setCameraType($(this).text());
             });
-            $('#orthographic').click(function () {
-                imolecule.setCameraType("orthographic");
-            });
-            $('#perspective').click(function () {
-                imolecule.setCameraType("perspective");
-            });
-            $('#on').click(function () {
-                imolecule.showUnitCell(true);
-            });
-            $('#off').click(function () {
-                imolecule.showUnitCell(false);
+            $('.unitcell').click(function () {
+                imolecule.showUnitCell($(this).text() === "on");
             });
         </script>
     </body>
