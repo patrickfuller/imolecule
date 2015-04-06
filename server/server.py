@@ -6,6 +6,7 @@ import json
 import logging
 import multiprocessing
 import os
+import sys
 import traceback
 import webbrowser
 
@@ -96,7 +97,12 @@ def start_server():
     if not args.no_browser:
         webbrowser.open("http://localhost:%d/" % args.port, new=2)
 
-    tornado.ioloop.IOLoop.instance().start()
+    try:
+        tornado.ioloop.IOLoop.instance().start()
+    except KeyboardInterrupt:
+        sys.stderr.write("Received keyboard interrupt. Stopping server.")
+        tornado.ioloop.IOLoop.instance().stop()
+        sys.exit(1)
 
 
 if __name__ == "__main__":
