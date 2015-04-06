@@ -1,8 +1,9 @@
 from setuptools import setup
+from python import __version__
 
 setup(
     name="imolecule",
-    version="0.1.4",
+    version=__version__,
     description="View molecules in the IPython notebook.",
     url="http://github.com/patrickfuller/imolecule/",
     license="MIT",
