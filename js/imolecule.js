@@ -39,7 +39,7 @@ var imolecule = {
                       'does not support either WebGL or Canvas. Please upgrade.</p>');
             return;
         }
-
+        this.renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
         this.renderer.setSize($s.width(), $s.height());
         $s.append(this.renderer.domElement);
 
