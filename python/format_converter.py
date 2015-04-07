@@ -7,10 +7,13 @@ from collections import Counter
 from fractions import gcd
 from functools import reduce
 
-import pybel
-ob = pybel.ob
-
-table = ob.OBElementTable()
+try:
+    import pybel
+    ob = pybel.ob
+    table = ob.OBElementTable()
+    has_ob = True
+except ImportError:
+    has_ob = False
 
 
 def convert(data, in_format, out_format, name=None, pretty=False):
@@ -32,6 +35,12 @@ def convert(data, in_format, out_format, name=None, pretty=False):
     """
     # Decide on a json formatter depending on desired prettiness
     dumps = json.dumps if pretty else json.compress
+
+    # Shortcut for avoiding pybel dependency
+    if not has_ob and in_format == "json" and out_format == "json":
+        return dumps(json.loads(data) if is_string(data) else data)
+    elif not has_ob:
+        raise ImportError("Chemical file format conversion requires pybel.")
 
     # Bring up with open babel dev: mmcif seems to be a better parser than cif
     if in_format == "cif":
