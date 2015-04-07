@@ -8,7 +8,7 @@ var imolecule = {
         var $s = $(selector), self = this, hasCanvas, hasWebgl;
         options = options || {};
 
-        this.shader = options.hasOwnProperty("shader") ? options.shader : "basic";
+        this.shader = options.hasOwnProperty("shader") ? options.shader : "lambert";
         this.drawingType = options.hasOwnProperty("drawingType") ? options.drawingType : "ball and stick";
         this.cameraType = options.hasOwnProperty("cameraType") ? options.cameraType : "perspective";
         this.updateCamera = (this.cameraType === "orthographic");

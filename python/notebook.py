@@ -12,7 +12,7 @@ remote_path = ("https://rawgit.com/patrickfuller/imolecule/master/"
 
 
 def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
-         camera_type="perspective", shader="basic", display_html=True):
+         camera_type="perspective", shader="lambert", display_html=True):
     """Draws an interactive 3D visualization of the inputted chemical.
 
     Args:

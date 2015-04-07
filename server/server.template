@@ -35,7 +35,7 @@
                 </select>
 
                 <select id="shaders" onchange="javascript:onShader();">
-                  {% for option in ["basic", "lambert", "phong", "toon"] %}
+                  {% for option in ["lambert", "basic", "phong", "toon"] %}
                     <option>{{option}}</option>
                   {% end %}
                 </select>

@@ -100,7 +100,7 @@ def start_server():
     try:
         tornado.ioloop.IOLoop.instance().start()
     except KeyboardInterrupt:
-        sys.stderr.write("Received keyboard interrupt. Stopping server.")
+        sys.stderr.write("Received keyboard interrupt. Stopping server.\n")
         tornado.ioloop.IOLoop.instance().stop()
         sys.exit(1)
 

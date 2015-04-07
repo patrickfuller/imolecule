@@ -65,7 +65,7 @@ button {
   font-size: 12px;
   font-weight: 400;
   height: 35px;
-  margin: 5px;
+  padding: 5px;
   width: 100px;
 
   text-align: left;
@@ -103,6 +103,7 @@ button:active {
 .header > select {
   font-size: 16px;
   margin: 10px 20px 0 0;
+  text-align: center;
   width: 150px;
 }
 
