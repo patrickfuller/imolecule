@@ -5,22 +5,23 @@ html, body {
 
 body {
   background: #fff;
-  color: #222;
-  font-family: Helvetica, sans-serif;
-  font-size: 16px;
+  color: #444;
+  font-family: Helvetica Neue, Helvetica, sans-serif;
+  font-size: 14px;
   text-align: justify;
   width: 100%;
   -webkit-overflow-scrolling: touch;
 }
 
 h1 {
-  font-size: 28px;
+  color: #222;
+  font-size: 20px;
   margin-bottom: 14px;
 }
 
 a {
   cursor: pointer;
-  color: #2f4ff7;
+  color: #22a;
   text-decoration: none;
 
   -webkit-transition: 0.15s color ease;
@@ -30,7 +31,7 @@ a {
           transition: 0.15s color ease;
 }
 a:hover {
-  color: #6282ff;
+  color: #2f4ff7;
 }
 
 .molecule {
@@ -47,6 +48,6 @@ a:hover {
   padding: 10px;
   position: absolute;
   top: 30px;
-  width: 400px;
+  width: 300px;
   z-index: 100;
 }
