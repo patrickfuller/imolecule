@@ -19,9 +19,10 @@ var imolecule = {
             try {
                 return !!window.WebGLRenderingContext &&
                        !!document.createElement("canvas").getContext("experimental-webgl");
-            } catch(e) {
+            } catch (e) {
                 return false;
-            }})();
+            }
+        }());
 
         if (hasWebgl) {
             this.renderMode = "webgl";
@@ -39,7 +40,7 @@ var imolecule = {
                       'does not support either WebGL or Canvas. Please upgrade.</p>');
             return;
         }
-        this.renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
+        this.renderer.setPixelRatio(window.devicePixelRatio || 1);
         this.renderer.setSize($s.width(), $s.height());
         $s.append(this.renderer.domElement);
 
@@ -264,7 +265,7 @@ var imolecule = {
         // building the molecule. This should be triggered at most once, and only
         // when imolecule.create($d, {cameraType: "orthographic"}) is used.
         if (this.updateCamera) {
-            this.setCameraType(this.cameraType);
+            this.setCameraType("orthographic");
             this.updateCamera = false;
         }
         this.render();
