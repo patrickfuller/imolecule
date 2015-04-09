@@ -1,6 +1,9 @@
-from IPython.display import HTML, display
 import os
 import uuid
+
+import IPython
+from IPython.display import HTML, display
+
 import imolecule.json_formatter as json
 from imolecule import format_converter
 
@@ -9,6 +12,17 @@ file_path = os.path.normpath(os.path.dirname(__file__))
 local_path = os.path.join("nbextensions", filename)
 remote_path = ("https://rawgit.com/patrickfuller/imolecule/master/"
                "js/build/imolecule.min.js")
+
+if IPython.release.version < "2.0":
+    raise ImportError("Old version of IPython detected. Please update.")
+else:
+    try:
+        from IPython.html.nbextensions import install_nbextension
+        p = os.path.join(file_path, "js/build", filename)
+        install_nbextension([p] if IPython.release.version < "3.0" else p,
+                            verbose=0)
+    except:
+        pass
 
 
 def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
@@ -45,14 +59,6 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
     if shader not in shader_options:
         raise Exception("Invalid shader! Please use one of: " +
                         ", ".join(shader_options))
-
-    # Try using IPython >=2.0 to install js locally
-    try:
-        from IPython.html.nbextensions import install_nbextension
-        install_nbextension([os.path.join(file_path,
-                             "js/build", filename)], verbose=0)
-    except:
-        pass
 
     json_mol = generate(data, format)
     div_id = uuid.uuid4()
