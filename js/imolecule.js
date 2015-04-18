@@ -346,21 +346,23 @@ var imolecule = {
     // Sets camera type (orthogonal, perspective)
     setCameraType: function (type) {
         var self = this;
-        if (type !== this.cameraType) {
-            this.cameraType = type;
-            if (type === "orthographic") {
-                this.camera = this.orthographic;
+        this.cameraType = type;
+        if (type === "orthographic") {
+            this.camera = this.orthographic;
+            if (this.perspective.position.length() > 1) {
                 this.camera.position.copy(this.perspective.position);
-            } else if (type === "perspective") {
-                this.camera = this.perspective;
+            }
+        } else if (type === "perspective") {
+            this.camera = this.perspective;
+            if (this.orthographic.position.length() > 1) {
                 this.camera.position.copy(this.orthographic.position);
             }
-            this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
-            this.controls.addEventListener("change", function () { self.render(); });
-            this.camera.add(this.light);
-            this.camera.add(this.directionalLight);
-            this.render();
         }
+        this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
+        this.controls.addEventListener("change", function () { self.render(); });
+        this.camera.add(this.light);
+        this.camera.add(this.directionalLight);
+        this.render();
     },
 
     // Sets shader (toon, basic, phong, lambert) and redraws
