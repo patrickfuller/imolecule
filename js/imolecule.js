@@ -35,6 +35,7 @@ var imolecule = {
                 this.shader = "basic";
             }
             this.renderer = new THREE.CanvasRenderer();
+            this.renderer.setClearColor(0xffffff, 0);
         } else {
             $s.append('<p class="alert alert-danger" align="center">Your web browser ' +
                       'does not support either WebGL or Canvas. Please upgrade.</p>');
