@@ -59,7 +59,12 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
         raise Exception("Invalid shader! Please use one of: " +
                         ", ".join(shader_options))
 
-    json_mol = generate(data, format)
+    try:
+        json.loads(data)
+    except ValueError:
+        json_mol = generate(data, format)
+    else:
+        json_mol = data
     div_id = uuid.uuid4()
     html = """<div id="molecule_%s"></div>
            <script type="text/javascript">
