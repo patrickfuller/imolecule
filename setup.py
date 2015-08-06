@@ -1,5 +1,5 @@
 from setuptools import setup
-from python import __version__
+from imolecule import __version__
 
 setup(
     name="imolecule",
@@ -9,7 +9,7 @@ setup(
     license="MIT",
     author="Patrick Fuller",
     author_email="patrickfuller@gmail.com",
-    package_dir={"imolecule": "python",
+    package_dir={"imolecule": "imolecule",
                  "imolecule.server": "server",
                  "imolecule.js": "js"},
     package_data={"imolecule.js": ["js/build/imolecule.min.js"],
