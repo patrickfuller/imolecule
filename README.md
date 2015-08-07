@@ -72,7 +72,7 @@ Javascript
 Start by downloading the minified javascript file:
 
 ```
-wget https://raw.githubusercontent.com/patrickfuller/imolecule/master/js/build/imolecule.min.js
+wget https://raw.githubusercontent.com/patrickfuller/imolecule/master/imolecule/js/build/imolecule.min.js
 ```
 
 Include this file alongside [jQuery](http://jquery.com/) in your project, and then use with:
