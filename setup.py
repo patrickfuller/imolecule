@@ -1,5 +1,5 @@
 from setuptools import setup
-from python import __version__
+from imolecule import __version__
 
 setup(
     name="imolecule",
@@ -9,14 +9,14 @@ setup(
     license="MIT",
     author="Patrick Fuller",
     author_email="patrickfuller@gmail.com",
-    package_dir={"imolecule": "python",
-                 "imolecule.server": "server",
-                 "imolecule.js": "js"},
-    package_data={"imolecule.js": ["js/build/imolecule.min.js"],
-                  "imolecule.server": ["server/data/*.json",
-                                       "server/js/*.js",
-                                       "server/css/*.css",
-                                       "server/*.template"]},
+    package_dir={"imolecule": "imolecule",
+                 "imolecule.server": "imolecule/server",
+                 "imolecule.js": "imolecule/js"},
+    package_data={"imolecule.js": ["imolecule/js/build/imolecule.min.js"],
+                  "imolecule.server": ["imolecule/server/data/*.json",
+                                       "imolecule/server/js/*.js",
+                                       "imolecule/server/css/*.css",
+                                       "imolecule/server/*.template"]},
     include_package_data=True,
     packages=["imolecule", "imolecule.server", "imolecule.js"],
     install_requires=["ipython", "tornado"],
