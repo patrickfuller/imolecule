@@ -88,7 +88,41 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
 
     # Execute js and display the results in a div (see script for more)
     if display_html:
-        display(HTML(html))
+        try:
+            __IPYTHON__
+            # we're running in ipython: display widget
+            display(HTML(html))
+        except NameError:
+            # we're running outside ipython, let's generate a static HTML and show it in the browser
+            import shutil
+            import webbrowser
+            import tempfile
+            import time
+            import urlparse
+            import urllib
+            from tornado import template
+
+            file_path = os.path.dirname(os.path.realpath(__file__))
+            t = template.Loader(file_path).load('viewer.template')
+            html = t.generate(title="imolecule", json_mol=json_mol, drawing_type=drawing_type,
+                           camera_type=camera_type, shader=shader)
+
+            tempdir = tempfile.mkdtemp(prefix='imolecule_' + str(int(time.time())) + '_')
+
+            html_filename = os.path.join(tempdir,'index.html')
+            with open(html_filename, 'w') as f:
+                f.write(html)
+
+            shutil.copy(os.path.join(file_path, 'server', 'css', 'chosen.css'), tempdir)
+            shutil.copy(os.path.join(file_path, 'server', 'css', 'server.css'), tempdir)
+            shutil.copy(os.path.join(file_path, 'js', 'jquery-1.11.1.min.js'), tempdir)
+            shutil.copy(os.path.join(file_path, 'server', 'js', 'chosen.jquery.min.js'), tempdir)
+            shutil.copy(os.path.join(file_path, 'js', 'build', 'imolecule.min.js'), tempdir)
+
+            html_file_url = urlparse.urljoin('file:', urllib.pathname2url(html_filename))
+
+            print('Opening html file: {}'.format(html_file_url))
+            webbrowser.open(html_file_url)
     else:
         return html
 

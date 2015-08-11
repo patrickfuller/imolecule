@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <title>{{ title }}</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href='http://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css' />
+
+
+        <link href="chosen.css" rel="stylesheet" type="text/css" />
+        <link href="server.css" rel="stylesheet" type="text/css" />
+
+        <script src="jquery-1.11.1.min.js" type="text/javascript"></script>
+        <script src="chosen.jquery.min.js" type="text/javascript"></script>
+
+        <script src="imolecule.min.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+        $(document).ready(function () {
+
+            imolecule.create("#imolecule");
+            imolecule.draw({% raw json_mol %});
+
+            imolecule.setCameraType("{{ camera_type }}");
+            imolecule.setDrawingType("{{ drawing_type }}");
+            imolecule.setShader("{{ shader }}");
+        });
+
+        var onCameraType = function () {
+            imolecule.setCameraType($("#camera-type").find(":selected").text());
+        };
+
+        var onDrawingType = function () {
+            imolecule.setDrawingType($("#drawing-types").find(":selected").text());
+        };
+
+        var onShader = function () {
+            imolecule.setShader($("#shaders").find(":selected").text());
+        };
+
+
+        </script>
+
+    </head>
+    <body>
+        <div id="imolecule">
+            <article id="options">
+
+                <select id="camera-type" onchange="javascript:onCameraType();">
+                    <option>perspective</option>
+                    <option>orthographic</option>
+                </select>
+
+                <select id="drawing-types" onchange="javascript:onDrawingType();">
+                    <option>ball and stick</option>
+                    <option>space filling</option>
+                    <option>wireframe</option>
+                </select>
+
+                <select id="shaders" onchange="javascript:onShader();">
+                    <option>lambert</option>
+                    <option>basic</option>
+                    <option>phong</option>
+                    <option>toon</option>
+                </select>
+            </article>
+        </div>
+    </body>
+</html>
