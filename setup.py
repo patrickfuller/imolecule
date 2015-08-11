@@ -19,7 +19,6 @@ setup(
                                        "imolecule/server/*.template"]},
     include_package_data=True,
     packages=["imolecule", "imolecule.server", "imolecule.js"],
-    install_requires=["ipython", "tornado"],
     entry_points={
         "console_scripts": [
             "imolecule = imolecule.server:start_server"

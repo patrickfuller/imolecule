@@ -5,6 +5,7 @@ package:
 requirements:
   build:
     - python
+    - ipython
 
   run:
     - python
