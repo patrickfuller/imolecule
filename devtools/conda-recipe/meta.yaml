@@ -1,0 +1,17 @@
+package:
+  name: imolecule
+  version: !!str 0.1.9.dev0
+
+requirements:
+  build:
+    - python
+
+  run:
+    - python
+    - ipython
+    - tornado
+
+about:
+  home: http://patrick-fuller.com/imolecule/
+  license: MIT
+  summary: An embeddable webGL molecule viewer and file format converter.

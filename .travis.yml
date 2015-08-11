@@ -1,0 +1,26 @@
+language: c
+
+sudo: false
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+
+install:
+  - source devtools/travis-ci/install.sh
+
+script:
+  - conda build devtools/conda-recipe
+
+env:
+  matrix:
+    - python=2.7  CONDA_PY=27
+    - python=3.4  CONDA_PY=34
+
+  global:
+    # BINSTAR
+    #- secure:
+
+after_success:
+  - source devtools/travis-ci/post_binstar.sh
+
