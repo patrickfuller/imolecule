@@ -17,17 +17,11 @@
         $(document).ready(function () {
 
             imolecule.create("#imolecule");
+            imolecule.draw({% raw json_mol %});
 
-            // Only show crystallographic options when we're looking at crystals
-            (function () {
-                var oldDraw = imolecule.draw;
-                imolecule.draw = function () {
-                    oldDraw.apply(this, arguments);
-                    $("#camera-type").toggle(this.current.hasOwnProperty("unitcell"));
-                };
-            }());
-
-            imolecule.draw({% raw mol_json %});
+            imolecule.setCameraType("{{ camera_type }}");
+            imolecule.setDrawingType("{{ drawing_type }}");
+            imolecule.setShader("{{ shader }}");
         });
 
         var onCameraType = function () {
