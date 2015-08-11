@@ -102,8 +102,8 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
             import urllib
             from tornado import template
 
-            PATH = os.path.dirname(os.path.realpath(__file__))
-            t = template.Loader(PATH).load('viewer.template')
+            file_path = os.path.dirname(os.path.realpath(__file__))
+            t = template.Loader(file_path).load('viewer.template')
             html = t.generate(title="imolecule", json_mol=json_mol, drawing_type=drawing_type,
                            camera_type=camera_type, shader=shader)
 
@@ -113,11 +113,11 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
             with open(html_filename, 'w') as f:
                 f.write(html)
 
-            shutil.copy(os.path.join(PATH, os.path.join('server/css', 'chosen.css')), tempdir)
-            shutil.copy(os.path.join(PATH, os.path.join('server/css', 'server.css')), tempdir)
-            shutil.copy(os.path.join(PATH, os.path.join('js', 'jquery-1.11.1.min.js')), tempdir)
-            shutil.copy(os.path.join(PATH, os.path.join('server/js', 'chosen.jquery.min.js')), tempdir)
-            shutil.copy(os.path.join(PATH, os.path.join('js/build', 'imolecule.min.js')), tempdir)
+            shutil.copy(os.path.join(file_path, 'server', 'css', 'chosen.css'), tempdir)
+            shutil.copy(os.path.join(file_path, 'server', 'css', 'server.css'), tempdir)
+            shutil.copy(os.path.join(file_path, 'js', 'jquery-1.11.1.min.js'), tempdir)
+            shutil.copy(os.path.join(file_path, 'server', 'js', 'chosen.jquery.min.js'), tempdir)
+            shutil.copy(os.path.join(file_path, 'js', 'build', 'imolecule.min.js'), tempdir)
 
             html_file_url = urlparse.urljoin('file:', urllib.pathname2url(html_filename))
 
