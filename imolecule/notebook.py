@@ -10,7 +10,7 @@ from imolecule import format_converter
 file_path = os.path.normpath(os.path.dirname(__file__))
 local_path = "nbextensions/imolecule.min.js"
 remote_path = ("https://rawgit.com/patrickfuller/imolecule/master/"
-               "js/build/imolecule.min.js")
+               "imolecule/js/build/imolecule.min.js")
 
 if IPython.release.version < "2.0":
     raise ImportError("Old version of IPython detected. Please update.")
