@@ -95,9 +95,8 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
             # show it in the browser
             import shutil
             import webbrowser
-            import tempfile
-            import time
-            import urllib
+            from tempfile import mkdtemp
+            from time import time
             try:  # Python 3
                 from urllib.parse import urljoin
                 from urllib.request import pathname2url
@@ -106,29 +105,31 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
                 from urllib import pathname2url
             from tornado import template
 
-            file_path = os.path.dirname(os.path.realpath(__file__))
             t = template.Loader(file_path).load('viewer.template')
-            html = t.generate(title="imolecule", json_mol=json_mol, drawing_type=drawing_type,
-                           camera_type=camera_type, shader=shader)
+            html = t.generate(title="imolecule", json_mol=json_mol,
+                              drawing_type=drawing_type, shader=shader,
+                              camera_type=camera_type)
 
-            tempdir = tempfile.mkdtemp(prefix='imolecule_{:d}_'.format(int(time.time())))
+            tempdir = mkdtemp(prefix='imolecule_{:.0f}_'.format(time()))
 
             html_filename = os.path.join(tempdir, 'index.html')
             with open(html_filename, 'wb') as f:
                 f.write(html)
 
-            shutil.copy(os.path.join(file_path, 'server', 'css', 'chosen.css'), tempdir)
-            shutil.copy(os.path.join(file_path, 'server', 'css', 'server.css'), tempdir)
-            shutil.copy(os.path.join(file_path, 'js', 'jquery-1.11.1.min.js'), tempdir)
-            shutil.copy(os.path.join(file_path, 'server', 'js', 'chosen.jquery.min.js'), tempdir)
-            shutil.copy(os.path.join(file_path, 'js', 'build', 'imolecule.min.js'), tempdir)
+            libs = (('server', 'css', 'chosen.css'),
+                    ('server', 'css', 'server.css'),
+                    ('js', 'jquery-1.11.1.min.js'),
+                    ('server', 'js', 'chosen.jquery.min.js'),
+                    ('js', 'build', 'imolecule.min.js'))
+            for lib in libs:
+                shutil.copy(os.path.join(file_path, *lib), tempdir)
 
             html_file_url = urljoin('file:', pathname2url(html_filename))
 
             print('Opening html file: {}'.format(html_file_url))
             webbrowser.open(html_file_url)
         else:
-            # we're running in ipython: display widget
+            # We're running in ipython: display widget
             display(HTML(html))
     else:
         return html
