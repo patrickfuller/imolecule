@@ -90,16 +90,20 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
     if display_html:
         try:
             __IPYTHON__
-            # we're running in ipython: display widget
-            display(HTML(html))
         except NameError:
-            # we're running outside ipython, let's generate a static HTML and show it in the browser
+            # We're running outside ipython, let's generate a static HTML and
+            # show it in the browser
             import shutil
             import webbrowser
             import tempfile
             import time
-            import urlparse
             import urllib
+            try:  # Python 3
+                from urllib.parse import urljoin
+                from urllib.request import pathname2url
+            except ImportError:  # Python 2
+                from urlparse import urljoin
+                from urllib import pathname2url
             from tornado import template
 
             file_path = os.path.dirname(os.path.realpath(__file__))
@@ -107,10 +111,10 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
             html = t.generate(title="imolecule", json_mol=json_mol, drawing_type=drawing_type,
                            camera_type=camera_type, shader=shader)
 
-            tempdir = tempfile.mkdtemp(prefix='imolecule_' + str(int(time.time())) + '_')
+            tempdir = tempfile.mkdtemp(prefix='imolecule_{:d}_'.format(int(time.time())))
 
-            html_filename = os.path.join(tempdir,'index.html')
-            with open(html_filename, 'w') as f:
+            html_filename = os.path.join(tempdir, 'index.html')
+            with open(html_filename, 'wb') as f:
                 f.write(html)
 
             shutil.copy(os.path.join(file_path, 'server', 'css', 'chosen.css'), tempdir)
@@ -119,10 +123,13 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
             shutil.copy(os.path.join(file_path, 'server', 'js', 'chosen.jquery.min.js'), tempdir)
             shutil.copy(os.path.join(file_path, 'js', 'build', 'imolecule.min.js'), tempdir)
 
-            html_file_url = urlparse.urljoin('file:', urllib.pathname2url(html_filename))
+            html_file_url = urljoin('file:', pathname2url(html_filename))
 
             print('Opening html file: {}'.format(html_file_url))
             webbrowser.open(html_file_url)
+        else:
+            # we're running in ipython: display widget
+            display(HTML(html))
     else:
         return html
 
