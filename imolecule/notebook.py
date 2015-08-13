@@ -9,8 +9,7 @@ from imolecule import format_converter
 
 file_path = os.path.normpath(os.path.dirname(__file__))
 local_path = "nbextensions/imolecule.min.js"
-remote_path = ("https://rawgit.com/patrickfuller/imolecule/master/"
-               "js/build/imolecule.min.js")
+remote_path = ("https://rawgit.com/patrickfuller/imolecule/master/imolecule/js/build/imolecule.min.js")
 
 if IPython.release.version < "2.0":
     raise ImportError("Old version of IPython detected. Please update.")
@@ -102,7 +101,6 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
             import urllib
             from tornado import template
 
-            file_path = os.path.dirname(os.path.realpath(__file__))
             t = template.Loader(file_path).load('viewer.template')
             html = t.generate(title="imolecule", json_mol=json_mol, drawing_type=drawing_type,
                            camera_type=camera_type, shader=shader)
