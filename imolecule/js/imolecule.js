@@ -1,5 +1,6 @@
 /*global THREE, $, jQuery, console, window, requestAnimationFrame, document, WebSocket, alert, Blob, saveAs*/
-"use strict";
+/* jshint globalstrict: true */
+'use strict';
 
 var imolecule = {
 
@@ -8,31 +9,31 @@ var imolecule = {
         var $s = $(selector), self = this, hasCanvas, hasWebgl;
         options = options || {};
 
-        this.shader = options.hasOwnProperty("shader") ? options.shader : "lambert";
-        this.drawingType = options.hasOwnProperty("drawingType") ? options.drawingType : "ball and stick";
-        this.cameraType = options.hasOwnProperty("cameraType") ? options.cameraType : "perspective";
-        this.updateCamera = (this.cameraType === "orthographic");
+        this.shader = options.hasOwnProperty('shader') ? options.shader : 'lambert';
+        this.drawingType = options.hasOwnProperty('drawingType') ? options.drawingType : 'ball and stick';
+        this.cameraType = options.hasOwnProperty('cameraType') ? options.cameraType : 'perspective';
+        this.updateCamera = (this.cameraType === 'orthographic');
 
         // Adapted from http://japhr.blogspot.com/2012/07/fallback-from-webgl-to-canvas-in-threejs.html
         hasCanvas = !!window.CanvasRenderingContext2D;
         hasWebgl = (function () {
             try {
                 return !!window.WebGLRenderingContext &&
-                       !!document.createElement("canvas").getContext("experimental-webgl");
+                       !!document.createElement('canvas').getContext('experimental-webgl');
             } catch (e) {
                 return false;
             }
         }());
 
         if (hasWebgl) {
-            this.renderMode = "webgl";
+            this.renderMode = 'webgl';
             this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
         } else if (hasCanvas) {
             $s.append('<p class="alert alert-warning" align="center">Your web browser ' +
                       'does not support WebGL. Using Canvas as a fallback.</p>');
-            this.renderMode = "canvas";
-            if (this.shader === "toon") {
-                this.shader = "basic";
+            this.renderMode = 'canvas';
+            if (this.shader === 'toon') {
+                this.shader = 'basic';
             }
             this.renderer = new THREE.CanvasRenderer();
             this.renderer.setClearColor(0xffffff, 0);
@@ -69,7 +70,7 @@ var imolecule = {
         this.scene.add(this.perspective);
         this.scene.add(this.orthographic);
 
-        this.setCameraType("perspective");
+        this.setCameraType('perspective');
         this.makeMaterials();
 
         $(window).resize(function () {
@@ -100,17 +101,17 @@ var imolecule = {
         var self = this, threeMaterial, overdraw;
 
         // If a different shader is specified, use uncustomized materials
-        if ($.inArray(self.shader, ["basic", "phong", "lambert"]) !== -1) {
-            threeMaterial = "Mesh" + self.shader.charAt(0).toUpperCase() +
-                            self.shader.slice(1) + "Material";
-            overdraw = this.renderMode === "canvas" ? 0.5 : 0;
+        if ($.inArray(self.shader, ['basic', 'phong', 'lambert']) !== -1) {
+            threeMaterial = 'Mesh' + self.shader.charAt(0).toUpperCase() +
+                            self.shader.slice(1) + 'Material';
+            overdraw = this.renderMode === 'canvas' ? 0.5 : 0;
             $.each(self.data, function (key, value) {
                 value.material = new THREE[threeMaterial]({color: value.color,
                                                            overdraw: overdraw});
             });
 
         // If toon, use materials with some shader edits
-        } else if (this.shader === "toon") {
+        } else if (this.shader === 'toon') {
             $.each(this.data, function (key, value) {
                 var shader, material;
                 shader = THREE.ShaderToon.toon2;
@@ -140,10 +141,10 @@ var imolecule = {
         cent = new THREE.Vector3();
         this.current = molecule;
 
-        scale = this.drawingType === "space filling" ? 1.0 : 0.3;
+        scale = this.drawingType === 'space filling' ? 1.0 : 0.3;
 
         // Don't hate on formats without bond information
-        if (!molecule.hasOwnProperty("bonds")) { molecule.bonds = []; }
+        if (!molecule.hasOwnProperty('bonds')) { molecule.bonds = []; }
 
         // Draws atoms and saves references
         maxHeight = 0;
@@ -155,7 +156,7 @@ var imolecule = {
             mesh.scale.set(1, 1, 1).multiplyScalar(scale * data.radius * 2);
 
             // We set the color and material to be the highlighted one
-            if (atom.hasOwnProperty("color")) {
+            if (atom.hasOwnProperty('color')) {
                 highlightedMesh = new THREE.Mesh(self.sphereGeometry.clone(), self.makeHighlight(atom.color));
                 highlightedMesh.position.copy(mesh.position);
                 highlightedMesh.scale.set(1, 1, 1).multiplyScalar(scale * data.radius * 2 * 1.2);
@@ -163,7 +164,7 @@ var imolecule = {
                 mesh.highlightedMaterial = highlightedMesh.material;
             }
 
-            if (self.drawingType !== "wireframe") {
+            if (self.drawingType !== 'wireframe') {
                 self.scene.add(mesh);
             }
             mesh.element = atom.element;
@@ -174,7 +175,7 @@ var imolecule = {
         });
 
         // Sets camera position to view whole molecule in bounds with some buffer
-        if (typeof resetCamera === "undefined" || resetCamera) {
+        if (typeof resetCamera === 'undefined' || resetCamera) {
             cameraZ = (maxHeight / Math.tan(Math.PI * self.camera.fov / 360) + maxZ) / 0.8;
             self.perspective.position.z = cameraZ;
         }
@@ -201,7 +202,7 @@ var imolecule = {
                     mesh.scale.z = a[1].position.distanceTo(a[0].position) / 2.0;
                     mesh.translateY(0.3 * dy);
 
-                    if (a[0].hasOwnProperty("highlightedMaterial") && a[1].hasOwnProperty("highlightedMaterial")) {
+                    if (a[0].hasOwnProperty('highlightedMaterial') && a[1].hasOwnProperty('highlightedMaterial')) {
                         highlightedMesh = new THREE.Mesh(self.cylinderGeometry, a[0].highlightedMaterial);
                         cent.addVectors(a[0].position, a[1].position).divideScalar(2);
                         highlightedMesh.atomMaterial = self.data[a[k].element].material;
@@ -213,10 +214,10 @@ var imolecule = {
                         self.scene.add(highlightedMesh);
                     }
 
-                    if (self.drawingType === "wireframe") {
+                    if (self.drawingType === 'wireframe') {
                         mesh.material = mesh.atomMaterial;
                     }
-                    if (self.drawingType !== "space filling") {
+                    if (self.drawingType !== 'space filling') {
                         self.scene.add(mesh);
                     }
                     self.bonds.push(mesh);
@@ -224,14 +225,8 @@ var imolecule = {
             }
         });
 
-        // Back-compatibility with a stupid naming scheme
-        if (molecule.hasOwnProperty("periodic_connections")) {
-            molecule.unitcell = molecule.periodic_connections;
-            delete molecule.periodic_connections;
-        }
-
         // If we're dealing with a crystal structure, draw the unit cell
-        if (molecule.hasOwnProperty("unitcell")) {
+        if (molecule.hasOwnProperty('unitcell')) {
             // Some basic conversions to handle math via THREE.Vector3
             v = new THREE.Vector3(0, 0, 0);
             vectors = [
@@ -264,9 +259,9 @@ var imolecule = {
 
         // If drawing in orthographic, controls need to be initialized *after*
         // building the molecule. This should be triggered at most once, and only
-        // when imolecule.create($d, {cameraType: "orthographic"}) is used.
+        // when imolecule.create($d, {cameraType: 'orthographic'}) is used.
         if (this.updateCamera) {
-            this.setCameraType("orthographic");
+            this.setCameraType('orthographic');
             this.updateCamera = false;
         }
         this.render();
@@ -287,15 +282,15 @@ var imolecule = {
     setDrawingType: function (type) {
         // Some case-by-case logic to avoid clearing and redrawing the canvas
         var i;
-        if (this.drawingType === "ball and stick") {
-            if (type === "wireframe") {
+        if (this.drawingType === 'ball and stick') {
+            if (type === 'wireframe') {
                 for (i = 0; i < this.atoms.length; i += 1) {
                     this.scene.remove(this.atoms[i]);
                 }
                 for (i = 0; i < this.bonds.length; i += 1) {
                     this.bonds[i].material = this.bonds[i].atomMaterial;
                 }
-            } else if (type === "space filling") {
+            } else if (type === 'space filling') {
                 for (i = 0; i < this.atoms.length; i += 1) {
                     this.atoms[i].scale.divideScalar(0.3);
                 }
@@ -303,15 +298,15 @@ var imolecule = {
                     this.scene.remove(this.bonds[i]);
                 }
             }
-        } else if (this.drawingType === "wireframe") {
-            if (type === "ball and stick") {
+        } else if (this.drawingType === 'wireframe') {
+            if (type === 'ball and stick') {
                 for (i = 0; i < this.atoms.length; i += 1) {
                     this.scene.add(this.atoms[i]);
                 }
                 for (i = 0; i < this.bonds.length; i += 1) {
                     this.bonds[i].material = this.data.bond.material;
                 }
-            } else if (type === "space filling") {
+            } else if (type === 'space filling') {
                 for (i = 0; i < this.atoms.length; i += 1) {
                     this.atoms[i].scale.divideScalar(0.3);
                     this.scene.add(this.atoms[i]);
@@ -320,8 +315,8 @@ var imolecule = {
                     this.scene.remove(this.bonds[i]);
                 }
             }
-        } else if (this.drawingType === "space filling") {
-            if (type === "ball and stick") {
+        } else if (this.drawingType === 'space filling') {
+            if (type === 'ball and stick') {
                 for (i = 0; i < this.atoms.length; i += 1) {
                     this.atoms[i].scale.multiplyScalar(0.3);
                 }
@@ -329,7 +324,7 @@ var imolecule = {
                     this.bonds[i].material = this.data.bond.material;
                     this.scene.add(this.bonds[i]);
                 }
-            } else if (type === "wireframe") {
+            } else if (type === 'wireframe') {
                 for (i = 0; i < this.atoms.length; i += 1) {
                     this.atoms[i].scale.multiplyScalar(0.3);
                     this.scene.remove(this.atoms[i]);
@@ -348,19 +343,19 @@ var imolecule = {
     setCameraType: function (type) {
         var self = this;
         this.cameraType = type;
-        if (type === "orthographic") {
+        if (type === 'orthographic') {
             this.camera = this.orthographic;
             if (this.perspective.position.length() > 1) {
                 this.camera.position.copy(this.perspective.position);
             }
-        } else if (type === "perspective") {
+        } else if (type === 'perspective') {
             this.camera = this.perspective;
             if (this.orthographic.position.length() > 1) {
                 this.camera.position.copy(this.orthographic.position);
             }
         }
         this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
-        this.controls.addEventListener("change", function () { self.render(); });
+        this.controls.addEventListener('change', function () { self.render(); });
         this.camera.add(this.light);
         this.camera.add(this.directionalLight);
         this.render();
@@ -368,7 +363,7 @@ var imolecule = {
 
     // Sets shader (toon, basic, phong, lambert) and redraws
     setShader: function (shader) {
-        if (this.renderMode !== "webgl" && shader === "toon") {
+        if (this.renderMode !== 'webgl' && shader === 'toon') {
             throw new Error("Toon shading requires webGL.");
         }
         this.shader = shader;
@@ -383,7 +378,7 @@ var imolecule = {
         window.requestAnimationFrame(function () {
             return self.animate();
         });
-        if (this.cameraType === "orthographic") {
+        if (this.cameraType === 'orthographic') {
             this.render();
         }
         this.controls.update();
@@ -395,7 +390,7 @@ var imolecule = {
 
     // Either shows or hides the unit cell
     showUnitCell: function (toggle) {
-        this.scene[toggle ? "add" : "remove"](this.corners);
+        this.scene[toggle ? 'add' : 'remove'](this.corners);
         this.render();
     },
 
@@ -403,7 +398,7 @@ var imolecule = {
     // if you're not using the client-server functionality
     connect: function (port) {
         var self = this;
-        this.socket = new WebSocket("ws://" + window.location.hostname + ":" + port + "/websocket");
+        this.socket = new WebSocket('ws://' + window.location.hostname + ':' + port + '/websocket');
         this.queue = {};
 
         this.socket.onopen = function () {
@@ -421,15 +416,15 @@ var imolecule = {
             if (jsonRpc.error) {
                 alert(jsonRpc.result);
 
-            } else if (router === "draw") {
+            } else if (router === 'draw') {
                 self.clear();
                 self.draw(jsonRpc.result);
 
-            } else if (router === "save") {
-                name = (jsonRpc.result.hasOwnProperty("name") && jsonRpc.result.name !== "") ?
+            } else if (router === 'save') {
+                name = (jsonRpc.result.hasOwnProperty('name') && jsonRpc.result.name !== '') ?
                         jsonRpc.result.name : self.filename;
-                saveAs(new Blob([self.result], {type: "text/plain"}),
-                        name + "." + self.outFormat);
+                saveAs(new Blob([self.result], {type: 'text/plain'}),
+                        name + '.' + self.outFormat);
 
             } else {
                 alert("Unsupported function: " + router);
@@ -440,29 +435,29 @@ var imolecule = {
     // Standardizes chemical drawing formats and draws
     convertAndDraw: function (data, inFormat) {
         // Skips a socket call if not needed
-        if (inFormat === "json") {
+        if (inFormat === 'json') {
             this.clear();
             this.draw($.parseJSON(data));
             return;
         }
 
         var uuid = this.uuid();
-        this.socket.send(JSON.stringify({method: "convert", id: uuid,
+        this.socket.send(JSON.stringify({method: 'convert', id: uuid,
                           params: {data: data, in_format: inFormat,
-                                   out_format: "object", pretty: false}
+                                   out_format: 'object', pretty: false}
                          }));
-        this.queue[uuid] = "draw";
+        this.queue[uuid] = 'draw';
     },
 
     // Converts and saves output
     convertAndSave: function (data, outFormat) {
         var uuid = this.uuid();
-        this.socket.send(JSON.stringify({method: "convert", id: uuid,
-                          params: {data: data, in_format: "json",
+        this.socket.send(JSON.stringify({method: 'convert', id: uuid,
+                          params: {data: data, in_format: 'json',
                                    out_format: outFormat, pretty: true}
                          }));
         this.outFormat = outFormat;
-        this.queue[uuid] = "save";
+        this.queue[uuid] = 'save';
     },
 
     // Generates a unique identifier for request ids

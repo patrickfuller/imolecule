@@ -8,7 +8,6 @@ Some small edits to json output.
 """
 
 from itertools import takewhile
-import re
 import json
 from json import encoder
 encoder.FLOAT_REPR = lambda o: format(o, '.6f')
@@ -25,7 +24,7 @@ loads = json.loads
 
 def compress(obj):
     """Outputs json without whitespace."""
-    return json.dumps(obj, sort_keys=True, separators=(",", ":"),
+    return json.dumps(obj, sort_keys=True, separators=(',', ':'),
                       cls=CustomEncoder)
 
 
@@ -42,8 +41,8 @@ class CustomEncoder(json.JSONEncoder):
         elif HAS_NUMPY and isinstance(obj, np.ndarray):
             return obj.copy().tolist()
         else:
-            raise TypeError(("Object of type %s with value of %s is not JSON "
-                            "serializable") % (type(obj), repr(obj)))
+            raise TypeError(("Object of type {:s} with value of {:s} is not "
+                             "JSON serializable").format(type(obj), repr(obj)))
 
     def encode(self, obj):
         """Fired for every object."""

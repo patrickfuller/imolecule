@@ -8,50 +8,50 @@ import imolecule.json_formatter as json
 from imolecule import format_converter
 
 file_path = os.path.normpath(os.path.dirname(__file__))
-local_path = "nbextensions/imolecule.min.js"
-remote_path = ("https://rawgit.com/patrickfuller/imolecule/master/"
-               "imolecule/js/build/imolecule.min.js")
+local_path = 'nbextensions/imolecule.min.js'
+remote_path = ('https://rawgit.com/patrickfuller/imolecule/master/'
+               'imolecule/js/build/imolecule.min.js')
 
-if IPython.release.version < "2.0":
+if IPython.release.version < '2.0':
     raise ImportError("Old version of IPython detected. Please update.")
 else:
     try:
-        if IPython.release.version < "4.0":
+        if IPython.release.version < '4.0':
             from IPython.html.nbextensions import install_nbextension
         else:
             from notebook.nbextensions import install_nbextension
-        p = os.path.join(file_path, "js", "build", "imolecule.min.js")
-        install_nbextension([p] if IPython.release.version < "3.0" else p,
+        p = os.path.join(file_path, 'js', 'build', 'imolecule.min.js')
+        install_nbextension([p] if IPython.release.version < '3.0' else p,
                             verbose=0)
     except:
         pass
 
 
-def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
-         camera_type="perspective", shader="lambert", display_html=True):
+def draw(data, format='auto', size=(400, 300), drawing_type='ball and stick',
+         camera_type='perspective', shader='lambert', display_html=True):
     """Draws an interactive 3D visualization of the inputted chemical.
 
     Args:
         data: A string or file representing a chemical.
-        format: The format of the `data` variable (default is "auto").
+        format: The format of the `data` variable (default is 'auto').
         size: Starting dimensions of visualization, in pixels.
-        drawing_type: Specifies the molecular representation. Can be "ball and
-            stick", "wireframe", or "space filling".
-        camera_type: Can be "perspective" or "orthographic".
-        shader: Specifies shading algorithm to use. Can be "toon", "basic",
-            "phong", or "lambert".
+        drawing_type: Specifies the molecular representation. Can be 'ball and
+            stick', 'wireframe', or 'space filling'.
+        camera_type: Can be 'perspective' or 'orthographic'.
+        shader: Specifies shading algorithm to use. Can be 'toon', 'basic',
+            'phong', or 'lambert'.
         display_html: If True (default), embed the html in a IPython display.
             If False, return the html as a string.
 
     The `format` can be any value specified by Open Babel
-    (http://openbabel.org/docs/2.3.1/FileFormats/Overview.html). The "auto"
+    (http://openbabel.org/docs/2.3.1/FileFormats/Overview.html). The 'auto'
     option uses the extension for files (ie. my_file.mol -> mol) and defaults
     to SMILES (smi) for strings.
     """
     # Catch errors on string-based input before getting js involved
-    draw_options = ["ball and stick", "wireframe", "space filling"]
-    camera_options = ["perspective", "orthographic"]
-    shader_options = ["toon", "basic", "phong", "lambert"]
+    draw_options = ['ball and stick', 'wireframe', 'space filling']
+    camera_options = ['perspective', 'orthographic']
+    shader_options = ['toon', 'basic', 'phong', 'lambert']
     if drawing_type not in draw_options:
         raise Exception("Invalid drawing type! Please use one of: " +
                         ", ".join(draw_options))
@@ -66,8 +66,8 @@ def draw(data, format="auto", size=(400, 300), drawing_type="ball and stick",
     div_id = uuid.uuid4()
     html = """<div id="molecule_%s"></div>
            <script type="text/javascript">
-           require.config({baseUrl: "/",
-                             paths: {imolecule: ['%s', '%s']}});
+           require.config({baseUrl: '/',
+                           paths: {imolecule: ['%s', '%s']}});
            require(['imolecule'], function () {
                var $d = $('#molecule_%s');
                $d.width(%d); $d.height(%d);
@@ -143,23 +143,23 @@ def generate(data, format="auto"):
 
     Args:
         data: A string or file representing a chemical
-        format: The format of the `data` variable (default is "auto")
+        format: The format of the `data` variable (default is 'auto')
 
     The `format` can be any value specified by Open Babel
-    (http://openbabel.org/docs/2.3.1/FileFormats/Overview.html). The "auto"
+    (http://openbabel.org/docs/2.3.1/FileFormats/Overview.html). The 'auto'
     option uses the extension for files (ie. my_file.mol -> mol) and defaults
     to SMILES (smi) for strings.
     """
     # Support both files and strings and attempt to infer file type
     try:
         with open(data) as in_file:
-            if format == "auto":
-                format = data.split(".")[-1]
+            if format == 'auto':
+                format = data.split('.')[-1]
             data = in_file.read()
     except:
-        if format == "auto":
-            format = "smi"
-    return format_converter.convert(data, format, "json")
+        if format == 'auto':
+            format = 'smi'
+    return format_converter.convert(data, format, 'json')
 
 
 def to_json(data, compress=False):

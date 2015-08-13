@@ -15,7 +15,7 @@ import tornado.websocket
 
 # Load supported open babel formats for save as options
 PATH = os.path.dirname(os.path.realpath(__file__))
-with open(os.path.join(PATH, "data/openbabel_formats.json")) as in_file:
+with open(os.path.join(PATH, 'data/openbabel_formats.json')) as in_file:
     OB_FORMATS = json.load(in_file)
 
 args = None
@@ -24,13 +24,13 @@ args = None
 def _worker_process(msg):
     """Wrapper function for worker process to execute."""
     from imolecule import format_converter
-    return getattr(format_converter, msg["method"])(**msg["params"])
+    return getattr(format_converter, msg['method'])(**msg['params'])
 
 
 class IndexHandler(tornado.web.RequestHandler):
 
     def get(self):
-        self.render("server.template", port=args.port, formats=OB_FORMATS)
+        self.render('server.template', port=args.port, formats=OB_FORMATS)
 
 
 class WebSocket(tornado.websocket.WebSocketHandler):
@@ -61,9 +61,9 @@ class WebSocket(tornado.websocket.WebSocketHandler):
             error = 1
         logging.log(logging.DEBUG, result)
 
-        self.write_message(json.dumps({"result": result, "error": error,
-                                       "id": json_rpc["id"]},
-                                      separators=(",", ":")))
+        self.write_message(json.dumps({'result': result, 'error': error,
+                                       'id': json_rpc['id']},
+                                      separators=(',', ':')))
 
 
 def start_server():
@@ -71,16 +71,16 @@ def start_server():
     parser = argparse.ArgumentParser(description="Opens a browser-based "
                                      "client that interfaces with the "
                                      "chemical format converter.")
-    parser.add_argument("--debug", action="store_true", help="Prints all "
+    parser.add_argument('--debug', action="store_true", help="Prints all "
                         "transmitted data streams.")
-    parser.add_argument("--port", type=int, default=8000, help="The port "
+    parser.add_argument('--port', type=int, default=8000, help="The port "
                         "on which to serve the website.")
-    parser.add_argument("--timeout", type=int, default=5, help="The maximum "
+    parser.add_argument('--timeout', type=int, default=5, help="The maximum "
                         "time, in seconds, allowed for a process to run "
                         "before returning an error.")
-    parser.add_argument("--workers", type=int, default=2, help="The number of "
+    parser.add_argument('--workers', type=int, default=2, help="The number of "
                         "worker processes to use with the server.")
-    parser.add_argument("--no-browser", action="store_true", help="Disables "
+    parser.add_argument('--no-browser', action="store_true", help="Disables "
                         "opening a browser window on startup.")
     global args
     args = parser.parse_args()
@@ -88,14 +88,14 @@ def start_server():
     if args.debug:
         logging.getLogger().setLevel(logging.DEBUG)
 
-    handlers = [(r"/", IndexHandler), (r"/websocket", WebSocket),
+    handlers = [(r'/', IndexHandler), (r'/websocket', WebSocket),
                 (r'/static/(.*)', tornado.web.StaticFileHandler,
                  {'path': os.path.normpath(os.path.dirname(__file__))})]
     application = tornado.web.Application(handlers)
     application.listen(args.port)
 
     if not args.no_browser:
-        webbrowser.open("http://localhost:%d/" % args.port, new=2)
+        webbrowser.open('http://localhost:%d/' % args.port, new=2)
 
     try:
         tornado.ioloop.IOLoop.instance().start()
@@ -105,5 +105,5 @@ def start_server():
         sys.exit(1)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     start_server()
