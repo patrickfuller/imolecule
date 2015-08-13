@@ -19,7 +19,7 @@ env:
 
   global:
     # BINSTAR
-    #- secure:
+    - secure: "sDj6wmccNwkuUfVdR9s8wtGzEgNlPIWWqXA5x1io6v24m4LTDGO9N2c2fiDZy03ttu6evKJQ+OzCWU/3SSQgrJap9dAPozKK+XvCmBrU3+GpNy+zP0CcQBOTeoV3U9H9AwIt4vcSwvtWMvArMIJHgsGnAKtnCLfp0fXd88MQBwP84+sl6NQs3Px1MpnouAts1eagurALB3LTGR4ZLYX96dI/i5oNczLgEMmuGZcTRSTM0jnVxG7uvwhtZA8ECSJmWPmoLmkSJrzXNxtpHDdKwnvODonT1z1U/BPpAmVaW7OdmJrP+EZMOm9GaToRsdmNOzLxccRtGSE+mleiWcH9A3wJOiaOpxRl5U/s/Wl7xJgGmAbEc13/2CEpvWr2xAJcQgEBAMcph6UQpXekMukoskeZrdkumn0RIA/pf2/VpfowOFlWhoip1pwBGuoIGhNKe97Mz2gHewnQdgZMfvdGGneeqeltzZCheRl4s76T7DVpkXHvB0YNz2BLPKnA49eRpIbn6dwpS+tjaDDGRNGCiNsd8RJLD6EXYBUZeNEqXlFcYRvdk/srSR4lTPqeQubgy0/Z4fhT/zB5cDTbCBL1KkFgvwTIZM/zLFpovyLIqPCqUBAV9HznPr/1g6RbwmjJYY0tfRUAmpH6yKpG3iel2Rr6xTVlLg29si5TsOIjS+c="
 
 after_success:
   - source devtools/travis-ci/post_binstar.sh
