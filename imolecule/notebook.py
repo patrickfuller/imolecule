@@ -16,8 +16,11 @@ if IPython.release.version < "2.0":
     raise ImportError("Old version of IPython detected. Please update.")
 else:
     try:
-        from IPython.html.nbextensions import install_nbextension
-        p = os.path.join(file_path, "js/build/imolecule.min.js")
+        if IPython.release.version < "4.0":
+            from IPython.html.nbextensions import install_nbextension
+        else:
+            from notebook.nbextensions import install_nbextension
+        p = os.path.join(file_path, "js", "build", "imolecule.min.js")
         install_nbextension([p] if IPython.release.version < "3.0" else p,
                             verbose=0)
     except:
