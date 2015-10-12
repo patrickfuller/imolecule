@@ -6,7 +6,6 @@ Examples
 ========
 
  * [IPython notebook](http://patrickfuller.github.io/imolecule/examples/ipython.html)
- * [file format converter](http://98.193.59.178:9000/)
  * [metal-organic frameworks](http://patrickfuller.github.io/imolecule/examples/mof.html)
 
 IPython
@@ -40,7 +39,7 @@ associated with the IPython interface for more.
 Server
 ======
 
-If you want to run the [file format converter](http://73.209.1.128:9000/) on
+If you want to run the file format converter on
 your own computer, install the library with:
 
 ```
@@ -141,6 +140,6 @@ make && make install
 ```
 
 Older versions of open babel can be found through standard package managers,
-and do support most of the functionality of the development version. If you 
+and do support most of the functionality of the development version. If you
 are struggling with building from source, check your package manager for
 openbabel.
