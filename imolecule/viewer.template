@@ -16,6 +16,9 @@
             $(document).ready(function () {
 
                 imolecule.create("#imolecule");
+
+                imolecule.addElements({% raw json_element_properties %});
+
                 imolecule.draw({% raw json_mol %});
 
                 imolecule.setCameraType("{{ camera_type }}");
