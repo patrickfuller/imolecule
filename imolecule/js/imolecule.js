@@ -195,7 +195,12 @@ var imolecule = {
                 for (k = 0; k < 2; k += 1) {
                     mesh = new THREE.Mesh(self.cylinderGeometry, self.data.bond.material);
                     cent.addVectors(a[0].position, a[1].position).divideScalar(2);
-                    mesh.atomMaterial = self.data[a[k].element].material;
+                    if(self.data[a[k].element] === undefined) {
+                        mesh.atomMaterial = self.data.unknown.material;
+                    }
+                    else {
+                        mesh.atomMaterial = self.data[a[k].element].material;
+                    }
                     mesh.position.addVectors(cent, a[k].position).divideScalar(2);
                     mesh.lookAt(a[1].position);
                     mesh.scale.x = mesh.scale.y = 0.3 * self.data.bond.radius * 2;
@@ -205,7 +210,12 @@ var imolecule = {
                     if (a[0].hasOwnProperty('highlightedMaterial') && a[1].hasOwnProperty('highlightedMaterial')) {
                         highlightedMesh = new THREE.Mesh(self.cylinderGeometry, a[0].highlightedMaterial);
                         cent.addVectors(a[0].position, a[1].position).divideScalar(2);
-                        highlightedMesh.atomMaterial = self.data[a[k].element].material;
+                        if(self.data[a[k].element] === undefined) {
+                            highlightedMesh.atomMaterial = self.data.unknown.material;
+                        }
+                        else {
+                            highlightedMesh.atomMaterial = self.data[a[k].element].material;
+                        }
                         highlightedMesh.position.addVectors(cent, a[k].position).divideScalar(2);
                         highlightedMesh.lookAt(a[1].position);
                         highlightedMesh.scale.x = highlightedMesh.scale.y = 0.3 * self.data.bond.radius * 2 * 1.2; // 1.2 is the highlight ratio
@@ -468,6 +478,17 @@ var imolecule = {
             var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
             return v.toString(16);
         });
+    },
+
+    // Add elements to data object
+    addElements: function(elementObj) {
+        for(var key in elementObj) {
+            if(elementObj.hasOwnProperty(key)) {
+                this.data[key] = elementObj[key];
+            }
+        }
+        this.makeMaterials();
+        this.render();
     },
 
     data: { Ac: { color: 0x70aaf9, radius: 1.95 },
