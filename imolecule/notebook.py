@@ -96,7 +96,7 @@ def draw(data, format='auto', size=(400, 300), drawing_type='ball and stick',
                            div_id, size[0], size[1], drawing_type,
                            camera_type, shader, json_element_properties,
                            json_mol, size[0], size[1])
-    print(html)
+
     # Execute js and display the results in a div (see script for more)
     if display_html:
         try:

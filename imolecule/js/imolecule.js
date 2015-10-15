@@ -487,6 +487,8 @@ var imolecule = {
                 this.data[key] = elementObj[key];
             }
         }
+        this.makeMaterials();
+        this.render();
     },
 
     data: { Ac: { color: 0x70aaf9, radius: 1.95 },
