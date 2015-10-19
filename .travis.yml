@@ -9,6 +9,10 @@ addons:
 install:
   - source devtools/travis-ci/install.sh
 
+before_script:
+  - npm install -g uglify-js
+  - uglifyjs imolecule/js/jquery-ui.resizable.js imolecule/js/three.min.js imolecule/js/TrackballControls.js imolecule/js/ShaderToon.js imolecule/js/imolecule.js > imolecule/js/build/imolecule.min.js
+
 script:
   - conda build devtools/conda-recipe
 
