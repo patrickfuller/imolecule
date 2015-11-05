@@ -13,6 +13,8 @@ var imolecule = {
         this.drawingType = options.hasOwnProperty('drawingType') ? options.drawingType : 'ball and stick';
         this.cameraType = options.hasOwnProperty('cameraType') ? options.cameraType : 'perspective';
         this.updateCamera = (this.cameraType === 'orthographic');
+        this.showSave = options.hasOwnProperty('showSave') ? options.showSave : false;
+        this.saveImage = false;
 
         // Adapted from http://japhr.blogspot.com/2012/07/fallback-from-webgl-to-canvas-in-threejs.html
         hasCanvas = !!window.CanvasRenderingContext2D;
@@ -84,6 +86,12 @@ var imolecule = {
             self.orthographic.updateProjectionMatrix();
             self.render();
         });
+
+        if (this.showSave) {
+            $s.prepend('<p class="imolecule-save" style="position: absolute; z-index: 10; opacity: 0.5; ' +
+                       'bottom: 10px; right: 28px; cursor: pointer; font-size: 36px">&#x1f4be;</p>');
+            $s.find('.imolecule-save').click(function () { self.save(); });
+        }
 
         this.render();
         this.animate();
@@ -288,6 +296,11 @@ var imolecule = {
         this.scene.remove(this.corners);
     },
 
+    // Request to save a screenshot of the current canvas.
+    save: function () {
+        this.saveImage = true;
+    },
+
     // Sets molecule drawing types ( ball and stick, space filling, wireframe )
     setDrawingType: function (type) {
         // Some case-by-case logic to avoid clearing and redrawing the canvas
@@ -384,14 +397,19 @@ var imolecule = {
 
     // Runs the main window animation in an infinite loop
     animate: function () {
-        var self = this;
+        var self = this, link;
         window.requestAnimationFrame(function () {
             return self.animate();
         });
-        if (this.cameraType === 'orthographic') {
-            this.render();
-        }
+        this.render();
         this.controls.update();
+        if (this.saveImage) {
+            link = document.createElement("a");
+            link.download = 'imolecule.png';
+            link.href = this.renderer.domElement.toDataURL('image/png');
+            link.click();
+            this.saveImage = false;
+        }
     },
 
     render: function () {

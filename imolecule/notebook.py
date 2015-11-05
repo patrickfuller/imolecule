@@ -80,7 +80,8 @@ def draw(data, format='auto', size=(400, 300), drawing_type='ball and stick',
                $d.imolecule = jQuery.extend({}, imolecule);
                $d.imolecule.create($d, {drawingType: '%s',
                                         cameraType: '%s',
-                                        shader: '%s'});
+                                        shader: '%s',
+                                        save: true});
                $d.imolecule.addElements(%s);
                $d.imolecule.draw(%s);
 

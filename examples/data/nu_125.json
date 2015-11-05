@@ -2595,7 +2595,7 @@
         { "atoms": [ 940, 900 ], "order": 2 },
         { "atoms": [ 940, 457 ], "order": 1 }
     ],
-    "periodic_connections": [
+    "unitcell": [
         [
             31.310900,
             0.000000,
