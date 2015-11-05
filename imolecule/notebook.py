@@ -29,7 +29,7 @@ else:
 
 def draw(data, format='auto', size=(400, 300), drawing_type='ball and stick',
          camera_type='perspective', shader='lambert', display_html=True,
-         element_properties=None):
+         element_properties=None, show_save=False):
     """Draws an interactive 3D visualization of the inputted chemical.
 
     Args:
@@ -45,6 +45,8 @@ def draw(data, format='auto', size=(400, 300), drawing_type='ball and stick',
             If False, return the html as a string.
         element_properites: A dictionary providing color and radius information
             for custom elements or overriding the defaults in imolecule.js
+        show_save: If True, displays a save icon for rendering molecule as an
+            image.
 
     The `format` can be any value specified by Open Babel
     (http://openbabel.org/docs/2.3.1/FileFormats/Overview.html). The 'auto'
@@ -81,7 +83,7 @@ def draw(data, format='auto', size=(400, 300), drawing_type='ball and stick',
                $d.imolecule.create($d, {drawingType: '%s',
                                         cameraType: '%s',
                                         shader: '%s',
-                                        save: true});
+                                        showSave: %s});
                $d.imolecule.addElements(%s);
                $d.imolecule.draw(%s);
 
@@ -95,7 +97,9 @@ def draw(data, format='auto', size=(400, 300), drawing_type='ball and stick',
            });
            </script>""" % (div_id, local_path[:-3], remote_path[:-3],
                            div_id, size[0], size[1], drawing_type,
-                           camera_type, shader, json_element_properties,
+                           camera_type, shader,
+                           'true' if show_save else 'false',
+                           json_element_properties,
                            json_mol, size[0], size[1])
 
     # Execute js and display the results in a div (see script for more)
