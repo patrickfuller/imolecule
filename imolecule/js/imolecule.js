@@ -8,6 +8,7 @@ var imolecule = {
     create: function (selector, options) {
         var $s = $(selector), self = this, hasCanvas, hasWebgl;
         options = options || {};
+        this.$s = $s;
 
         this.shader = options.hasOwnProperty('shader') ? options.shader : 'lambert';
         this.drawingType = options.hasOwnProperty('drawingType') ? options.drawingType : 'ball and stick';
@@ -397,19 +398,24 @@ var imolecule = {
 
     // Runs the main window animation in an infinite loop
     animate: function () {
-        var self = this, link;
+        var self = this, link, w, h, renderWidth;
         window.requestAnimationFrame(function () {
             return self.animate();
         });
-        this.render();
-        this.controls.update();
         if (this.saveImage) {
-            link = document.createElement("a");
+            renderWidth = 2560 / (window.devicePixelRatio || 1);
+            w = this.$s.width(); h = this.$s.height();
+            this.renderer.setSize(renderWidth, renderWidth * h / w);
+            this.render();
+            link = document.createElement('a');
             link.download = 'imolecule.png';
             link.href = this.renderer.domElement.toDataURL('image/png');
             link.click();
+            this.renderer.setSize(w, h);
             this.saveImage = false;
         }
+        this.render();
+        this.controls.update();
     },
 
     render: function () {
