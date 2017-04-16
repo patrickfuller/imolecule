@@ -144,4 +144,4 @@ make && make install
 Older versions of open babel can be found through standard package managers,
 and do support most of the functionality of the development version. If you
 are struggling with building from source, check your package manager for
-openbabel.
+openbabel (`sudo apt-get install python-openbabel` for Ubuntu).
