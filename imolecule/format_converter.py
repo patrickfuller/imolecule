@@ -7,13 +7,27 @@ from collections import Counter
 from fractions import gcd
 from functools import reduce
 
+# Open Babel <= '2.4.1'
 try:
     import pybel
     ob = pybel.ob
     table = ob.OBElementTable()
+    GetAtomicNum = table.GetAtomicNum
+    GetSymbol = table.GetSymbol
     has_ob = True
 except ImportError:
     has_ob = False
+
+# Open Babel >= '3.0.0'
+try:
+    from openbabel import pybel
+    ob = pybel.ob
+    GetAtomicNum = ob.GetAtomicNum
+    GetSymbol = ob.GetSymbol
+    has_ob = True
+except ImportError:
+    has_ob = False
+
 
 
 def convert(data, in_format, out_format, name=None, pretty=False):
@@ -87,7 +101,7 @@ def json_to_pybel(data, infer_bonds=False):
     obmol.BeginModify()
     for atom in data['atoms']:
         obatom = obmol.NewAtom()
-        obatom.SetAtomicNum(table.GetAtomicNum(str(atom['element'])))
+        obatom.SetAtomicNum(GetAtomicNum(str(atom['element'])))
         obatom.SetVector(*atom['location'])
         if 'label' in atom:
             pd = ob.OBPairData()
@@ -137,7 +151,7 @@ def pybel_to_json(molecule, name=None):
        A Python dictionary containing atom and bond data
     """
     # Save atom element type and 3D location.
-    atoms = [{'element': table.GetSymbol(atom.atomicnum),
+    atoms = [{'element': GetSymbol(atom.atomicnum),
               'location': list(atom.coords)}
              for atom in molecule.atoms]
     # Recover auxiliary data, if exists
@@ -169,7 +183,7 @@ def pybel_to_json(molecule, name=None):
         output['units']['density'] = 'kg / L'
 
     # Save the formula to json. Use Hill notation, just to have a standard.
-    element_count = Counter(table.GetSymbol(a.atomicnum) for a in molecule)
+    element_count = Counter(GetSymbol(a.atomicnum) for a in molecule)
     hill_count = []
     for element in ['C', 'H']:
         if element in element_count:
