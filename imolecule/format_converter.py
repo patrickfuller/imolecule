@@ -1,37 +1,23 @@
-"""
-Methods to interconvert between json and other (cif, mol, smi, etc.) files
-"""
-import imolecule.json_formatter as json
-
+"""Interconvert between json and other (cif, mol, smi, etc.) files."""
 from collections import Counter
 from fractions import gcd
+import logging
 from functools import reduce
 
-# Open Babel <= '2.4.1'
 try:
-    import pybel
-    ob = pybel.ob
-    table = ob.OBElementTable()
-    GetAtomicNum = table.GetAtomicNum
-    GetSymbol = table.GetSymbol
-    has_ob = True
-except ImportError:
-    has_ob = False
-
-# Open Babel >= '3.0.0'
-try:
+    from openbabel import openbabel as ob
     from openbabel import pybel
-    ob = pybel.ob
-    GetAtomicNum = ob.GetAtomicNum
-    GetSymbol = ob.GetSymbol
-    has_ob = True
+    HAS_OB = True
 except ImportError:
-    has_ob = False
+    logging.warning("Open Babel >3.0 not found. Format conversion disabled.")
+    HAS_OB = False
 
+
+import imolecule.json_formatter as json
 
 
 def convert(data, in_format, out_format, name=None, pretty=False):
-    """Converts between two inputted chemical formats.
+    """Convert between two inputted chemical formats.
 
     Args:
         data: A string representing the chemical file to be converted. If the
@@ -46,19 +32,25 @@ def convert(data, in_format, out_format, name=None, pretty=False):
             print the output for human readability
     Returns:
         A string representing the inputted `data` in the specified `out_format`
+
     """
     # Decide on a json formatter depending on desired prettiness
     dumps = json.dumps if pretty else json.compress
 
     # Shortcut for avoiding pybel dependency
-    if not has_ob and in_format == 'json' and out_format == 'json':
-        return dumps(json.loads(data) if is_string(data) else data)
-    elif not has_ob:
+    if not HAS_OB and in_format == 'json' and out_format == 'json':
+        return dumps(json.loads(data) if isinstance(data, str) else data)
+    elif not HAS_OB:
         raise ImportError("Chemical file format conversion requires pybel.")
+
+    # Bring up with open babel dev: mmcif seems to be a better parser than cif
+    if in_format == 'cif':
+        in_format = 'mmcif'
 
     # These use the open babel library to interconvert, with additions for json
     if in_format == 'json':
-        mol = json_to_pybel(json.loads(data) if is_string(data) else data)
+        mol = json_to_pybel(json.loads(data) if isinstance(data, str)
+                            else data)
     elif in_format == 'pybel':
         mol = data
     else:
@@ -87,7 +79,7 @@ def convert(data, in_format, out_format, name=None, pretty=False):
 
 
 def json_to_pybel(data, infer_bonds=False):
-    """Converts python data structure to pybel.Molecule.
+    """Convert python data structure to pybel.Molecule.
 
     This will infer bond data if not specified.
 
@@ -96,12 +88,13 @@ def json_to_pybel(data, infer_bonds=False):
         infer_bonds (Optional): If no bonds specified in input, infer them
     Returns:
         An instance of `pybel.Molecule`
+
     """
     obmol = ob.OBMol()
     obmol.BeginModify()
     for atom in data['atoms']:
         obatom = obmol.NewAtom()
-        obatom.SetAtomicNum(GetAtomicNum(str(atom['element'])))
+        obatom.SetAtomicNum(ob.GetAtomicNum(str(atom['element'])))
         obatom.SetVector(*atom['location'])
         if 'label' in atom:
             pd = ob.OBPairData()
@@ -133,7 +126,7 @@ def json_to_pybel(data, infer_bonds=False):
     mol = pybel.Molecule(obmol)
 
     # Add partial charges
-    if 'charge' in data['atoms'][0]:
+    if all('charge' in atom for atom in data['atoms']):
         mol.OBMol.SetPartialChargesPerceived()
         for atom, pyatom in zip(data['atoms'], mol.atoms):
             pyatom.OBAtom.SetPartialCharge(atom['charge'])
@@ -142,16 +135,17 @@ def json_to_pybel(data, infer_bonds=False):
 
 
 def pybel_to_json(molecule, name=None):
-    """Converts a pybel molecule to json.
+    """Convert a pybel molecule to json.
 
     Args:
         molecule: An instance of `pybel.Molecule`
         name: (Optional) If specified, will save a "name" property
     Returns:
        A Python dictionary containing atom and bond data
+
     """
     # Save atom element type and 3D location.
-    atoms = [{'element': GetSymbol(atom.atomicnum),
+    atoms = [{'element': ob.GetSymbol(atom.atomicnum),
               'location': list(atom.coords)}
              for atom in molecule.atoms]
     # Recover auxiliary data, if exists
@@ -177,13 +171,13 @@ def pybel_to_json(molecule, name=None):
         uc = molecule.unitcell
         output['unitcell'] = [[v.GetX(), v.GetY(), v.GetZ()]
                               for v in uc.GetCellVectors()]
-        density = (sum(atom.atomicmass for atom in molecule.atoms) /
-                   (uc.GetCellVolume() * 0.6022))
+        density = (sum(atom.atomicmass for atom in molecule.atoms)
+                   / (uc.GetCellVolume() * 0.6022))
         output['density'] = density
         output['units']['density'] = 'kg / L'
 
     # Save the formula to json. Use Hill notation, just to have a standard.
-    element_count = Counter(GetSymbol(a.atomicnum) for a in molecule)
+    element_count = Counter(ob.GetSymbol(a.atomicnum) for a in molecule)
     hill_count = []
     for element in ['C', 'H']:
         if element in element_count:
@@ -195,7 +189,7 @@ def pybel_to_json(molecule, name=None):
     div = (reduce(gcd, (c[1] for c in hill_count))
            if hasattr(molecule, 'unitcell') else 1)
 
-    output['formula'] = ''.join(n if c / div == 1 else '%s%d' % (n, c / div)
+    output['formula'] = ''.join(n if c / div == 1 else f'{n}{c // div}'
                                 for n, c in hill_count)
     output['molecular_weight'] = molecule.molwt / div
     output['units']['molecular_weight'] = 'g / mol'
@@ -205,14 +199,6 @@ def pybel_to_json(molecule, name=None):
         output['name'] = name
 
     return output
-
-
-def is_string(obj):
-    """Wraps Python2.x and 3.x ways to test if string."""
-    try:
-        return isinstance(obj, basestring)
-    except NameError:
-        return isinstance(obj, str)
 
 
 if __name__ == '__main__':

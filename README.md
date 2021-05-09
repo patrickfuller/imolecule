@@ -41,8 +41,7 @@ associated with the IPython interface for more.
 Server
 ======
 
-If you want to run the file format converter on
-your own computer, install the library with:
+If you want to run the file format converter on your own computer, install the library with:
 
 ```
 pip install imolecule
@@ -131,7 +130,13 @@ for interconverting over 100 chemical file formats. imolecule uses Open Babel
 to convert input formats to JSON before drawing. Therefore, to use imolecule
 with non-JSON formats, you will need Open Babel.
 
-Open Babel is best installed from source. For more, read through the
+Open Babel is best installed through conda.
+
+```
+conda install -c conda-forge openbabel
+```
+
+If you don't use conda, Open Babel can be installed from source. For more, read through the
 [Open Babel installation instructions](http://openbabel.org/docs/dev/Installation/install.html).
 
 ```
@@ -140,8 +145,3 @@ mkdir build && cd build
 cmake ../openbabel -DPYTHON_BINDINGS=ON
 make && make install
 ```
-
-Older versions of open babel can be found through standard package managers,
-and do support most of the functionality of the development version. If you
-are struggling with building from source, check your package manager for
-openbabel.
