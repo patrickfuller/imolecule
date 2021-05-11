@@ -1,3 +1,4 @@
+"""Draw molecules in the Jupyter notebook."""
 import os
 import uuid
 
@@ -8,9 +9,10 @@ import imolecule.json_formatter as json
 from imolecule import format_converter
 
 file_path = os.path.normpath(os.path.dirname(__file__))
-local_path = 'nbextensions/imolecule.min.js'
+local_path = 'nbextensions/imolecule.min'
 remote_path = ('https://rawgit.com/patrickfuller/imolecule/master/'
-               'imolecule/js/build/imolecule.min.js')
+               'imolecule/js/build/imolecule.min')
+jquery_path = 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min'
 
 if IPython.release.version < '2.0':
     raise ImportError("Old version of IPython detected. Please update.")
@@ -75,7 +77,9 @@ def draw(data, format='auto', size=(400, 300), drawing_type='ball and stick',
     html = """<div id="molecule_%s"></div>
            <script type="text/javascript">
            require.config({baseUrl: '/',
-                           paths: {imolecule: ['%s', '%s']}});
+                           paths: {
+                           jquery: '%s',
+                           imolecule: ['%s', '%s']}});
            require(['imolecule'], function () {
                var $d = $('#molecule_%s');
                $d.width(%d); $d.height(%d);
@@ -95,7 +99,7 @@ def draw(data, format='auto', size=(400, 300), drawing_type='ball and stick',
                    }
                });
            });
-           </script>""" % (div_id, local_path[:-3], remote_path[:-3],
+           </script>""" % (div_id, jquery_path, local_path, remote_path,
                            div_id, size[0], size[1], drawing_type,
                            camera_type, shader,
                            'true' if show_save else 'false',
