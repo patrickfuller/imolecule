@@ -1,6 +1,9 @@
 """Interconvert between json and other (cif, mol, smi, etc.) files."""
 from collections import Counter
-from fractions import gcd
+try:
+    from fractions import gcd   # < Python 3.9
+except ImportError:
+    from math import gcd        # >= Python 3.9
 import logging
 from functools import reduce
 
